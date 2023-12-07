@@ -1,6 +1,7 @@
 from flask_pymongo import pymongo
+import os
 
-CONNECTION_STRING = "mongodb+srv://clovischowjh:analystavengersforever@cluster0.qx0lb1j.mongodb.net/?retryWrites=true&w=majority"
+CONNECTION_STRING = os.getenv('MONGO_CONNECTION_STRING')
 
 client = pymongo.MongoClient(CONNECTION_STRING)
 db = client.get_database('testdb')

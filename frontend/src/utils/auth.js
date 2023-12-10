@@ -2,13 +2,13 @@ import { initializeApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCOGOrr6vPU4O8MaHJUnjH3anGfDyrW7YM",
-    authDomain: "analystavengers.firebaseapp.com",
-    projectId: "analystavengers",
-    storageBucket: "analystavengers.appspot.com",
-    messagingSenderId: "496207571190",
-    appId: "1:496207571190:web:f5766e0a6bd8d20db7a4d7",
-    measurementId: "G-6F1MHJTJ19"
+    apiKey: import.meta.env.VITE_APP_API_KEY,
+    authDomain: import.meta.env.VITE_APP_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_APP_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_APP_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_APP_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_APP_APP_ID,
+    measurementId: import.meta.env.VITE_APP_MEASUREMENT_ID
 };
 
 initializeApp(firebaseConfig);

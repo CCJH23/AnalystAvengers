@@ -6,7 +6,7 @@
         </div>
         <div class="col px-0">
           <Header></Header>
-          <h1 class="p-4">Home Page</h1>
+          <h1 class="p-4" style="color:#3498db">Home Page</h1>
         </div>
       </div>
   </div>

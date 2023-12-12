@@ -1,5 +1,5 @@
 <template>
-    <nav class="navbar navbar-expand-lg" style="background-color: beige;">
+    <nav class="navbar" style="background-color: #f0f0f0;">
         <div class="container-fluid justify-content-end">
             <router-link class="navbar-brand" to="/login">Log Out</router-link>
         </div>

@@ -1,6 +1,5 @@
 from flask_pymongo import pymongo
 import os
-import certifi
 
 CONNECTION_STRING = os.getenv('MONGO_CONNECTION_STRING')
 

@@ -3,10 +3,10 @@
     <LoginNavbar />
     <div class="login-container">
       <h1>Login</h1>
-      <form @submit.prevent="register" class="needs-validation">
+      <form @submit.prevent="handleLogin" class="needs-validation">
           <div class="form-group">
-              <label for="username">Username</label>
-              <input type="text" id="username" v-model="username" class="form-control" required>
+              <label for="email">Email</label>
+              <input type="text" id="email" v-model="email" class="form-control" required>
           </div>
           <div class="form-group">
               <label for="password">Password</label>
@@ -21,24 +21,29 @@
 
 <script>
   import LoginNavbar from '../components/LoginNavbar.vue';
+  import Auth from '../utils/auth'
+
   export default {
     components: {
       LoginNavbar,
     },
     data() {
       return {
-        username: '',
         email: '',
         password: '',
       };
     },
     methods: {
-      login() {
-        // Perform registration logic here
-        // You can make an API call to register the user
-        // using the provided username, email, and password
-        // Once the registration is successful, you can redirect the user to another page
-      },
+      async handleLogin(){
+        try {
+          const user = await Auth.login(this.email, this.password)
+          console.log("User logged in:", user)
+          this.email = ''
+          this.password = ''
+        } catch (error) {
+          console.error("Login error:", error.message)
+        }
+      }
     },
   };
   

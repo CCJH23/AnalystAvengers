@@ -3,7 +3,7 @@
         <LoginNavbar />
         <div class="register-container">
         <h1>Register</h1>
-        <form @submit.prevent="register" class="needs-validation">
+        <form @submit.prevent="handleRegister" class="needs-validation">
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" v-model="email" class="form-control" required>

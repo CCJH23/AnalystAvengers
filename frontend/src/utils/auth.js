@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_APP_API_KEY,
@@ -21,6 +21,15 @@ class Auth {
             return userCredential.user
         } catch (error) {
             throw error;
+        }
+    }
+    async login(email, password) {
+        try {
+            const auth = getAuth()
+            const userCredential = await signInWithEmailAndPassword(auth, email, password)
+            return userCredential.user
+        } catch (error) {
+           throw error 
         }
     }
 }

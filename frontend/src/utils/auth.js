@@ -18,7 +18,12 @@ class Auth {
         try {
             const auth = getAuth()
             const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-            return userCredential.user
+            const user = userCredential.user
+            // cookie lasts a year
+            var currentDate = new Date();
+            currentDate.setFullYear(currentDate.getFullYear() + 1);
+            document.cookie = `uid=${user.uid}; expires=${currentDate}; path=/register;`;
+            return user
         } catch (error) {
             throw error;
         }
@@ -27,7 +32,12 @@ class Auth {
         try {
             const auth = getAuth()
             const userCredential = await signInWithEmailAndPassword(auth, email, password)
-            return userCredential.user
+            const user = userCredential.user
+            // cookie lasts a year
+            var currentDate = new Date();
+            currentDate.setFullYear(currentDate.getFullYear() + 1);
+            document.cookie = `uid=${user.uid}; expires=${currentDate}; path=/register;`;
+            return user
         } catch (error) {
            throw error 
         }

@@ -5,10 +5,6 @@
         <h1>Register</h1>
         <form @submit.prevent="register" class="needs-validation">
             <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" v-model="username" class="form-control" required>
-            </div>
-            <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" v-model="email" class="form-control" required>
             </div>
@@ -33,7 +29,6 @@ export default {
     },
     data() {
         return {
-            username: '',
             email: '',
             password: ''
         };

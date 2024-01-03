@@ -25,6 +25,7 @@
 
 <script>
 import LoginNavbar from '../components/LoginNavbar.vue';
+import Auth from '../utils/auth'
 
 export default {
     components: {
@@ -38,11 +39,15 @@ export default {
         };
     },
     methods: {
-        register() {
-            // Perform registration logic here
-            // You can make an API call to register the user
-            // using the provided username, email, and password
-            // Once the registration is successful, you can redirect the user to another page
+        async handleRegister(){
+            try {
+                const user = await Auth.register(this.email, this.password)
+                console.log("User registered:", user)
+                this.email = ''
+                this.password = ''
+            } catch (error) {
+                console.error("Registration error:", error.message)
+            }
         }
     }
 };

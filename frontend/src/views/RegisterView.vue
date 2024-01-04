@@ -33,6 +33,13 @@ export default {
             password: ''
         };
     },
+    created() {
+        const uidCookie = this.getCookie('uid');
+
+        if (uidCookie) {
+            this.$router.push('/');
+        }
+    },
     methods: {
         async handleRegister(){
             try {
@@ -40,11 +47,20 @@ export default {
                 console.log("User registered:", user)
                 this.email = ''
                 this.password = ''
+                this.$router.push('/')
             } catch (error) {
                 console.error("Registration error:", error.message)
             }
-        }
-    }
+        },
+        getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            
+            if (parts.length === 2) {
+                return parts.pop().split(';').shift();
+            }
+        },
+    },
 };
 </script>
 

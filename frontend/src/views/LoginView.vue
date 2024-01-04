@@ -33,6 +33,13 @@
         password: '',
       };
     },
+    created() {
+        const uidCookie = this.getCookie('uid');
+
+        if (uidCookie) {
+            this.$router.push('/');
+        }
+    },
     methods: {
       async handleLogin(){
         try {
@@ -43,85 +50,17 @@
         } catch (error) {
           console.error("Login error:", error.message)
         }
-      }
+      },
+      getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            
+            if (parts.length === 2) {
+                return parts.pop().split(';').shift();
+            }
+        },
     },
   };
-  
-    // import axios from 'axios'
-    // import { server } from "../utils/helper.js"
-
-    // export default {
-    //     name: 'LoginView',
-    //     data() {
-    //         return {
-    //             userid: '',
-    //             password: '',
-    //             email: '',
-    //             submitted: false,
-    //             emailBlurred: false,
-    //             passwordBlurred: false,
-    //             // flag to prevent 2x output of data in console to reduce load
-    //             isAuthenticating: false,
-    //         }
-    //     },
-    //     methods: {
-    //         authenticate() {
-    //             if (this.isAuthenticating) {
-    //                 return
-    //             }
-
-    //             this.isAuthenticating = true
-
-    //             axios.post(`${server.baseURL}/login`, {
-    //                 Email: this.email,
-    //                 Password: this.password,
-    //             })
-    //             .then((response) => {
-    //                 if (response.status === 200) {
-    //                     const data = response.data.data
-    //                     if (data.Access_Role === 4) {
-    //                         sessionStorage.setItem('user', JSON.stringify(data))
-    //                         this.$router.push({ name: 'HRHome' })
-    //                     } else if (data.Access_Role === 2) {
-    //                         sessionStorage.setItem('user', JSON.stringify(data));
-    //                         this.$router.push({ name: 'StaffHome' })
-    //                     }
-    //                 } else if (response.status === 404) {
-    //                     alert('Please enter valid credentials')
-    //                 } else if (response.status === 401) {
-    //                     if (response.data.message === "Incorrect password") {
-    //                         alert("Please enter a valid password")
-    //                     } else if (response.data.message === "Restricted Access") {
-    //                         alert("Please select the correct access")
-    //                     }
-    //                 }
-    //             })
-    //             .catch((error) => {
-    //                 console.error(error);
-    //             });
-    //         },
-    //         validEmail(email) {
-    //             return axios.post(`${server.baseURL}/validate-email`, { email })
-    //                 .then((response) => {
-    //                     return response.data.valid;
-    //             })
-    //                 .catch((error) => {
-    //                     console.log(error);
-    //                     return false;
-    //             });
-    //         },
-    //         validPassword(password) {
-    //             return axios.post(`${server.baseURL}/validate-password`, { password })
-    //                 .then((response) => {
-    //                     return response.data.valid;
-    //                 })
-    //                 .catch((error) => {
-    //                     console.log(error);
-    //                     return false;
-    //                 });
-    //         },
-    //     }
-    // }
 </script>
 
 <style scoped>

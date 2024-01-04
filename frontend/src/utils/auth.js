@@ -12,17 +12,14 @@ const firebaseConfig = {
 };
 
 initializeApp(firebaseConfig);
-
 class Auth {
     async register(email, password) {
         try {
             const auth = getAuth()
             const userCredential = await createUserWithEmailAndPassword(auth, email, password)
             const user = userCredential.user
-            // cookie lasts a year
-            var currentDate = new Date();
-            currentDate.setFullYear(currentDate.getFullYear() + 1);
-            document.cookie = `uid=${user.uid}; expires=${currentDate}; path=/register;`;
+            const uid = user.uid
+            document.cookie = `uid=${uid}; expires=Wed, 8 Dec 2024 12:00:00 UTC`;
             return user
         } catch (error) {
             throw error;
@@ -33,10 +30,8 @@ class Auth {
             const auth = getAuth()
             const userCredential = await signInWithEmailAndPassword(auth, email, password)
             const user = userCredential.user
-            // cookie lasts a year
-            var currentDate = new Date();
-            currentDate.setFullYear(currentDate.getFullYear() + 1);
-            document.cookie = `uid=${user.uid}; expires=${currentDate}; path=/register;`;
+            const uid = user.uid
+            document.cookie = `uid=${uid}; expires=Wed, 8 Dec 2024 12:00:00 UTC`;
             return user
         } catch (error) {
            throw error 
@@ -44,4 +39,4 @@ class Auth {
     }
 }
 
-export default new Auth()
+export default new Auth();

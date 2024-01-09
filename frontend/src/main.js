@@ -1,19 +1,16 @@
-import { createApp } from 'vue';
-import App from './App.vue';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap';
-import router from './router';
+import { createApp } from 'vue'
+import router from './router'
+import App from './App.vue'
 
-import Vue from 'vue';
-import Vuetify from 'vuetify';
-import 'vuetify/dist/vuetify.min.css';
+// Vuetify
+import 'vuetify/styles'
+import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
 
-Vue.use(Vuetify);
-const vuetify = new Vuetify();
+const vuetify = createVuetify({
+  components,
+  directives,
+})
 
-const app = createApp(App);
-
-app.use(vuetify);
-app.use(router);
-
-app.mount('#app');
+createApp(App).use(vuetify).use(router).mount('#app')

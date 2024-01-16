@@ -2,6 +2,7 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 // import LoginRegisterView from './views/LoginRegisterView.vue'
+
 </script>
 
 <template>

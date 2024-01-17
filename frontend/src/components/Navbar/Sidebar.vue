@@ -7,27 +7,27 @@
         <!-- Your sidebar content goes here -->
         <v-list>
           <v-list-item link>
-            <!-- <v-list-item-icon>
-              <v-icon>mdi-home</v-icon>
-            </v-list-item-icon> -->
+            <v-list-item-icon>
+              <v-icon>mdi-view-dashboard</v-icon>
+            </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>Dashboard</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
   
           <v-list-item link>
-            <!-- <v-list-item-icon>
-              <v-icon>mdi-store</v-icon>
-            </v-list-item-icon> -->
+            <v-list-item-icon>
+              <v-icon>mdi-list-status</v-icon>
+            </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>View All</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
   
           <v-list-item link>
-            <!-- <v-list-item-icon>
-              <v-icon>mdi-message</v-icon>
-            </v-list-item-icon> -->
+            <v-list-item-icon>
+              <v-icon>mdi-logout</v-icon>
+            </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>Sign Out</v-list-item-title>
             </v-list-item-content>
@@ -41,6 +41,11 @@
         <!-- <img src="../../assets/logo.png" style="height: 100px; opacity: 100%;" class="mt-5"> -->
         <v-toolbar-title class="font-italic mx-0">Analyst Avengers</v-toolbar-title>
         <v-spacer></v-spacer>
+        <span class="mr-14">
+            <v-btn text to="/dashboard">Dashboard</v-btn>
+            |
+            <v-btn text to="/dashboard">View All</v-btn>
+        </span>
         <button class="btn btn-none btn-sign-out mb-2 pr-4" @click="signOut">Sign out</button>
       </v-app-bar>
       

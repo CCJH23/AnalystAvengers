@@ -6,14 +6,14 @@
       <v-navigation-drawer app :mini-variant="mini" :clipped="clipped" v-model="drawer">
         <!-- Your sidebar content goes here -->
         <v-list>
-          <v-list-item link>
-            <v-list-item-icon>
-              <v-icon>mdi-view-dashboard</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>Dashboard</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
+            <v-list-item link>
+                <v-list-item-icon>
+                  <v-icon>mdi-home</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Dashboard</v-list-item-title>
+                </v-list-item-content>
+            </v-list-item>
   
           <v-list-item link>
             <v-list-item-icon>

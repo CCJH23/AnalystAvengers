@@ -26,6 +26,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import LoginView from '../views/LoginView.vue';
 import RegisterView from '../views/RegisterView.vue';
+import ViewAllView from '../views/ViewAllView.vue';
 import TopNavbar from '@/components/Navbar/TopNavbar.vue';
 import Sidebar from '@/components/Navbar/Sidebar.vue';
 
@@ -47,6 +48,11 @@ const router = createRouter({
       path: '/register',
       name: 'register',
       component: RegisterView,
+    },
+    {
+      path: '/viewall',
+      name: 'viewall',
+      component: ViewAllView,
     },
     {
       // Redirect any unknown routes to the login page

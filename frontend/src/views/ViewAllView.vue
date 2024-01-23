@@ -1,9 +1,14 @@
+<script setup>
+    import Sidebar from "@/components/Navbar/Sidebar.vue";
+</script>
 <template>
+    <Sidebar/>
     <v-container style="background-color: #ececec" class="my-4">
         <v-row>
             <!-- Search bar (30% width) -->
             <v-col cols="4">
-              <v-text-field v-model="searchKeyword" label="Search" outlined dense></v-text-field>
+                <v-text-field v-model="searchKeyword" label="Search" outlined dense></v-text-field>
+                <v-icon>mdi-magnify</v-icon>
             </v-col>
       
             <!-- Filters (70% width) -->
@@ -56,7 +61,7 @@
   export default {
     data() {
       return {
-        columnTitles: ["Server", "Status", "Connection", "IP Address", "Product", "Country"],
+        columnTitles: ["Infrastructure", "Status", "Connection", "IP Address", "Product", "Country"],
         selectedRows: Array(10).fill(false), // Initialize with 10 rows
         selectAll: false,
         searchKeyword: '', 
@@ -81,11 +86,11 @@
         filteredRows() {
             // Filter rows based on the search keyword
             return Array.from({ length: 10 }, (_, i) => i + 1).filter(row => {
-                const rowData = this.columnTitles.map(title => this.generateFakeData(row, title)).join(' ');
+                const rowData = this.columnTitles.map(title => this.generateFakeData(row, title)).join('');
                 const statusFilterMatch = !this.selectedStatusFilter.length || (this.selectedStatusFilter.includes("Unselect All") || rowData.toLowerCase().includes(this.selectedStatusFilter.toLowerCase()));
                 const countryFilterMatch = !this.selectedCountryFilter.length || (this.selectedCountryFilter.includes("Unselect All") || rowData.toLowerCase().includes(this.selectedCountryFilter.toLowerCase()));
                 const serverFilterMatch = !this.selectedServerFilter.length || (this.selectedServerFilter.includes("Unselect All") || rowData.toLowerCase().includes(this.selectedServerFilter.toLowerCase()));
-                return statusFilterMatch && countryFilterMatch && serverFilterMatch;
+                return rowData.toLowerCase().includes(this.searchKeyword.toLowerCase()) && statusFilterMatch && countryFilterMatch && serverFilterMatch;
             });
         },
     },

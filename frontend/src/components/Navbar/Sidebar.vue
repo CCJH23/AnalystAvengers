@@ -1,7 +1,8 @@
 <!-- App.vue -->
 
 <template>
-    <v-app>
+    <!-- <v-app> -->
+    <div style="margin-top:100px">
       <!-- Navigation Drawer -->
       <v-navigation-drawer app :mini-variant="mini" :clipped="clipped" v-model="drawer">
         <!-- Your sidebar content goes here -->
@@ -13,7 +14,7 @@
                 <v-list-item-content>
                   <v-list-item-title>Dashboard</v-list-item-title>
                 </v-list-item-content>
-            </v-list-item>
+              </v-list-item>
   
           <v-list-item link>
             <v-list-item-icon>
@@ -48,8 +49,9 @@
         </span>
         <button class="btn btn-none btn-sign-out mb-2 pr-4" @click="signOut">Sign out</button>
       </v-app-bar>
+    </div>
       
-    </v-app>
+    <!-- </v-app> -->
   </template>
   
   <script>

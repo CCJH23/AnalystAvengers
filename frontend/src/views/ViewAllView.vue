@@ -8,17 +8,16 @@
             <!-- Search bar (30% width) -->
             <v-col cols="4">
                 <v-text-field v-model="searchKeyword" label="Search" outlined dense></v-text-field>
-                <v-icon>mdi-magnify</v-icon>
             </v-col>
       
             <!-- Filters (70% width) -->
             <v-col cols="8" class="d-flex justify-end">
-                <!-- Add your filters here -->
-                <v-select v-model="selectedStatusFilter" :items="statusFilterItems" label="Status" class="mr-3"></v-select>
-                <!-- Country Filter -->
-                <v-select v-model="selectedCountryFilter" :items="countryFilterItems" label="Country" class="mr-3"></v-select>
-                <!-- Server Filter -->
-                <v-select v-model="selectedServerFilter" :items="serverFilterItems" label="Server"></v-select>
+              <!-- Tool Filter -->
+              <v-select v-model="selectedToolFilter" :items="toolFilterItems" label="Tool" class="mr-3"></v-select>
+              <!-- Status Filter -->
+              <v-select v-model="selectedStatusFilter" :items="statusFilterItems" label="Status" class="mr-3"></v-select>
+              <!-- Country Filter -->
+              <v-select v-model="selectedCountryFilter" :items="countryFilterItems" label="Country"></v-select>
             </v-col>
         </v-row>     
       <!-- Column Titles -->
@@ -28,11 +27,16 @@
         <!-- Column Titles -->
         <v-col cols="1"></v-col>
         <v-col v-for="(title, index) in columnTitles" :key="title" cols="1" class="mx-8">
-          <v-card class="column-card" v-if="index > 0">
-            <v-card-title class="text-center font-weight-bold green--text">{{ title }}</v-card-title>
+          <v-card class="column-card" v-if="index > 0" style="background-color: #c5dad2;">
+              <v-card-title
+                  class="text-center font-weight-bold green--text"
+                  :style="{ 'font-size': title === 'Infrastructure' ? '17px' : 'inherit' }"
+              >
+                  {{ title }}
+              </v-card-title>
           </v-card>
-          <v-card class="column-card" v-else>
-            <v-card-title class="text-center font-weight-bold green--text">{{ title }}</v-card-title>
+          <v-card class="column-card" v-else style="background-color: #c5dad2;">
+              <v-card-title class="text-center font-weight-bold green--text" style="font-size: 17px">{{ title }}</v-card-title>
           </v-card>
         </v-col>
       </v-row>
@@ -43,7 +47,11 @@
       <v-row v-for="row in filteredRows" :key="row">
         <!-- Checkbox for each row -->
         <v-col cols="1">
-          <v-checkbox v-model="selectedRows[row]" @click="updateSelectAll"></v-checkbox>
+          <v-checkbox
+            v-model="selectedRows[row]"
+            @click="updateSelectAll"
+            style="color: #305b4a;"
+          ></v-checkbox>
         </v-col>
         <!-- Fake Data for each column -->
         <v-col v-for="(title, index) in columnTitles" :key="title" cols="1" class="mx-8">
@@ -61,16 +69,18 @@
   export default {
     data() {
       return {
-        columnTitles: ["Infrastructure", "Status", "Connection", "IP Address", "Product", "Country"],
+        columnTitles: ["Tool", "Infrastructure", "Status", "IP Address", "Country", "Date/Time"],
         selectedRows: Array(10).fill(false), // Initialize with 10 rows
         selectAll: false,
         searchKeyword: '', 
-        statusFilters: ["Available", "Down"],
+        statusFilters: ["Online", "Requires Attention", "Offline"],
         countryFilters: ["USA", "Canada", "Germany", "France", "Japan", "Australia", "Brazil", "India", "China"],
         serverFilters: ["Server1", "Server2", "Server3"],
         selectedStatusFilter: [],
         selectedCountryFilter: [],
         selectedServerFilter: [],
+        selectedToolFilter: [],
+        toolFilters: ["Zabbix", "Prometheus"], 
       };
     },
     computed: {
@@ -82,6 +92,9 @@
         },
         serverFilterItems() {
             return ["", ...this.serverFilters];
+        },
+        toolFilterItems() {
+        return ["", ...this.toolFilters];
         },
         filteredRows() {
             // Filter rows based on the search keyword
@@ -97,16 +110,15 @@
     methods: {
         generateFakeData(row, columnTitle) {
             // Generate random "available" or "down" status for the "Status" column
-                if (columnTitle === "Status") {
-                    return (row % 2 === 0) ? "Available" : "Down";
+                if (columnTitle === 'Tool') {
+                  const tools = ['Zabbix', 'Prometheus'];
+                  return tools[row % tools.length];
                 }
 
-                // Generate Power data with alternating green and red icons
-                if (columnTitle === "Power") {
-                const isGreen = Math.random() < 0.5; // 50% chance of being green
-                const powerIcon = isGreen ? "mdi-power" : "mdi-power-off";
-                const iconColor = isGreen ? "green" : "red";
-                return `<v-icon color="${iconColor}">${powerIcon}</v-icon>`;
+                if (columnTitle === 'Status') {
+                    // Return different statuses for the "Status" column
+                    const statusValues = ['Online', 'Requires Attention', 'Offline'];
+                    return statusValues[row % statusValues.length];
                 }
 
                 // Generate random IP addresses for "IP Address" column
@@ -130,15 +142,20 @@
                 return `${columnTitle} Data`;
             
         },
-      toggleSelectAll() {
-        // Toggle selectAll value and update selectedRows accordingly
-        this.selectAll = !this.selectAll;
-        this.selectedRows.fill(this.selectAll);
-      },
-      updateSelectAll() {
-        // Update selectAll value based on selectedRows
-        this.selectAll = this.selectedRows.every((row) => row);
-      },
+        getIconColor(index) {
+          // Define colors for each icon
+          const colors = ["green", "orange", "red"];
+          return colors[index];
+        },
+        toggleSelectAll() {
+          // Toggle selectAll value and update selectedRows accordingly
+          this.selectAll = !this.selectAll;
+          this.selectedRows.fill(this.selectAll);
+        },
+        updateSelectAll() {
+          // Update selectAll value based on selectedRows
+          this.selectAll = this.selectedRows.every((row) => row);
+        },
     },
   };
   </script>
@@ -148,7 +165,7 @@
     height: 50px;
     width: 150px;
     margin-right: 20px;
-    background-color: #c5dad2;
+    color:#c5dad2;
   }
   
   .data-card {
@@ -163,7 +180,9 @@
   }
   
   .green--text {
+    font-size: 17px; 
     color: #2f5244;
   }
+
   </style>
   

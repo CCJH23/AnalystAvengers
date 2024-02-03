@@ -3,10 +3,10 @@
     <LoginNavbar />
     <div class="login-container">
       <h1>Login</h1>
-      <form @submit.prevent="register" class="needs-validation">
+      <form @submit.prevent="handleLogin" class="needs-validation">
           <div class="form-group">
-              <label for="username">Username</label>
-              <input type="text" id="username" v-model="username" class="form-control" required>
+              <label for="email">Email</label>
+              <input type="text" id="email" v-model="email" class="form-control" required>
           </div>
           <div class="form-group">
               <label for="password">Password</label>
@@ -21,102 +21,47 @@
 
 <script>
   import LoginNavbar from '../components/LoginNavbar.vue';
+  import Auth from '../utils/auth'
+
   export default {
     components: {
       LoginNavbar,
     },
     data() {
       return {
-        username: '',
         email: '',
         password: '',
       };
     },
+    created() {
+        (async () => {
+            const result = await Auth.checkState();
+            if(result){
+                this.$router.push('/')
+            }
+        })();
+    },
     methods: {
-      login() {
-        // Perform registration logic here
-        // You can make an API call to register the user
-        // using the provided username, email, and password
-        // Once the registration is successful, you can redirect the user to another page
+      async handleLogin(){
+        try {
+          await Auth.login(this.email, this.password)
+          this.email = ''
+          this.password = ''
+          this.$router.push('/')
+        } catch (error) {
+          console.error("Login error:", error.message)
+        }
       },
+      getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            
+            if (parts.length === 2) {
+                return parts.pop().split(';').shift();
+            }
+        },
     },
   };
-  
-    // import axios from 'axios'
-    // import { server } from "../utils/helper.js"
-
-    // export default {
-    //     name: 'LoginView',
-    //     data() {
-    //         return {
-    //             userid: '',
-    //             password: '',
-    //             email: '',
-    //             submitted: false,
-    //             emailBlurred: false,
-    //             passwordBlurred: false,
-    //             // flag to prevent 2x output of data in console to reduce load
-    //             isAuthenticating: false,
-    //         }
-    //     },
-    //     methods: {
-    //         authenticate() {
-    //             if (this.isAuthenticating) {
-    //                 return
-    //             }
-
-    //             this.isAuthenticating = true
-
-    //             axios.post(`${server.baseURL}/login`, {
-    //                 Email: this.email,
-    //                 Password: this.password,
-    //             })
-    //             .then((response) => {
-    //                 if (response.status === 200) {
-    //                     const data = response.data.data
-    //                     if (data.Access_Role === 4) {
-    //                         sessionStorage.setItem('user', JSON.stringify(data))
-    //                         this.$router.push({ name: 'HRHome' })
-    //                     } else if (data.Access_Role === 2) {
-    //                         sessionStorage.setItem('user', JSON.stringify(data));
-    //                         this.$router.push({ name: 'StaffHome' })
-    //                     }
-    //                 } else if (response.status === 404) {
-    //                     alert('Please enter valid credentials')
-    //                 } else if (response.status === 401) {
-    //                     if (response.data.message === "Incorrect password") {
-    //                         alert("Please enter a valid password")
-    //                     } else if (response.data.message === "Restricted Access") {
-    //                         alert("Please select the correct access")
-    //                     }
-    //                 }
-    //             })
-    //             .catch((error) => {
-    //                 console.error(error);
-    //             });
-    //         },
-    //         validEmail(email) {
-    //             return axios.post(`${server.baseURL}/validate-email`, { email })
-    //                 .then((response) => {
-    //                     return response.data.valid;
-    //             })
-    //                 .catch((error) => {
-    //                     console.log(error);
-    //                     return false;
-    //             });
-    //         },
-    //         validPassword(password) {
-    //             return axios.post(`${server.baseURL}/validate-password`, { password })
-    //                 .then((response) => {
-    //                     return response.data.valid;
-    //                 })
-    //                 .catch((error) => {
-    //                     console.log(error);
-    //                     return false;
-    //                 });
-    //         },
-    //     }
-    // }
 </script>
 
 <style scoped>

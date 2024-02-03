@@ -3,11 +3,7 @@
         <LoginNavbar />
         <div class="register-container">
         <h1>Register</h1>
-        <form @submit.prevent="register" class="needs-validation">
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" v-model="username" class="form-control" required>
-            </div>
+        <form @submit.prevent="handleRegister" class="needs-validation">
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" v-model="email" class="form-control" required>
@@ -25,6 +21,7 @@
 
 <script>
 import LoginNavbar from '../components/LoginNavbar.vue';
+import Auth from '../utils/auth'
 
 export default {
     components: {
@@ -32,19 +29,38 @@ export default {
     },
     data() {
         return {
-            username: '',
             email: '',
             password: ''
         };
     },
+    created() {
+        (async () => {
+            const result = await Auth.checkState();
+            if(result){
+                this.$router.push('/')
+            }
+        })();
+    },
     methods: {
-        register() {
-            // Perform registration logic here
-            // You can make an API call to register the user
-            // using the provided username, email, and password
-            // Once the registration is successful, you can redirect the user to another page
-        }
-    }
+        async handleRegister(){
+            try {
+                await Auth.register(this.email, this.password)
+                this.email = ''
+                this.password = ''
+                this.$router.push('/')
+            } catch (error) {
+                console.error("Registration error:", error.message)
+            }
+        },
+        getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            
+            if (parts.length === 2) {
+                return parts.pop().split(';').shift();
+            }
+        },
+    },
 };
 </script>
 

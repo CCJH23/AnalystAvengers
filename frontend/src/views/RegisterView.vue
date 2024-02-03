@@ -34,17 +34,17 @@ export default {
         };
     },
     created() {
-        const uidCookie = this.getCookie('uid');
-
-        if (uidCookie) {
-            this.$router.push('/');
-        }
+        (async () => {
+            const result = await Auth.checkState();
+            if(result){
+                this.$router.push('/')
+            }
+        })();
     },
     methods: {
         async handleRegister(){
             try {
-                const user = await Auth.register(this.email, this.password)
-                console.log("User registered:", user)
+                await Auth.register(this.email, this.password)
                 this.email = ''
                 this.password = ''
                 this.$router.push('/')

@@ -14,7 +14,7 @@
     "vue-router": "^4.2.5",
     "vuetify": "^3.4.9",
     "@mdi/font": "^5.9.55",
-    "material-design-icons-iconfont": "^10.0.3"
+    "material-design-icons-iconfont": "*"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.5.1",

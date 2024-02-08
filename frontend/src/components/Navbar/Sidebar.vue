@@ -52,9 +52,10 @@
     </div>
       
     <!-- </v-app> -->
-  </template>
+</template>
   
-  <script>
+<script>
+  import Auth from '../../utils/auth'
   export default {
     data() {
       return {
@@ -65,11 +66,16 @@
     },
     methods: {
       signOut() {
-        // Implement your sign-out logic
+        try {
+          Auth.signout()
+          this.$router.push('/login')
+        } catch (error) {
+          console.error(error.message)
+        }
       },
     },
   };
-  </script>
+</script>
   
   <style>
   /* Add your custom styles here */

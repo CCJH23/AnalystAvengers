@@ -34,19 +34,20 @@
       };
     },
     created() {
-        const uidCookie = this.getCookie('uid');
-
-        if (uidCookie) {
-            this.$router.push('/');
-        }
+        (async () => {
+            const result = await Auth.checkState();
+            if(result){
+                this.$router.push('/')
+            }
+        })();
     },
     methods: {
       async handleLogin(){
         try {
-          const user = await Auth.login(this.email, this.password)
-          console.log("User logged in:", user)
+          await Auth.login(this.email, this.password)
           this.email = ''
           this.password = ''
+          this.$router.push('/')
         } catch (error) {
           console.error("Login error:", error.message)
         }

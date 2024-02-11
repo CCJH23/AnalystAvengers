@@ -29,6 +29,7 @@ import RegisterView from '../views/RegisterView.vue';
 import ViewAllView from '../views/ViewAllView.vue';
 import ViewEachView from '../views/ViewEachView.vue'
 import TopNavbar from '@/components/Navbar/TopNavbar.vue';
+import DashboardView from '../views/DashboardView.vue';
 import Sidebar from '@/components/Navbar/Sidebar.vue';
 
 
@@ -39,6 +40,11 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
+    },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: DashboardView,
     },
     {
       path: '/login',

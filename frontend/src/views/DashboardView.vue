@@ -5,7 +5,7 @@
 
 <template>
     <Sidebar/>
-    <div class="mx-6 mt-6">
+    <div class="mx-6 mt-6" style="background-color: rgb(239, 244, 246)">
         <v-row>
             <v-col class="mini-container" cols="2.5">
                 <!-- First Mini Column -->
@@ -160,6 +160,7 @@
     margin-bottom: 40px;
     margin-left: 30px;
     margin-right: 30px;
+    margin-top: 30px;
     height: 220px; /* Let the height adjust based on content */
     display: flex;
     flex-direction: column; /* Stack items vertically */

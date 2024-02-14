@@ -53,7 +53,7 @@
             <span>Healthy</span>
           </v-col>          
           <v-col>
-            <img src="../assets/degraded.jpeg" alt="Logo" class="row-logo" style="width: 15px; height: 15px;">Degraded
+            <img src="../assets/degraded.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px;">Degraded
           </v-col>
           <v-col>
             <img src="../assets/unhealthy.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px;">Unhealthy
@@ -93,11 +93,11 @@ export default {
   }
 
   .bottom-container {
-    background-color: rgb(239, 234, 234);
     display: flex;
     flex-direction: column; /* Stack items vertically */
     align-items: center;
     height: 100vh; /* Span entire viewport height */
+    background-color: rgb(239, 244, 246)
   }
 
   .inner-container-1{

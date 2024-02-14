@@ -3,186 +3,149 @@
 </script>
 <template>
     <Sidebar/>
-    <v-container style="background-color: #ececec" class="my-4">
-        <v-row>
-            <!-- Search bar (30% width) -->
-            <v-col cols="4">
-                <v-text-field v-model="searchKeyword" label="Search" outlined dense></v-text-field>
-            </v-col>
-      
-            <!-- Filters (70% width) -->
-            <v-col cols="8" class="d-flex justify-end">
-              <!-- Tool Filter -->
-              <v-select v-model="selectedToolFilter" :items="toolFilterItems" label="Tool" class="mr-3"></v-select>
-              <!-- Status Filter -->
-              <v-select v-model="selectedStatusFilter" :items="statusFilterItems" label="Status" class="mr-3"></v-select>
-              <!-- Country Filter -->
-              <v-select v-model="selectedCountryFilter" :items="countryFilterItems" label="Country"></v-select>
-            </v-col>
-        </v-row>     
-      <!-- Column Titles -->
-      <hr class="my-4 mr-1 ml-15" style="border: 1px solid black;">
-      <v-row>
-        <!-- Checkbox column -->
-        <!-- Column Titles -->
-        <v-col cols="1"></v-col>
-        <v-col v-for="(title, index) in columnTitles" :key="title" cols="1" class="mx-8">
-          <v-card class="column-card" v-if="index > 0" style="background-color: #c5dad2;">
-              <v-card-title
-                  class="text-center font-weight-bold green--text"
-                  :style="{ 'font-size': title === 'Infrastructure' ? '17px' : 'inherit' }"
-              >
-                  {{ title }}
-              </v-card-title>
-          </v-card>
-          <v-card class="column-card" v-else style="background-color: #c5dad2;">
-              <v-card-title class="text-center font-weight-bold green--text" style="font-size: 17px">{{ title }}</v-card-title>
-          </v-card>
-        </v-col>
-      </v-row>
-      <hr class="my-4 mr-1 ml-15" style="border: 1px solid black;">
-
-  
-      <!-- Fake Data Rows -->
-      <v-row v-for="row in filteredRows" :key="row">
-        <!-- Checkbox for each row -->
-        <v-col cols="1">
-          <v-checkbox
-            v-model="selectedRows[row]"
-            @click="updateSelectAll"
-            style="color: #305b4a;"
-          ></v-checkbox>
-        </v-col>
-        <!-- Fake Data for each column -->
-        <v-col v-for="(title, index) in columnTitles" :key="title" cols="1" class="mx-8">
-          <div class="data-card">
-            <!-- eslint-disable vue/no-v-text-v-html-on-component -->
-            <div class="text-center mt-4 fake-data">{{ generateFakeData(row, title) }}</div>
-          </div>
-        </v-col>
-      </v-row>
-    
+    <v-container fluid class="top-container">
+      <img src="../assets/logo.png" alt="Logo" class="logo">
+      <span class="text-center bold headline">Everything looks good</span>
     </v-container>
-  </template>
+    <v-container fluid class="bottom-container">
+      <v-container class="fluid inner-container-1">
+        <v-row style="margin-bottom:18px" class="service-label">Service Health</v-row>
+        <v-row class="row-with-border">
+          <v-col cols="2"></v-col>
+          <v-col cols="2">
+            China
+          </v-col>
+          <v-col cols="2">
+            APAC
+          </v-col>
+          <v-col cols="2">
+            Europe
+          </v-col>
+          <v-col cols="2">
+            Australia
+          </v-col>
+          <v-col cols="2">
+            India
+          </v-col>
+        </v-row>
+        <v-row class="row-with-border" v-for="(rowLabel, rowIndex) in rowLabels" :key="rowIndex">
+          <v-col cols="2">
+            <!-- Render different icons based on the label -->
+            <v-icon v-if="rowLabel === 'UBS Website'">mdi-web</v-icon>
+            <v-icon v-else-if="rowLabel === 'UBS Trading Platform'">mdi-swap-horizontal</v-icon>
+            <v-icon v-else-if="rowLabel === 'UBS Intranet'">mdi-web-box</v-icon>
+            <v-icon v-else-if="rowLabel === 'UBS Wealth Management Platform'">mdi-currency-usd</v-icon>
+            <v-icon v-else-if="rowLabel === 'UBS Mobile Banking App'">mdi-cellphone</v-icon>
+            <v-icon v-else-if="rowLabel === 'UBS Online Banking Platform'">mdi-bank-transfer</v-icon>
+            <v-icon v-else-if="rowLabel === 'UBS Financial Advisor Platform'">mdi-account-tie</v-icon>
+            <!-- Add more conditions for other labels and their corresponding icons -->
+            {{ rowLabel }}
+          </v-col>
+          <v-col cols="2" v-for="colIndex in 5" :key="colIndex">
+            <img src="../assets/logo.png" alt="Logo" class="row-logo">
+          </v-col>
+        </v-row>        
+        <v-row style="margin-top:38px">
+          <v-col cols="4">
+          </v-col>
+          <v-col>
+            <img src="../assets/healthy.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px; margin-top: 5px;">
+            <span>Healthy</span>
+          </v-col>          
+          <v-col>
+            <img src="../assets/degraded.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px;">Degraded
+          </v-col>
+          <v-col>
+            <img src="../assets/unhealthy.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px;">Unhealthy
+          </v-col>
+          <v-col cols="4">
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-container>
+</template>
   
-  <script>
-  export default {
-    data() {
-      return {
-        columnTitles: ["Tool", "Infrastructure", "Status", "IP Address", "Country", "Date/Time"],
-        selectedRows: Array(10).fill(false), // Initialize with 10 rows
-        selectAll: false,
-        searchKeyword: '', 
-        statusFilters: ["Online", "Requires Attention", "Offline"],
-        countryFilters: ["USA", "Canada", "Germany", "France", "Japan", "Australia", "Brazil", "India", "China"],
-        serverFilters: ["Server1", "Server2", "Server3"],
-        selectedStatusFilter: [],
-        selectedCountryFilter: [],
-        selectedServerFilter: [],
-        selectedToolFilter: [],
-        toolFilters: ["Zabbix", "Prometheus"], 
-      };
-    },
-    computed: {
-        statusFilterItems() {
-            return ["", ...this.statusFilters];
-        },
-        countryFilterItems() {
-            return ["", ...this.countryFilters];
-        },
-        serverFilterItems() {
-            return ["", ...this.serverFilters];
-        },
-        toolFilterItems() {
-        return ["", ...this.toolFilters];
-        },
-        filteredRows() {
-            // Filter rows based on the search keyword
-            return Array.from({ length: 10 }, (_, i) => i + 1).filter(row => {
-                const rowData = this.columnTitles.map(title => this.generateFakeData(row, title)).join('');
-                const statusFilterMatch = !this.selectedStatusFilter.length || (this.selectedStatusFilter.includes("Unselect All") || rowData.toLowerCase().includes(this.selectedStatusFilter.toLowerCase()));
-                const countryFilterMatch = !this.selectedCountryFilter.length || (this.selectedCountryFilter.includes("Unselect All") || rowData.toLowerCase().includes(this.selectedCountryFilter.toLowerCase()));
-                const serverFilterMatch = !this.selectedServerFilter.length || (this.selectedServerFilter.includes("Unselect All") || rowData.toLowerCase().includes(this.selectedServerFilter.toLowerCase()));
-                return rowData.toLowerCase().includes(this.searchKeyword.toLowerCase()) && statusFilterMatch && countryFilterMatch && serverFilterMatch;
-            });
-        },
-    },
-    methods: {
-        generateFakeData(row, columnTitle) {
-            // Generate random "available" or "down" status for the "Status" column
-                if (columnTitle === 'Tool') {
-                  const tools = ['Zabbix', 'Prometheus'];
-                  return tools[row % tools.length];
-                }
-
-                if (columnTitle === 'Status') {
-                    // Return different statuses for the "Status" column
-                    const statusValues = ['Online', 'Requires Attention', 'Offline'];
-                    return statusValues[row % statusValues.length];
-                }
-
-                // Generate random IP addresses for "IP Address" column
-                if (columnTitle === "IP Address") {
-                return `${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}`;
-                }
-
-                // Generate random countries for "Country" column
-                const countryListings = [
-                    "USA", "Canada", "Germany", "France", "Japan", "Australia", "Brazil", "India", "China"
-                ];
-
-                if (columnTitle === "Country") {
-                    // Use modulo to cycle through the array based on the row number
-                    const index = (row - 1) % countryListings.length;
-                    return countryListings[index];
-                }
-
-                // Replace this with your logic to generate fake data based on the column title
-                // For simplicity, using a placeholder value
-                return `${columnTitle} Data`;
-            
-        },
-        getIconColor(index) {
-          // Define colors for each icon
-          const colors = ["green", "orange", "red"];
-          return colors[index];
-        },
-        toggleSelectAll() {
-          // Toggle selectAll value and update selectedRows accordingly
-          this.selectAll = !this.selectAll;
-          this.selectedRows.fill(this.selectAll);
-        },
-        updateSelectAll() {
-          // Update selectAll value based on selectedRows
-          this.selectAll = this.selectedRows.every((row) => row);
-        },
-    },
-  };
-  </script>
-  
-  <style>
-  .column-card {
-    height: 50px;
-    width: 150px;
-    margin-right: 20px;
-    color:#c5dad2;
+<script>
+export default {
+  data() {
+    return {
+      rowLabels: [
+        "UBS Website",
+        "UBS Trading Platform",
+        "UBS Intranet",
+        "UBS Wealth Management Platform",
+        "UBS Mobile Banking App",
+        "UBS Online Banking Platform",
+        "UBS Financial Advisor Platform"
+      ]
+    };
   }
-  
-  .data-card {
-    width: 150px;
-    margin-bottom: 20px;
-  }
-  
-  .fake-data {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  .green--text {
-    font-size: 17px; 
-    color: #2f5244;
+};
+</script>
+
+<style>
+  .top-container {
+    height: auto; /* Let the height adjust based on content */
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    justify-content: center;
+    align-items: center;
   }
 
-  </style>
-  
+  .bottom-container {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: center;
+    height: 100vh; /* Span entire viewport height */
+    background-color: rgb(239, 244, 246)
+  }
+
+  .inner-container-1{
+    background-color: white;
+    position: relative; /* To position the label */
+    height: 720px;
+    width: 1200px;
+    padding: 50px;
+    margin: 20px 0; /* Add margin between service label and rows */
+  }
+
+  .text-center {
+    display: block;
+    text-align: center;
+  }
+
+  .bold {
+    font-weight: bold;
+    margin: 0; /* Remove margin to prevent any unwanted spacing */
+  }
+
+  .headline {
+    font-size: 24px; /* Adjust the font size as needed */
+    margin: 0; /* Remove margin to prevent any unwanted spacing */
+  }
+
+  .logo {
+    width: 80px; /* Adjust the width of the logo */
+    height: auto;
+    margin: 0; /* Remove margin to prevent any unwanted spacing */
+  }
+
+  .service-label {
+    top: 5;
+    left: 5;
+    font-weight: bold;
+    padding: 10px;
+    font-size: 20px;
+  }
+
+  .row-with-border {
+    border-bottom: 1px solid black; /* Add border to the bottom of each row */
+    margin-bottom: -1px; /* Offset the margin for better alignment */
+  }
+
+  .row-logo {
+    width: 10px; /* Adjust the width of the row logo */
+    height: auto;
+    margin: 5px; /* Add margin between row logos */
+  }
+</style>

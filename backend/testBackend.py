@@ -1,5 +1,5 @@
 import pytest
-from app import app
+from main import app
 
 @pytest.fixture
 def client():
@@ -11,4 +11,3 @@ if __name__ == '__main__':
     # Run all tests in the 'tests/' directory
     pytest.main(['tests/'])
 
-    

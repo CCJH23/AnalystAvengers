@@ -7,22 +7,26 @@
       <v-navigation-drawer app :mini-variant="mini" :clipped="clipped" v-model="drawer">
         <!-- Your sidebar content goes here -->
         <v-list>
-            <v-list-item link>
-                <v-list-item-icon>
-                  <v-icon>mdi-home</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>Dashboard</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
+          <v-list-item link>
+            <router-link to="/dashboard" class="v-list-item-content">
+              <v-list-item-icon>
+                <v-icon>mdi-home</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title>Dashboard</v-list-item-title>
+              </v-list-item-content>
+            </router-link>
+          </v-list-item>
   
           <v-list-item link>
+            <router-link to="/viewall" class="v-list-item-content">
             <v-list-item-icon>
               <v-icon>mdi-list-status</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>View All</v-list-item-title>
             </v-list-item-content>
+            </router-link>
           </v-list-item>
   
           <v-list-item link>

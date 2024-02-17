@@ -1,6 +1,7 @@
 <script setup>
     import Sidebar from "@/components/Navbar/Sidebar.vue";
     import PieChart from "@/components/PieChart.vue";
+    import Map from "@/components/Map.vue"
 </script>
 
 <template>
@@ -33,14 +34,14 @@
             </v-col>
         </v-row>
         <v-row>
-            <v-col class="mini-container" cols="8">
+            <v-col class="mini-container-geo" cols="8">
               <!-- First Mini Column -->
-              <span class="mini-container-header">Geo Map</span>
-              <!-- Start of Device Usage dropdown -->
+              <span class="mini-container-header" style="position: absolute; top: 10px;">Geo Map</span>
+              <Map/>
               <v-row>
-                
               </v-row>
-              <span class="mini-container-content3">
+              <span class="mini-container-content3" style="position: absolute; top: 80px;">
+                <!-- Adjusted position for the dropdown menu -->
                 <v-menu>
                     <template v-slot:activator="{ props }">
                         <v-btn
@@ -54,75 +55,76 @@
                         </v-btn>
                     </template>
                     <v-list>
-                        <v-list-item
-                            v-for="(item, index) in items"
-                            :key="index"
-                            :value="index"
-                        >
+                      <v-list-item
+                        v-for="(item, index) in serviceItems"
+                        :key="index"
+                        :value="index"
+                      >
                             <v-list-item-title>{{ item.title }}</v-list-item-title>
                         </v-list-item>
                     </v-list>
                 </v-menu>
                 </span>
-                <span class="mini-container-content4">
-                <v-menu>
-                    <template v-slot:activator="{ props }">
-                        <v-btn
-                            color="#a7c6ba"
-                            v-bind="props"
-                            class="button-with-padding"
-                        >
-                            Country
-                            <v-icon large right size="24">mdi-menu-down</v-icon>
-                        </v-btn>
-                    </template>
-                    <v-list>
-                        <v-list-item
-                            v-for="(item, index) in items"
+                <span class="mini-container-content4" style="position: absolute; top: 30px;">
+                  <!-- Adjusted position for the Countries dropdown menu -->
+                  <v-menu style="margin-bottom:200px">
+                      <template v-slot:activator="{ props }">
+                          <v-btn
+                              color="#a7c6ba"
+                              v-bind="props"
+                              class="button-with-padding"
+                          >
+                              Country
+                              <v-icon large right size="24">mdi-menu-down</v-icon>
+                          </v-btn>
+                      </template>
+                      <v-list>
+                          <v-list-item
+                            v-for="(item, index) in countryItems"
                             :key="index"
                             :value="index"
-                        >
-                            <v-list-item-title>{{ item.title }}</v-list-item-title>
-                        </v-list-item>
-                    </v-list>
-                </v-menu>
-                </span>
-              <span class="mini-container-content2">insert map here</span>
+                          >
+                              <v-list-item-title>{{ item.title }}</v-list-item-title>
+                          </v-list-item>
+                      </v-list>
+                  </v-menu>
+                  </span>
             </v-col>
 
-            <v-col class="mini-container" cols="3.5">
+            <v-col class="mini-container-usage" cols="3.5">
                 <!-- First Mini Column -->
                 <span class="mini-container-header">Device Usage</span>
                 <!-- Start of Device Usage dropdown -->
                 <v-row>
                   
                 </v-row>
-                <span class="mini-container-content3">
+                <span class="mini-container-content3" style="position: absolute; top: 80px;">
+                  <!-- Adjusted position for the dropdown menu -->
                   <v-menu>
                       <template v-slot:activator="{ props }">
-                        <v-btn
-                          color="#a7c6ba"
-                          v-bind="props"
-                          class="button-with-padding"
-                          style="padding-right:21px"
-                        >
-                          Service
-                          <v-icon large right size="24">mdi-menu-down</v-icon>
-                        </v-btn>
+                          <v-btn
+                              color="#a7c6ba"
+                              v-bind="props"
+                              class="button-with-padding"
+                              style="padding-right:21px"
+                          >
+                              Service
+                              <v-icon large right size="24">mdi-menu-down</v-icon>
+                          </v-btn>
                       </template>
                       <v-list>
-                        <v-list-item
-                          v-for="(item, index) in items"
+                          <v-list-item
+                          v-for="(item, index) in serviceItems"
                           :key="index"
                           :value="index"
                         >
-                          <v-list-item-title>{{ item.title }}</v-list-item-title>
-                        </v-list-item>
+                              <v-list-item-title>{{ item.title }}</v-list-item-title>
+                          </v-list-item>
                       </v-list>
-                    </v-menu>
+                  </v-menu>
                   </span>
         
-                  <span class="mini-container-content4">
+                  <span class="mini-container-content4" style="position: absolute; top: 30px">
                       <v-menu>
                           <template v-slot:activator="{ props }">
                             <v-btn
@@ -136,7 +138,7 @@
                           </template>
                           <v-list>
                             <v-list-item
-                              v-for="(item, index) in items"
+                              v-for="(item, index) in countryItems"
                               :key="index"
                               :value="index"
                             >
@@ -160,7 +162,7 @@
     margin-bottom: 40px;
     margin-left: 30px;
     margin-right: 30px;
-    margin-top: 30px;
+    margin-top: 50px;
     height: 220px; /* Let the height adjust based on content */
     display: flex;
     flex-direction: column; /* Stack items vertically */
@@ -168,6 +170,34 @@
     align-items: center; /* Align items horizontally */
     border: 1px solid black; /* Add border for visualization */
     padding: 20px; /* Add padding for spacing */
+}
+
+.mini-container-usage {
+  position: relative;
+  margin-bottom: 40px;
+  margin-left: 30px;
+  margin-right: 30px;
+  height: 220px; /* Let the height adjust based on content */
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
+  justify-content: center; /* Align items vertically */
+  align-items: center; /* Align items horizontally */
+  border: 1px solid black; /* Add border for visualization */
+  padding: 20px; /* Add padding for spacing */
+}
+
+.mini-container-geo {
+  position: relative;
+  margin-bottom: 50px;
+  margin-left: 30px;
+  height: 650px; /* Set a fixed height */
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
+  justify-content: center; /* Align items vertically */
+  align-items: center; /* Align items horizontally */
+  border: 1px solid black; /* Add border for visualization */
+  padding: 20px; /* Add padding for spacing */
+  overflow: hidden; /* Hide overflow content if any */
 }
 
 .mini-container-header {
@@ -200,7 +230,7 @@
     margin-top: 120px;
     font-size: 20px;
     align-self: flex-start;
-    position: fixed
+    position: fixed;
 }
 
 .highlight-text {
@@ -208,7 +238,7 @@
 }
 
 .dropdown-menu {
-    position: absolute;
+    position: relative;
     background-color: white; /* Set background color for dropdown menu */
     border: 1px solid black; /* Add border for dropdown menu */
     padding: 10px; /* Add padding for dropdown menu */
@@ -236,11 +266,21 @@
 <script>
   export default {
     data: () => ({
-      items: [
-        { title: 'Click Me' },
-        { title: 'Click Me' },
-        { title: 'Click Me' },
-        { title: 'Click Me 2' },
+      serviceItems: [
+        { title: 'UBS Website' },
+        { title: 'UBS Trading Platform' },
+        { title: 'UBS Intranet' },
+        { title: 'UBS Wealth Management Platform' },
+        { title: 'UBS Mobile Banking App' },
+        { title: 'UBS Online Banking Platform' },
+        { title: 'UBS Financial Advisor Platform' }
+      ],
+      countryItems: [
+        { title: 'China' },
+        { title: 'India' },
+        { title: 'APAC' },
+        { title: 'Europe' },
+        { title: 'Australia' }
       ],
     }),
   }

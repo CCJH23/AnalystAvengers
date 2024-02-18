@@ -6,27 +6,27 @@
 
 <template>
     <Sidebar/>
-    <div class="mx-6 mt-6" style="background-color: rgb(239, 244, 246)">
+    <div class="mx-6 mt-6" style="background-color: rgb(239, 244, 246)" data-aos="fade-down">
         <v-row>
-            <v-col class="mini-container" cols="2.5">
+            <v-col class="mini-container" cols="2.5" data-aos="fade-down">
                 <!-- First Mini Column -->
                 <span class="mini-container-header">Uptime</span>
                 <span class="mini-container-content1">99.99%</span>
                 <span class="mini-container-content2">Monitoring frequency: <span class="highlight-text">continuously</span></span>
             </v-col>
-            <v-col class="mini-container" cols="2.5">
+            <v-col class="mini-container" cols="2.5" data-aos="fade-down">
                 <!-- Second Mini Column -->
                 <span class="mini-container-header">Average CPU Usage</span>
                 <span class="mini-container-content1">20%</span>
                 <span class="mini-container-content2">Monitoring frequency: <span class="highlight-text">every 5 min</span></span>
             </v-col>
-            <v-col class="mini-container" cols="2.5">
+            <v-col class="mini-container" cols="2.5" data-aos="fade-down">
                 <!-- Third Mini Column -->
                 <span class="mini-container-header">Average Memory Usage</span>
                 <span class="mini-container-content1">40%</span>
                 <span class="mini-container-content2">Monitoring frequency: <span class="highlight-text">every 5 min</span></span>
             </v-col>
-            <v-col class="mini-container" cols="2.5">
+            <v-col class="mini-container" cols="2.5" data-aos="fade-down">
                 <!-- Fourth Mini Column -->
                 <span class="mini-container-header">Average Network Throughput</span>
                 <span class="mini-container-content1">40%</span>
@@ -34,7 +34,7 @@
             </v-col>
         </v-row>
         <v-row>
-            <v-col class="mini-container-geo" cols="8">
+            <v-col class="mini-container-geo" cols="8" data-aos="fade-down">
               <!-- First Mini Column -->
               <span class="mini-container-header" style="position: absolute; top: 10px;">Geo Map</span>
               <Map/>
@@ -91,7 +91,7 @@
                   </span>
             </v-col>
 
-            <v-col class="mini-container-usage" cols="3.5">
+            <v-col class="mini-container-usage" cols="3.5" data-aos="fade-down">
                 <!-- First Mini Column -->
                 <span class="mini-container-header">Device Usage</span>
                 <!-- Start of Device Usage dropdown -->
@@ -264,6 +264,12 @@
 </style>
 
 <script>
+  import AOS from 'aos'
+  import 'aos/dist/aos.css'
+  AOS.init({
+    duration: 1600,
+  })
+  AOS.refresh()
   export default {
     data: () => ({
       serviceItems: [

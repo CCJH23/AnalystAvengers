@@ -4,13 +4,13 @@
 <template>
     <Sidebar/>
     <v-container fluid class="top-container">
-      <img src="../assets/logo.png" alt="Logo" class="logo">
-      <span class="text-center bold headline">Everything looks good</span>
+      <img src="../assets/logo.png" alt="Logo" class="logo" data-aos="fade-down">
+      <span class="text-center bold headline" :style="headlineStyle" data-aos="fade-down">{{ healthStatus }}</span>
     </v-container>
     <v-container fluid class="bottom-container">
       <v-container class="fluid inner-container-1">
-        <v-row style="margin-bottom:18px" class="service-label">Service Health</v-row>
-        <v-row class="row-with-border">
+        <v-row style="margin-bottom:18px" class="service-label" data-aos="fade-down">Service Health</v-row>
+        <v-row class="row-with-border" data-aos="fade-down">
           <v-col cols="2"></v-col>
           <v-col cols="2">
             China
@@ -28,7 +28,7 @@
             India
           </v-col>
         </v-row>
-        <v-row class="row-with-border" v-for="(rowLabel, rowIndex) in rowLabels" :key="rowIndex">
+        <v-row class="row-with-border" v-for="(rowLabel, rowIndex) in rowLabels" :key="rowIndex" data-aos="fade-down">
           <v-col cols="2">
             <!-- Render different icons based on the label -->
             <v-icon v-if="rowLabel === 'UBS Website'">mdi-web</v-icon>
@@ -41,21 +41,23 @@
             <!-- Add more conditions for other labels and their corresponding icons -->
             {{ rowLabel }}
           </v-col>
-          <v-col cols="2" v-for="colIndex in 5" :key="colIndex">
-            <img src="../assets/logo.png" alt="Logo" class="row-logo">
+          <v-col cols="2" v-for="(colIndex, index) in 5" :key="colIndex">
+            <img v-if="index !== 3" src="../assets/healthy.png" alt="Healthy Logo" class="row-logo" />
+            <img v-else src="../assets/unhealthy.png" alt="Unhealthy Logo" class="row-logo" @load="hasUnhealthyLogo = true" />
+            <!-- <img src="../assets/degraded.png" alt="Degraded Logo" class="row-logo" @load="hasUnhealthyLogo = true"/> -->
           </v-col>
         </v-row>        
         <v-row style="margin-top:38px">
           <v-col cols="4">
           </v-col>
-          <v-col>
+          <v-col data-aos="fade-down">
             <img src="../assets/healthy.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px; margin-top: 5px;">
             <span>Healthy</span>
           </v-col>          
-          <v-col>
+          <v-col data-aos="fade-down">
             <img src="../assets/degraded.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px;">Degraded
           </v-col>
-          <v-col>
+          <v-col data-aos="fade-down">
             <img src="../assets/unhealthy.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px;">Unhealthy
           </v-col>
           <v-col cols="4">
@@ -66,6 +68,9 @@
 </template>
   
 <script>
+import AOS from 'aos'
+import 'aos/dist/aos.css'
+
 export default {
   data() {
     return {
@@ -77,33 +82,49 @@ export default {
         "UBS Mobile Banking App",
         "UBS Online Banking Platform",
         "UBS Financial Advisor Platform"
-      ]
+      ],
+      hasUnhealthyLogo: false,
     };
+  },
+  computed: {
+    healthStatus() {
+      // Return appropriate status based on the condition
+      return this.hasUnhealthyLogo ? "Hmm...something's not right" : "Everything looks good";
+    },
+    headlineStyle() {
+      return this.healthStatus === "Everything looks good" ? { color: '#a7c6ba' } : { color: 'red' };
+    }
+  },
+  mounted() {
+    AOS.init({
+      duration: 1600,
+    });
+    AOS.refresh();
   }
 };
 </script>
 
 <style>
   .top-container {
-    height: auto; /* Let the height adjust based on content */
+    height: 20vh; /* Set height of the container to full viewport height */
     display: flex;
     flex-direction: column; /* Stack items vertically */
-    justify-content: center;
-    align-items: center;
+    justify-content: center; /* Center items vertically */
+    align-items: center; /* Center items horizontally */
   }
 
   .bottom-container {
     display: flex;
     flex-direction: column; /* Stack items vertically */
     align-items: center;
-    height: 100vh; /* Span entire viewport height */
+    height: 80vh; /* Span entire viewport height */
     background-color: rgb(239, 244, 246)
   }
 
   .inner-container-1{
     background-color: white;
     position: relative; /* To position the label */
-    height: 720px;
+    height: 710px;
     width: 1200px;
     padding: 50px;
     margin: 20px 0; /* Add margin between service label and rows */
@@ -121,13 +142,15 @@ export default {
 
   .headline {
     font-size: 24px; /* Adjust the font size as needed */
-    margin: 0; /* Remove margin to prevent any unwanted spacing */
+    font-weight: bold;
+    text-align: center; /* Center align the text */
+    margin: 0; /* Remove default margin */
   }
 
   .logo {
     width: 80px; /* Adjust the width of the logo */
     height: auto;
-    margin: 0; /* Remove margin to prevent any unwanted spacing */
+    margin-bottom: 20px; /* Add margin below the logo */
   }
 
   .service-label {
@@ -136,6 +159,7 @@ export default {
     font-weight: bold;
     padding: 10px;
     font-size: 20px;
+    color: #a7c6ba;
   }
 
   .row-with-border {
@@ -144,7 +168,7 @@ export default {
   }
 
   .row-logo {
-    width: 10px; /* Adjust the width of the row logo */
+    width: 15px; /* Adjust the width of the row logo */
     height: auto;
     margin: 5px; /* Add margin between row logos */
   }

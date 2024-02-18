@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <div class="world-map">
         <img src="../assets/worldmap.png" alt="map"/>
         <div class="pin usa">
@@ -105,7 +105,7 @@
     }
 }
 
-</style>
+</style> -->
 
 <!-- <template>
     <div>
@@ -192,3 +192,24 @@
         }
     }
 </script> -->
+
+<template>
+    <div>
+    </div>
+</template>
+<script>
+    export default {
+        data () {
+            return {
+                coordinates: {
+                    lat: 0,
+                    lng: 0
+                }
+            }
+        },
+
+        created() {
+
+        }
+    }
+</script>

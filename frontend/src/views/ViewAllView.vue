@@ -148,9 +148,8 @@ export default {
   }
 
   .logo {
-    width: 80px; /* Adjust the width of the logo */
+    width: 120px; /* Adjust the width of the logo */
     height: auto;
-    margin-bottom: 20px; /* Add margin below the logo */
   }
 
   .service-label {

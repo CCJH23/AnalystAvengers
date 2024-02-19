@@ -128,8 +128,8 @@
         ></GmapMap>
     </div>
 </template>
-<script>
-    export default {
+<script> -->
+    <!-- export default {
         data() {
             return {
                 map: null,
@@ -192,24 +192,103 @@
         }
     }
 </script> -->
-
 <template>
-    <div>
+    <div class="GoogleMap">
+      <div class="SearchArea" v-if="autocomplete">
+        <input
+          v-bind="$attrs"
+          ref="SearchInput"
+          :class="inputClass"
+          :disabled="disabledSearch"
+          v-model="address"
+        />
+      </div>
+      <iframe
+        :src="mapSrc"
+        width="100%"
+        height="500px"
+        frameborder="0"
+        style="border:0"
+        allowfullscreen
+      ></iframe>
     </div>
-</template>
-<script>
-    export default {
-        data () {
-            return {
-                coordinates: {
-                    lat: 0,
-                    lng: 0
-                }
-            }
-        },
-
-        created() {
-
-        }
+  </template>
+  
+  <script>
+  export default {
+    name: 'VueGoogleMapUI',
+    emits: [
+      'change-address',
+      'update-circle',
+      'update-polygon',
+      'update-polyline',
+      'update-rectangle',
+      'update-marker'
+    ],
+    props: {
+      disabledSearch: { type: Boolean },
+      inputClass: { type: String, default: '' },
+      autocomplete: { type: Boolean, default: false }
+    },
+    data() {
+      return {
+        address: ''
+      };
+    },
+    computed: {
+      mapSrc() {
+        return "https://maps.google.com/maps?q=Tangesir%20Dates%20Products&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=&amp;output=embed";
+      }
+    },
+    methods: {
+      setAddressData(address) {
+        if (!address) return;
+        this.address = address.formatted_address;
+        this.$emit('change-address', { info: address, address: this.address });
+      },
+      setAutoComplete() {
+        // Implement autocomplete logic if needed
+      },
+      async setLocation() {
+        // Implement location logic if needed
+      },
+      setCurrentAddres() {
+        // Implement current address logic if needed
+      }
+      // Add more methods as needed
+    },
+    async mounted() {
+      // Implement initialization logic if needed
+    },
+    watch: {
+      language() {
+        // Implement language change logic if needed
+      }
+    },
+    beforeUnmount() {
+      // Implement cleanup logic if needed
     }
-</script>
+  };
+  </script>
+  
+  <style>
+  .GoogleMap {
+    height: max-content;
+    background: rgb(229, 227, 223);
+  }
+  
+  .GoogleMap .SearchArea {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    display: flex;
+  }
+  
+  .GoogleMap .SearchArea input {
+    flex: 1;
+    outline: none;
+    border: none;
+    height: 30px;
+    padding: 10px;
+  }
+  </style>
+  

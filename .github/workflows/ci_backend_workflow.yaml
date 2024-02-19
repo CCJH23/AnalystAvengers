@@ -13,10 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up environment variables
-        env:
-          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-
       - name: Set up Python 3.11
         uses: actions/setup-python@v3
         with:
@@ -37,7 +33,9 @@ jobs:
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-      - name: Test with pytest
+      - name: Set up environment variables and test with pytest
+        env:
+          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
         working-directory: backend
         run: |
           pytest

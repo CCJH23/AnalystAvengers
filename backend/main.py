@@ -1,3 +1,12 @@
+# internal imports
+from db import db
+from models.infrastructureConfigModel import InfrastructureConfig
+from models.serverLogsModel import ServerLogs
+from models.webAppLogsModel import WebAppLogs
+from models.databaseServerLogsModel import DatabaseServerLogs
+from models.serverHealthStatusThresholdsModel import ServerHealthStatusThresholds
+
+# external imports
 from dotenv import load_dotenv
 import os
 import json
@@ -7,7 +16,6 @@ from flask_socketio import SocketIO, emit
 from sqlalchemy import text, desc, func, and_ #func is a module provided by SQLAlchemy that allows usage of SQL functions in queries. and_ is a logical operator provided by SQLAlchemy that constructs an SQL AND clause.
 from flask_cors import CORS
 import pyodbc
-from db import db
 
 app = Flask(__name__)
 CORS(app)
@@ -17,58 +25,6 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 load_dotenv()
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mssql+pyodbc://analystavengers:{os.environ["DATABASE_PASSWORD"]}@analystavengersdb.database.windows.net:1433/AnalystAvenger_SQL?driver=ODBC+Driver+18+for+SQL+Server'
 db.init_app(app)
-
-# Define SQLAlchemy models for each table
-class InfrastructureConfig(db.Model):
-    __tablename__ = 'InfrastructureConfig'
-
-    ServerName = db.Column(db.String(255), primary_key=True)
-    Type = db.Column(db.String(255), primary_key=True)
-    MonitoringTool = db.Column(db.String(255))
-    Priority = db.Column(db.Integer)
-    Country = db.Column(db.String(255))
-
-class ServerLogs(db.Model):
-    __tablename__ = 'ServerLogs'
-
-    SN = db.Column(db.Integer, primary_key=True)
-    ServerName = db.Column(db.String(255))
-    Type = db.Column(db.String(255))
-    Timestamp = db.Column(db.DateTime)
-    Availability = db.Column(db.Integer)
-    DiskUtilization = db.Column(db.Integer)
-    MemoryUtilization = db.Column(db.Integer)
-    CPUUtilization = db.Column(db.Integer)
-    NetworkAvailability = db.Column(db.Integer)
-
-class WebAppLogs(db.Model):
-    __tablename__ = 'WebAppLogs'
-
-    SN = db.Column(db.Integer, primary_key=True)
-    ServerName = db.Column(db.String(255))
-    Type = db.Column(db.String(255))
-    Timestamp = db.Column(db.DateTime)
-    Availability = db.Column(db.Integer)
-    Rate = db.Column(db.Integer)
-    Error = db.Column(db.Integer)
-    Duration = db.Column(db.Integer)
-
-class DatabaseServerLogs(db.Model):
-    __tablename__ = 'DatabaseServerLogs'
-
-    SN = db.Column(db.Integer, primary_key=True)
-    ServerName = db.Column(db.String(255))
-    Type = db.Column(db.String(255))
-    Timestamp = db.Column(db.DateTime)
-    Availability = db.Column(db.Integer)
-
-class ServerHealthStatusThresholds(db.Model):
-    __tablename__ = 'ServerHealthStatusThresholds'
-
-    Metric = db.Column(db.String(50), primary_key=True)
-    CriticalThreshold = db.Column(db.Integer)
-    BadThreshold = db.Column(db.Integer)
-    WarningThreshold = db.Column(db.Integer)
 
 # Check the database connection
 def check_db_connection():

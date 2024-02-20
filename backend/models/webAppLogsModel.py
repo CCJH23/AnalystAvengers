@@ -1,14 +1,15 @@
 from db import db
 
 class WebAppLogs(db.Model):
-    __tablename__ = 'WebAppLogs'
+    # test table name is WebAppLogsTest while table with actual data is WebAppLogs
+    __tablename__ = 'WebAppLogsTest'
 
-    SN = db.Column(db.Integer, primary_key=True)
-    ServerName = db.Column(db.String(255))
-    Type = db.Column(db.String(255))
-    Timestamp = db.Column(db.DateTime)
-    Availability = db.Column(db.Integer)
-    Rate = db.Column(db.Integer)
-    Error = db.Column(db.Integer)
-    Duration = db.Column(db.Integer)
+    Id = db.Column(db.Integer, primary_key=True)
+    InfrastructureName = db.Column(db.String(255))
+    InfrastructureType = db.Column(db.String(255))
+    LogDateTime = db.Column(db.DateTime)
+    WebAppAvailability = db.Column(db.Integer)
+    WebAppRate = db.Column(db.Integer)
+    WebAppError = db.Column(db.Integer)
+    WebAppDuration = db.Column(db.Integer)
 

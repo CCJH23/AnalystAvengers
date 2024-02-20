@@ -1,15 +1,16 @@
 from db import db
 
 class ServerLogs(db.Model):
-    __tablename__ = 'ServerLogs'
+    # test table name is ServerLogsTest while table with actual data is ServerLogs
+    __tablename__ = 'ServerLogsTest'
 
-    SN = db.Column(db.Integer, primary_key=True)
-    ServerName = db.Column(db.String(255))
-    Type = db.Column(db.String(255))
-    Timestamp = db.Column(db.DateTime)
-    Availability = db.Column(db.Integer)
-    DiskUtilization = db.Column(db.Integer)
-    MemoryUtilization = db.Column(db.Integer)
-    CPUUtilization = db.Column(db.Integer)
-    NetworkAvailability = db.Column(db.Integer)
+    Id = db.Column(db.Integer, primary_key=True)
+    InfrastructureName = db.Column(db.String(255))
+    InfrastructureType = db.Column(db.String(255))
+    LogDateTime = db.Column(db.DateTime)
+    ServerAvailability = db.Column(db.Integer)
+    ServerDiskUtilisation = db.Column(db.Float)
+    ServerMemoryUtilisation = db.Column(db.Float)
+    ServerCpuUtilisation = db.Column(db.Float)
+    ServerNetworkAvailability = db.Column(db.Integer)
 

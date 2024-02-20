@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@mdi/font": "^5.9.55",
+    "all": "^0.0.0",
     "aos": "^2.3.4",
     "firebase": "^10.6.0",
     "material-design-icons-iconfont": "*",

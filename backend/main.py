@@ -6,17 +6,17 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, emit
 from sqlalchemy import text, desc, func, and_ #func is a module provided by SQLAlchemy that allows usage of SQL functions in queries. and_ is a logical operator provided by SQLAlchemy that constructs an SQL AND clause.
 from flask_cors import CORS
-# from items.itemController import itemBp
 import pyodbc
-
+from db import db
 
 app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
+# initialise database with Flask app
 load_dotenv()
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mssql+pyodbc://analystavengers:{os.environ["DATABASE_PASSWORD"]}@analystavengersdb.database.windows.net:1433/AnalystAvenger_SQL?driver=ODBC+Driver+18+for+SQL+Server'
-db = SQLAlchemy(app)
+db.init_app(app)
 
 # Define SQLAlchemy models for each table
 class InfrastructureConfig(db.Model):

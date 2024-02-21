@@ -15,8 +15,7 @@ def get_infrastructure_config():
         return jsonify({'error': str(e)}), 500
 
 # Query data from infrastructure_config table by infrastructure name and infrastructure type
-@infrastructureConfigBp.route('/infrastructure_config/<infrastructure_name>/<infrastructure_type>', 
-                            methods=['GET'])
+@infrastructureConfigBp.route('/infrastructure_config/<infrastructure_name>/<infrastructure_type>', methods=['GET'])
 def get_infrastructure_config_by_infra_name_and_type(infrastructure_name, infrastructure_type):
     try:
         response = infrastructureConfigClass.get_infrastructure_config_by_infra_name_and_type(infrastructure_name, infrastructure_type)

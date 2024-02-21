@@ -1,37 +1,36 @@
 <template>
-    <Sidebar/>
-    <v-container fluid class="top-container">
-      <img src="../assets/logo.png" alt="Logo" class="logo">
-      <span class="text-center bold headline">Latest Server Logs</span>
+  <Sidebar />
+  <v-container fluid class="top-container">
+    <img src="../assets/logo.png" alt="Logo" class="logo">
+    <span class="text-center bold headline">Latest Server Logs</span>
+  </v-container>
+  <v-container fluid class="bottom-container">
+    <v-container class="fluid inner-container-1">
+      <v-row style="margin-bottom:18px" class="service-label">
+        <v-col cols="2" class="col-title">Infrastructure Name</v-col>
+        <v-col cols="1" class="col-title">Infrastructure Type</v-col>
+        <v-col cols="2" class="col-title">Log Date Time</v-col>
+        <v-col cols="1" class="col-title">Server Availability</v-col>
+        <v-col cols="1" class="col-title">Server CPU Utilization</v-col>
+        <v-col cols="1" class="col-title">Server Disk Utilization</v-col>
+        <v-col cols="1" class="col-title">Server Memory Utilization</v-col>
+        <v-col cols="1" class="col-title">Server Network Availability</v-col>
+      </v-row>
+      <v-row class="row-with-border" v-for="(log, index) in latestServerLogs" :key="index">
+        <v-col cols="2" class="col-content">{{ log.InfrastructureName }}</v-col>
+        <v-col cols="1" class="col-content">{{ log.InfrastructureType }}</v-col>
+        <v-col cols="2" class="col-content">{{ log.LogDateTime }}</v-col>
+        <v-col cols="1" class="col-content">{{ log.ServerAvailability }}</v-col>
+        <v-col cols="1" class="col-content">{{ (parseFloat(log.ServerCpuUtilisation)).toFixed(5) }}%</v-col>
+        <v-col cols="1" class="col-content">{{ (parseFloat(log.ServerDiskUtilisation)).toFixed(5) }}%</v-col>
+        <v-col cols="1" class="col-content">{{ (parseFloat(log.ServerMemoryUtilisation)).toFixed(5) }}%</v-col>
+        <v-col cols="1" class="col-content">{{ log.ServerNetworkAvailability }}</v-col>
+      </v-row>
     </v-container>
-    <v-container fluid class="bottom-container">
-      <v-container class="fluid inner-container-1">
-        <v-row style="margin-bottom:18px" class="service-label">Server Logs</v-row>
-        <v-row class="row-with-border" v-for="(log, index) in latestServerLogs" :key="index">
-          <v-col cols="2">
-            {{ log.ServerName }}
-          </v-col>
-          <v-col cols="2">
-            {{ log.CPUUtilization }}
-          </v-col>
-          <v-col cols="2">
-            {{ log.DiskUtilization }}
-          </v-col>
-          <v-col cols="2">
-            {{ log.MemoryUtilization }}
-          </v-col>
-          <v-col cols="2">
-            {{ log.NetworkAvailability }}
-          </v-col>
-          <v-col cols="2">
-            {{ log.Timestamp }}
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-container>
-  </template>
-  
-  <script setup>
+  </v-container>
+</template>
+
+<script setup>
   import Sidebar from "@/components/Navbar/Sidebar.vue";
   import { ref, onMounted } from 'vue';
   import io from 'socket.io-client';
@@ -73,73 +72,73 @@
       socket.disconnect();
     };
   });
-  </script>
+</script>
 
 
-  <style>
-  .top-container {
-    height: auto; /* Let the height adjust based on content */
-    display: flex;
-    flex-direction: column; /* Stack items vertically */
-    justify-content: center;
-    align-items: center;
-  }
+<style>
+.col-title, .col-content{
+  font-size: 14px; /* Adjust the font size as needed */
+  text-align: center; /* Center-align the text */
+}
 
-  .bottom-container {
-    display: flex;
-    flex-direction: column; /* Stack items vertically */
-    align-items: center;
-    height: 100vh; /* Span entire viewport height */
-    background-color: rgb(239, 244, 246)
-  }
+.top-container {
+  height: auto; /* Let the height adjust based on content */
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
+  justify-content: center;
+  align-items: center;
+}
 
-  .inner-container-1{
-    background-color: white;
-    position: relative; /* To position the label */
-    height: 720px;
-    width: 1200px;
-    padding: 50px;
-    margin: 20px 0; /* Add margin between service label and rows */
-  }
+.bottom-container {
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
+  align-items: center;
+  height: 100vh; /* Span entire viewport height */
+  background-color: rgb(239, 244, 246);
+}
 
-  .text-center {
-    display: block;
-    text-align: center;
-  }
+.inner-container-1 {
+  background-color: white;
+  position: relative; /* To position the label */
+  max-width: 100%; /* Ensure container does not exceed screen width */
+  padding: 20px; /* Adjust padding as needed */
+  margin: 20px auto; /* Center container horizontally and add margin */
+  overflow-x: auto; /* Allow horizontal scrolling if content overflows */
+}
 
-  .bold {
-    font-weight: bold;
-    margin: 0; /* Remove margin to prevent any unwanted spacing */
-  }
+.text-center {
+  display: block;
+  text-align: center;
+}
 
-  .headline {
-    font-size: 24px; /* Adjust the font size as needed */
-    margin: 0; /* Remove margin to prevent any unwanted spacing */
-  }
+.bold {
+  font-weight: bold;
+}
 
-  .logo {
-    width: 80px; /* Adjust the width of the logo */
-    height: auto;
-    margin: 0; /* Remove margin to prevent any unwanted spacing */
-  }
+.headline {
+  font-size: 24px;
+  margin: 0; /* Remove margin to prevent any unwanted spacing */
+}
 
-  .service-label {
-    top: 5;
-    left: 5;
-    font-weight: bold;
-    padding: 10px;
-    font-size: 20px;
-  }
+.logo {
+  width: 80px;
+  height: auto;
+}
 
-  .row-with-border {
-    border-bottom: 1px solid black; /* Add border to the bottom of each row */
-    margin-bottom: -1px; /* Offset the margin for better alignment */
-  }
+.service-label {
+  font-weight: bold;
+  font-size: 20px;
+}
 
-  .row-logo {
-    width: 10px; /* Adjust the width of the row logo */
-    height: auto;
-    margin: 5px; /* Add margin between row logos */
-  }
-  </style>
+.row-with-border {
+  border-bottom: 1px solid black;
+}
+
+.row-logo {
+  width: 10px;
+  height: auto;
+  margin: 5px;
+}
+
+</style>
   

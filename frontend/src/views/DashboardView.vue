@@ -1,6 +1,5 @@
 <script setup>
     import Sidebar from "@/components/Navbar/Sidebar.vue";
-    import PieChart from "@/components/PieChart.vue";
     import Map from "@/components/Map.vue"
 </script>
 
@@ -34,12 +33,9 @@
             </v-col>
         </v-row>
         <v-row>
-            <v-col class="mini-container-geo" cols="8" data-aos="fade-down">
-              <!-- First Mini Column -->
+            <v-col class="mini-container-geo" cols="12" data-aos="fade-down">
               <span class="mini-container-header" style="position: absolute; top: 10px;">Geo Map</span>
               <Map/>
-              <v-row>
-              </v-row>
               <span class="mini-container-content3" style="position: absolute; top: 80px;">
                 <!-- Adjusted position for the dropdown menu -->
                 <v-menu>
@@ -64,8 +60,8 @@
                         </v-list-item>
                     </v-list>
                 </v-menu>
-                </span>
-                <span class="mini-container-content4" style="position: absolute; top: 30px;">
+              </span>
+              <span class="mini-container-content4" style="position: absolute; top: 30px;">
                   <!-- Adjusted position for the Countries dropdown menu -->
                   <v-menu style="margin-bottom:200px">
                       <template v-slot:activator="{ props }">
@@ -88,71 +84,9 @@
                           </v-list-item>
                       </v-list>
                   </v-menu>
-                  </span>
+              </span>
             </v-col>
-
-            <v-col class="mini-container-usage" cols="3.5" data-aos="fade-down">
-                <!-- First Mini Column -->
-                <span class="mini-container-header">Device Usage</span>
-                <!-- Start of Device Usage dropdown -->
-                <v-row>
-                  
-                </v-row>
-                <span class="mini-container-content3" style="position: absolute; top: 80px;">
-                  <!-- Adjusted position for the dropdown menu -->
-                  <v-menu>
-                      <template v-slot:activator="{ props }">
-                          <v-btn
-                              color="#a7c6ba"
-                              v-bind="props"
-                              class="button-with-padding"
-                              style="padding-right:21px"
-                          >
-                              Service
-                              <v-icon large right size="24">mdi-menu-down</v-icon>
-                          </v-btn>
-                      </template>
-                      <v-list>
-                          <v-list-item
-                          v-for="(item, index) in serviceItems"
-                          :key="index"
-                          :value="index"
-                        >
-                              <v-list-item-title>{{ item.title }}</v-list-item-title>
-                          </v-list-item>
-                      </v-list>
-                  </v-menu>
-                  </span>
-        
-                  <span class="mini-container-content4" style="position: absolute; top: 30px">
-                      <v-menu>
-                          <template v-slot:activator="{ props }">
-                            <v-btn
-                              color="#a7c6ba"
-                              v-bind="props"
-                              class="button-with-padding"
-                            >
-                              Country
-                              <v-icon large right size="24">mdi-menu-down</v-icon>
-                            </v-btn>
-                          </template>
-                          <v-list>
-                            <v-list-item
-                              v-for="(item, index) in countryItems"
-                              :key="index"
-                              :value="index"
-                            >
-                              <v-list-item-title>{{ item.title }}</v-list-item-title>
-                            </v-list-item>
-                          </v-list>
-                        </v-menu>
-                      </span>
-                <!-- End of Device Usage dropdown -->
-                <!-- <span style="margin-right:0px; padding-right:0px"> -->
-                    <PieChart/>
-                <!-- </span> -->
-              </v-col>
-          </v-row>
+        </v-row>
     </div>
 </template> 
 
@@ -190,7 +124,7 @@
   position: relative;
   margin-bottom: 50px;
   margin-left: 30px;
-  height: 650px; /* Set a fixed height */
+  height: 670px; /* Set a fixed height */
   display: flex;
   flex-direction: column; /* Stack items vertically */
   justify-content: center; /* Align items vertically */
@@ -221,14 +155,14 @@
 
 .mini-container-content3 {
     margin-bottom: 15px;
-    font-size: 20px;
+    font-size: 25px;
     align-self: flex-start;
     position: fixed;
 }
 
 .mini-container-content4 {
     margin-top: 120px;
-    font-size: 20px;
+    font-size: 25px;
     align-self: flex-start;
     position: fixed;
 }

@@ -192,7 +192,8 @@
         }
     }
 </script> -->
-<template>
+<!-- <template>
+
     <div class="GoogleMap">
       <div class="SearchArea" v-if="autocomplete">
         <input
@@ -290,5 +291,40 @@
     height: 30px;
     padding: 10px;
   }
+  </style>
+   -->
+
+   <template>
+    <!-- Your existing template code for the map component goes here -->
+  
+    <!-- New template code for displaying current position -->
+    <div class="d-flex text-center" style="height: 20vh">
+      <div class="m-auto">
+        <h4>Your Position</h4>
+        Latitude {{ currPos.lat.toFixed(2) }}, Longitude: {{ currPos.lng.toFixed(2) }}
+      </div>
+    </div>
+  </template>
+  
+  <script>
+  import { computed } from 'vue'
+  import { useGeolocation } from '../useGeolocation.js'
+  
+  export default {
+    setup() {
+      // Add the useGeoLocation logic here
+      const { coords } = useGeolocation()
+      const currPos = computed(() => ({
+        lat: coords.value.latitude,
+        lng: coords.value.longitude
+      }))
+      
+      return { currPos }
+    }
+  }
+  </script>
+  
+  <style>
+  /* Your existing styles for the map component go here */
   </style>
   

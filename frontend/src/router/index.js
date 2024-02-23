@@ -31,7 +31,7 @@ import ViewEachView from '../views/ViewEachView.vue'
 import TopNavbar from '@/components/Navbar/TopNavbar.vue';
 import DashboardView from '../views/DashboardView.vue';
 import Sidebar from '@/components/Navbar/Sidebar.vue';
-
+import sockettest from '../views/sockettest.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -65,6 +65,11 @@ const router = createRouter({
       path: '/vieweach',
       name: 'vieweach',
       component: ViewEachView,
+    },
+    {
+      path: '/sockettest',
+      name: 'sockettest',
+      component: sockettest,
     },
     {
       // Redirect any unknown routes to the login page

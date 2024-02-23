@@ -14,14 +14,13 @@ let userGeoMarker: leaflet.Marker;
 onMounted(() => {
   map = leaflet
   .map('map')
-  .setView([userMarker.value.latitude, userMarker.value.longitude], 13);
+  // .setView([userMarker.value.latitude, userMarker.value.longitude], 13);
 
   leaflet
   .tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
   }).addTo(map);
-
   nearbyMarkers.value.forEach(({latitude, longitude})=> {
     leaflet
       .marker([latitude, longitude])
@@ -32,6 +31,7 @@ onMounted(() => {
   });
 
   map.addEventListener('click', (e) => {
+    
     const {lat: latitude, lng: longitude} = e.latlng;
 
     leaflet
@@ -48,23 +48,24 @@ watchEffect(() => {
       userMarker.value.latitude = coords.value.latitude;
       userMarker.value.longitude = coords.value.longitude;
 
-      // removes old marker before adding a new one
+//       // removes old marker before adding a new one
       if(userGeoMarker) {
         map.removeLayer(userGeoMarker)
+        
       }
 
-      userGeoMarker = leaflet
-      .marker([userMarker.value.latitude, userMarker.value.longitude])
-      .addTo(map)
-      .bindPopup('User Marker');
+//       userGeoMarker = leaflet
+//       .marker([userMarker.value.latitude, userMarker.value.longitude])
+//       .addTo(map)
+//       .bindPopup('User Marker');
 
-      map.setView([userMarker.value.latitude, userMarker.value.longitude], 13)
+//       map.setView([userMarker.value.latitude, userMarker.value.longitude], 13)
       
-      // changes marker color
-      const el = userGeoMarker.getElement();
-      if(el){
-        el.style.filter = "hue-rotate(120deg)";
-      }
+// //       // changes marker color
+      // const el = userGeoMarker.getElement();
+      // if(el){
+      //   el.style.filter = "hue-rotate(120deg)";
+      // }
   }
 })
 </script>

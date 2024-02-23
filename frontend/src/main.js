@@ -3,6 +3,7 @@ import router from './router'
 import App from './App.vue'
 import '@mdi/font/css/materialdesignicons.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
+// import VueGeoLocation from 'vue-browser-geolocation'
 
 // Vuetify
 import 'vuetify/styles'

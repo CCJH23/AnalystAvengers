@@ -1,5 +1,5 @@
 <template>
-    <div style="margin-top: 100px">
+    <div style="margin-bottom: 60px">
       <v-app-bar app color="#c5dad2" dark>
         <!-- Conditionally render the v-app-bar-nav-icon based on the screen size -->
         <v-app-bar-nav-icon v-if="isPhoneSize" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
@@ -12,11 +12,11 @@
         </v-toolbar-title>
         <v-spacer></v-spacer>
         <span class="mr-14">
-            <v-btn text to="/dashboard">Dashboard</v-btn>
+            <v-btn text to="/"><v-icon>mdi-home</v-icon>&nbsp;&nbsp;Home</v-btn>
             |
-            <v-btn text to="/viewall">View All</v-btn>
+            <v-btn text to="/dashboard"><v-icon>mdi-view-dashboard</v-icon>&nbsp;&nbsp;Dashboard</v-btn>
         </span>
-        <button class="btn btn-none btn-sign-out mb-2 pr-4" @click="signOut">Sign out&nbsp;&nbsp;<v-icon>mdi-logout</v-icon></button>
+        <button class="btn btn-none btn-sign-out mb-2 pr-4" @click="signOut"><v-icon>mdi-logout</v-icon>&nbsp;Sign out</button>
       </v-app-bar>
     </div>
   </template>

@@ -20,7 +20,7 @@ from sqlalchemy import text, func, and_ #func is a module provided by SQLAlchemy
 from flask_cors import CORS
 import time, datetime, json
 from threading import Thread
-from datetime import datetime
+from datetime import datetime, timedelta
 
 #############################
 # INITIALISATIONS OF APP, etc
@@ -81,19 +81,45 @@ def check_db_connection():
 def poll_database_for_changes():
     with app.app_context():
         last_checked_timestamp = socketioClass.get_last_checked_timestamps()
-        print("Last Checked Timestamps:", last_checked_timestamp)
+        # print("Last Checked Timestamps:", last_checked_timestamp)
         while True:
             new_records = socketioClass.query_database_for_new_records(last_checked_timestamp)
-            print("New Records:", new_records)
+            # print("New Records:", new_records)
 
             if new_records:
                 socketio.emit('latest_server_logs', {"code": 200, "data": {"latest_server_logs": new_records}}, namespace='/latestlogs')
+
+                # Execute the health check function based on new records
+                response, status_code = socketioClass.get_health_status_socket(new_records)
+                health_data = json.loads(response.data.decode('utf-8'))
+                print("Health Status Response:", health_data['data'])
+                if status_code == 200:
+                    socketio.emit('health_status', {"code": 200, "data": health_data['data']}, namespace='/latestlogs')
+                else:
+                    print("Health Status Check Failed. Status Code:", status_code)
 
             last_checked_timestamp = socketioClass.get_latest_timestamp(new_records)
             # print("Last Checked Timestamps:", last_checked_timestamp)
             socketioClass.update_last_checked_timestamps(last_checked_timestamp)
             
             time.sleep(10)  # Adjust the interval as needed
+
+# Function to retrieve historical logs for each unique server within the past hour
+def get_historical_logs():
+    with app.app_context():
+        while True:
+            # Calculate time frame
+            end_time = datetime.now()
+            start_time = end_time - timedelta(hours=1)
+
+            # Retrieve historical logs for each unique server
+            historical_logs = socketioClass.get_historical_logs(start_time, end_time)
+
+            # print("Historical Logs:", historical_logs)
+            # Emit historical logs to frontend
+            socketio.emit('historical_server_logs', {"code": 200, "data": {"historical_server_logs": historical_logs}}, namespace='/latestlogs')
+
+            time.sleep(10)
 
 
 @socketio.on('serverlog', namespace='/latestlogs')
@@ -106,6 +132,11 @@ if __name__ == "__main__":
     polling_thread = Thread(target=poll_database_for_changes)
     polling_thread.daemon = True
     polling_thread.start()
+
+    # Start the historical logs retrieval process in a separate thread
+    historical_logs_thread = Thread(target=get_historical_logs)
+    historical_logs_thread.daemon = True
+    historical_logs_thread.start()
 
     # Start the Flask-SocketIO server
     socketio.run(app, port=8000, debug=True)

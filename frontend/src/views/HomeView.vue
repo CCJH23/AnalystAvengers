@@ -21,20 +21,14 @@
           <v-col class="col-title">Server Network Availability</v-col>
         </v-row>
         <v-row class="row-with-border" v-for="(log, index) in latestServerLogs" :key="index" data-aos="fade-down">
-          <v-col cols="2" class="col-content"><v-btn @click="redirect(server.serverId)">{{ log.InfrastructureName }}</v-btn></v-col>
-          <v-col cols="1" class="col-content">{{ log.InfrastructureType }}</v-col>
-          <v-col cols="2" class="col-content">{{ log.LogDateTime }}</v-col>
-          <v-col cols="1" class="col-content">
-            <img v-if="log.ServerAvailability === 0" src="../assets/unhealthy_logo.png" alt="Unhealthy" class="row-logo">
-            <img v-else src="../assets/healthy_logo.png" alt="Healthy" class="row-logo">
-          </v-col>
-          <v-col cols="1" class="col-content">{{ (parseFloat(log.ServerCpuUtilisation)).toFixed(5) }}%</v-col>
-          <v-col cols="1" class="col-content">{{ (parseFloat(log.ServerDiskUtilisation)).toFixed(5) }}%</v-col>
-          <v-col cols="1" class="col-content">{{ (parseFloat(log.ServerMemoryUtilisation)).toFixed(5) }}%</v-col>
-          <v-col cols="1" class="col-content">
-            <img v-if="log.ServerNetworkAvailability === 0" src="../assets/unhealthy_logo.png" alt="Unhealthy" class="row-logo">
-            <img v-else src="../assets/healthy_logo.png" alt="Healthy" class="row-logo">
-          </v-col>
+          <v-col class="col-content"><v-btn @click="redirect(server.serverId)">{{ log.InfrastructureName }}</v-btn></v-col>
+          <v-col class="col-content">{{ log.InfrastructureType }}</v-col>
+          <v-col class="col-content">{{ log.LogDateTime }}</v-col>
+          <v-col class="col-content">{{ log.ServerAvailability }}</v-col>
+          <v-col class="col-content">{{ (parseFloat(log.ServerCpuUtilisation)).toFixed(5) }}%</v-col>
+          <v-col class="col-content">{{ (parseFloat(log.ServerDiskUtilisation)).toFixed(5) }}%</v-col>
+          <v-col class="col-content">{{ (parseFloat(log.ServerMemoryUtilisation)).toFixed(5) }}%</v-col>
+          <v-col class="col-content">{{ log.ServerNetworkAvailability }}</v-col>
         </v-row>
         <v-row style="margin-top:38px; margin-left:70px">
           <v-col cols="4">

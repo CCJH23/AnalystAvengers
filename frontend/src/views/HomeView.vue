@@ -19,9 +19,12 @@
           <v-col class="col-title">Server Disk Utilization</v-col>
           <v-col class="col-title">Server Memory Utilization</v-col>
           <v-col class="col-title">Server Network Availability</v-col>
+          <v-col class="col-title">Health Status</v-col>
         </v-row>
         <v-row class="row-with-border" v-for="(log, index) in latestServerLogs" :key="index" data-aos="fade-down">
-          <v-col class="col-content"><v-btn @click="redirect(server.serverId)">{{ log.InfrastructureName }}</v-btn></v-col>
+          <v-col class="col-content">
+            <v-btn @click="redirect(log.InfrastructureName)">{{ log.InfrastructureName }}</v-btn>
+          </v-col>
           <v-col class="col-content">{{ log.InfrastructureType }}</v-col>
           <v-col class="col-content">{{ log.LogDateTime }}</v-col>
           <v-col class="col-content">{{ log.ServerAvailability }}</v-col>
@@ -29,6 +32,7 @@
           <v-col class="col-content">{{ (parseFloat(log.ServerDiskUtilisation)).toFixed(5) }}%</v-col>
           <v-col class="col-content">{{ (parseFloat(log.ServerMemoryUtilisation)).toFixed(5) }}%</v-col>
           <v-col class="col-content">{{ log.ServerNetworkAvailability }}</v-col>
+          <v-col class="col-content">{{ HealthStatus }}</v-col>
         </v-row>
         <v-row style="margin-top:38px; margin-left:70px">
           <v-col cols="4">
@@ -117,15 +121,15 @@ export default {
         "UBS Financial Advisor Platform"
       ],
       hasUnhealthyLogo: false,
+      HealthStatus: true,
+
     };
   },
   methods: {
-        redirect(serverId){
-            console.log(serverId)
-            this.$store.dispatch('loadedServer', serverId)
-            this.$router.push('/SearchAllPets/'+ serverId)
-        }
-    },
+    redirect(infrastructureName) {
+      this.$router.push({ name: 'ViewEachServer', params: { infrastructureName: infrastructureName } });
+    }
+  },
   mounted() {
     AOS.init({
       duration: 1600,

@@ -46,6 +46,11 @@ const router = createRouter({
       component: ViewEachServerView,
     },
     {
+      path: '/vieweachserver/:infrastructureName',
+      name: 'ViewEachServer',
+      component: ViewEachServerView
+    },
+    {
       path: '/dashboard',
       name: 'dashboard',
       component: DashboardView,

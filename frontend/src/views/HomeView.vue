@@ -16,6 +16,13 @@
           <v-col class="col-title">Health Status</v-col>
           <v-col class="col-title">LogDateTime</v-col>
         </v-row>
+        <v-row v-if="!healthStatus.length" style="margin-bottom:18px" class="service-label justify-center" data-aos="fade-down">
+          <v-progress-circular
+            indeterminate
+            color="teal-lighten-3"
+            class="text-center"
+          ></v-progress-circular>
+        </v-row>
         <v-row class="row-with-border" v-for="(log, index) in healthStatus" :key="index" data-aos="fade-down">
           <v-col class="col-content">
             <v-btn @click="redirect(log.InfrastructureName)">{{ log.InfrastructureName }}</v-btn>

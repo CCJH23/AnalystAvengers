@@ -27,10 +27,10 @@ class infrastructureConfigClass():
             return jsonify({"code": 404, "message": "There are no server configurations available."}), 404
     
     # Query data from infrastructure_config table by infrastructure name and type
-    def get_infrastructure_config_by_infra_name_and_type(infrastructure_name, infrastructure_type):
+    def get_infrastructure_config_by_infra_name(infrastructure_name):
         try:
             # Query to fetch the server configuration by infrastructure name and type
-            config = InfrastructureConfig.query.filter_by(InfrastructureName=infrastructure_name, InfrastructureType=infrastructure_type).first()
+            config = InfrastructureConfig.query.filter_by(InfrastructureName=infrastructure_name).first()
 
             if config:
                 # Convert record to a dictionary

@@ -2,7 +2,7 @@
     <Sidebar/>
     <div class="display">
         <v-container style="background-color:white, max-width: 800px; height:90vh" class="mb-6 mt-8" data-aos="fade-down">
-            <h2 style="color: #758d84; margin: 8px; margin-bottom: 40px; margin-top:150px">
+            <h2 style="color: #758d84; margin: 8px; margin-bottom: 40px; margin-top:60px">
                 Name: {{ $route.params.infrastructureName }}
             </h2>
             <div style="margin: 8px;">
@@ -132,6 +132,7 @@ import 'aos/dist/aos.css';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 import io from 'socket.io-client';
+import Sidebar from "@/components/Navbar/Sidebar.vue";
 
 const route = useRoute();
 const infrastructureName = ref('');

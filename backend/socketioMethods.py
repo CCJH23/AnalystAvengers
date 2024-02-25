@@ -1,9 +1,11 @@
 from db import db
 from models.serverLogsModel import ServerLogs
+from models.metricThresholdModel import MetricThreshold
 
 from sqlalchemy import func, and_
 import json
 from datetime import datetime
+from flask import jsonify
 
 class socketioClass():
     def get_last_checked_timestamps():
@@ -38,7 +40,7 @@ class socketioClass():
         if not last_checked_timestamps:
             latest_server_logs = query.all()
 
-            print("Latest Server Logs:", latest_server_logs)
+            # print("Latest Server Logs:", latest_server_logs)
 
             # Convert the latest server logs to a list of dictionaries
             for record in latest_server_logs:
@@ -86,7 +88,7 @@ class socketioClass():
             if infrastructure_name not in latest_timestamps or timestamp > latest_timestamps[infrastructure_name]:
                 latest_timestamps[infrastructure_name] = timestamp
 
-        print("Latest Timestamps:", latest_timestamps)
+        # print("Latest Timestamps:", latest_timestamps)
         return latest_timestamps
 
 
@@ -99,3 +101,76 @@ class socketioClass():
         with open('last_checked_timestamps.json', 'w') as file:
             file.write(json.dumps(serialized_timestamps))
 
+    def get_historical_logs(start_time, end_time):
+        # Initialize a list to store historical logs
+        historical_logs_data = []
+
+        # Query to fetch historical logs within the specified time frame
+        query = db.session.query(ServerLogs).filter(ServerLogs.LogDateTime >= start_time, ServerLogs.LogDateTime <= end_time)
+
+        # Fetch historical logs
+        historical_logs = query.all()
+
+        print("Historical Logs:", historical_logs)
+
+        # Convert historical logs to a list of dictionaries
+        for record in historical_logs:
+            log_data = record.__dict__
+            # Convert LogDateTime to string format
+            log_data['LogDateTime'] = str(log_data['LogDateTime'])
+            # Remove unnecessary keys from the dictionary (e.g., '_sa_instance_state')
+            log_data.pop('_sa_instance_state', None)
+            historical_logs_data.append(log_data)
+
+        return historical_logs_data
+    
+    def get_health_status_socket(latest_server_logs):
+        try:
+            if latest_server_logs:
+
+                # Fetch health status thresholds from the database
+                thresholds = MetricThreshold.query.all()
+                threshold_dict = {threshold.Metric: (threshold.CriticalThreshold, threshold.BadThreshold, threshold.WarningThreshold) for threshold in thresholds}
+
+                # List to store health status data
+                health_status_data = []
+
+                # Iterate through each server log
+                for log in latest_server_logs:
+                    infrastructure_name = log['InfrastructureName']
+                    health_status = {}
+
+                    # Determine health status for each metric
+                    for metric in log.keys():
+                        if metric in threshold_dict:
+                            value = log[metric]
+                            critical_threshold, bad_threshold, warning_threshold = threshold_dict[metric]
+
+                            if metric == 'ServerAvailability' or metric == 'ServerNetworkAvailability':
+                                if value == 0:
+                                    health_status[metric] = 'Critical'
+                                else:
+                                    health_status[metric] = 'Healthy'
+                            else:
+                                if value >= critical_threshold:
+                                    health_status[metric] = 'Critical'
+                                elif value >= bad_threshold:
+                                    health_status[metric] = 'Bad'
+                                elif value >= warning_threshold:
+                                    health_status[metric] = 'Warning'
+                                else:
+                                    health_status[metric] = 'Healthy'
+
+                    # Append infrastructure name and its health status to the list
+                    health_status_data.append({'InfrastructureName': infrastructure_name, 'HealthStatus': health_status})
+
+                if health_status_data:
+                    return jsonify({"code": 200, "data": health_status_data}), 200
+                else:
+                    return jsonify({"code": 404, "message": "No server logs available."}), 404
+            else:
+                # Return the response from get_latest_server_logs() directly
+                return jsonify({"code": 404, "message": "No server logs available."}), 404
+        except Exception as e:
+            # Handle any exceptions and return an error response
+            return jsonify({"code": 500, "message": f"An error occurred: {str(e)}"}), 500

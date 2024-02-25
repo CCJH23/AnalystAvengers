@@ -21,15 +21,15 @@
         <v-col cols="1" class="col-content">{{ log.InfrastructureType }}</v-col>
         <v-col cols="2" class="col-content">{{ log.LogDateTime }}</v-col>
         <v-col cols="1" class="col-content">
-          <img v-if="log.ServerAvailability === 0" src="../assets/unhealthy_logo.png" alt="Unhealthy" class="row-logo">
-          <img v-else src="../assets/healthy_logo.png" alt="Healthy" class="row-logo">
+          <img v-if="log.ServerAvailability === 0" src="../assets/unhealthy.png" alt="Unhealthy" class="row-logo">
+          <img v-else src="../assets/healthy.png" alt="Healthy" class="row-logo">
         </v-col>
         <v-col cols="1" class="col-content">{{ (parseFloat(log.ServerCpuUtilisation)).toFixed(5) }}%</v-col>
         <v-col cols="1" class="col-content">{{ (parseFloat(log.ServerDiskUtilisation)).toFixed(5) }}%</v-col>
         <v-col cols="1" class="col-content">{{ (parseFloat(log.ServerMemoryUtilisation)).toFixed(5) }}%</v-col>
         <v-col cols="1" class="col-content">
-          <img v-if="log.ServerNetworkAvailability === 0" src="../assets/unhealthy_logo.png" alt="Unhealthy" class="row-logo">
-          <img v-else src="../assets/healthy_logo.png" alt="Healthy" class="row-logo">
+          <img v-if="log.ServerNetworkAvailability === 0" src="../assets/unhealthy.png" alt="Unhealthy" class="row-logo">
+          <img v-else src="../assets/healthy.png" alt="Healthy" class="row-logo">
         </v-col>
       </v-row>
     </v-container>

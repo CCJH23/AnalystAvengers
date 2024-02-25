@@ -26,7 +26,7 @@ from datetime import datetime
 # INITIALISATIONS OF APP, etc
 #############################
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # initialise web socket
 socketio = SocketIO(app, cors_allowed_origins="*")

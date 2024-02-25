@@ -21,6 +21,7 @@ from flask_cors import CORS
 import time, datetime, json
 from threading import Thread
 from datetime import datetime, timedelta
+import pytz
 
 #############################
 # INITIALISATIONS OF APP, etc
@@ -84,7 +85,7 @@ def poll_database_for_changes():
         # print("Last Checked Timestamps:", last_checked_timestamp)
         while True:
             new_records = socketioClass.query_database_for_new_records(last_checked_timestamp)
-            # print("New Records:", new_records)
+            print("New Records:", new_records)
 
             if new_records:
                 socketio.emit('latest_server_logs', {"code": 200, "data": {"latest_server_logs": new_records}}, namespace='/latestlogs')
@@ -92,7 +93,7 @@ def poll_database_for_changes():
                 # Execute the health check function based on new records
                 response, status_code = socketioClass.get_health_status_socket(new_records)
                 health_data = json.loads(response.data.decode('utf-8'))
-                print("Health Status Response:", health_data['data'])
+                # print("Health Status Response:", health_data['data'])
                 if status_code == 200:
                     socketio.emit('health_status', {"code": 200, "data": health_data['data']}, namespace='/latestlogs')
                 else:
@@ -109,7 +110,9 @@ def get_historical_logs():
     with app.app_context():
         while True:
             # Calculate time frame
-            end_time = datetime.now()
+            gmt = pytz.timezone('GMT')
+            end_time = datetime.now(gmt)
+            # end_time = datetime.now()
             start_time = end_time - timedelta(hours=1)
 
             # Retrieve historical logs for each unique server

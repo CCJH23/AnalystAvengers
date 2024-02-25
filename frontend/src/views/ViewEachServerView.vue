@@ -1,11 +1,9 @@
-
-
 <template>
     <Sidebar/>
     <div class="display">
         <v-container style="background-color:white, max-width: 800px; height:90vh" class="mb-6 mt-8" data-aos="fade-down">
             <h2 style="color: #758d84; margin: 8px; margin-bottom: 40px; margin-top:150px">
-                Server {{ $route.params.infrastructureName }}
+                Name: {{ $route.params.infrastructureName }}
             </h2>
             <div style="margin: 8px;">
                 <div style="background-color: #dddddd; padding: 10px; border: 1px solid black; border-bottom: none;">
@@ -32,26 +30,26 @@
 
                     <v-row>
                         <v-col>
-                            <h4 style="color:rgb(193, 63, 63)">Unvailable</h4>
+                            <h4 style="color:rgb(193, 63, 63)">To edit</h4>
                         </v-col>
                         <v-col>
-                            <p>192.168.1.100</p>
+                            <p>{{ infrastructureType }}</p>
                         </v-col>
                         <v-col>
-                            <p>Singapore</p>
+                            <p>{{ monitoringTool }}</p>
                         </v-col>
                         <v-col>
-                            <p>21st Jan, 09:08:12</p>
+                            <p>{{ infrastructurePriority }}</p>
                         </v-col>
                         <v-col>
-                            <p>Test</p>
+                            <p>{{  infrastructureCountry }}</p>
                         </v-col>
                     </v-row>  
                 </div>
             </div>
             <div style="margin: 8px;margin-top: 60px">
                 <div style="background-color: #dddddd; padding: 10px; border: 1px solid black; border-bottom: none;">
-                    <h3>Error Log</h3>
+                    <h3>Logs</h3>
                 </div>
             
                 <div style="background-color: #ececec; padding: 20px; border: 1px solid black; border-top: none;">
@@ -95,7 +93,7 @@
                 bottom
                 @click="$router.push('/')"
                 >
-                Return to Server Logs
+                Return to Health Status Page    
             </v-btn>
             </v-row>
             
@@ -108,13 +106,33 @@ import Sidebar from "@/components/Navbar/Sidebar.vue";
 import { ref, onMounted } from 'vue';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import { useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
+import axios from 'axios';
 
-const router = useRouter();
-const infrastructureName = ref('');
+const route = useRoute();
+let infrastructureName = ref('');
+let infrastructureCountry = ref('');
+let infrastructurePriority = ref(0);
+let infrastructureType = ref('');
+let monitoringTool = ref('');
 
 onMounted(() => {
-  infrastructureName.value = router.currentRoute.params.infrastructureName;
+    // get data from InfrastructureConfigTest table using infrastructureName
+    infrastructureName = route.params.infrastructureName;
+
+    axios.get(`http://localhost:8000/infrastructureconfig/infrastructure_config/${infrastructureName}/server`)
+    .then(response => {
+        const serverConfigData = response.data.data.server_configuration;
+        infrastructureCountry.value = serverConfigData.InfrastructureCountry;
+        infrastructurePriority.value = serverConfigData.InfrastructurePriority;
+        infrastructureType.value = serverConfigData.InfrastructureType;
+        monitoringTool.value = serverConfigData.MonitoringTool;
+    })
+    .catch(err => {
+        console.log(err);
+    }) 
+
+//   infrastructureName.value = router.currentRoute.params.infrastructureName;
   AOS.init({
     duration: 1600,
   });

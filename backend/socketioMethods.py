@@ -136,8 +136,13 @@ class socketioClass():
                 health_status_data = []
 
                 # Iterate through each server log
+                print("Latest_server_logs are", latest_server_logs)
                 for log in latest_server_logs:
                     infrastructure_name = log['InfrastructureName']
+                    infrastructure_type = log['InfrastructureType']
+                    logDateTime = log['LogDateTime']
+                    overallHealthStatusSet = set()
+                    overallHealthStatus = 'Healthy'
                     health_status = {}
 
                     # Determine health status for each metric
@@ -149,20 +154,33 @@ class socketioClass():
                             if metric == 'ServerAvailability' or metric == 'ServerNetworkAvailability':
                                 if value == 0:
                                     health_status[metric] = 'Critical'
+                                    overallHealthStatusSet.add('Critical')
                                 else:
                                     health_status[metric] = 'Healthy'
+                                    overallHealthStatusSet.add('Healthy')
                             else:
                                 if value >= critical_threshold:
                                     health_status[metric] = 'Critical'
+                                    overallHealthStatusSet.add('Critical')
                                 elif value >= bad_threshold:
                                     health_status[metric] = 'Bad'
+                                    overallHealthStatusSet.add('Bad')
                                 elif value >= warning_threshold:
                                     health_status[metric] = 'Warning'
+                                    overallHealthStatusSet.add('Warning')
                                 else:
                                     health_status[metric] = 'Healthy'
+                                    overallHealthStatusSet.add('Healthy')
+
+                    if 'Critical' in overallHealthStatusSet:
+                        overallHealthStatus = 'Critical'
+                    elif 'Bad' in overallHealthStatusSet:
+                        overallHealthStatus = 'Bad'
+                    elif 'Warning' in overallHealthStatusSet:
+                        overallHealthStatus = 'Warning'
 
                     # Append infrastructure name and its health status to the list
-                    health_status_data.append({'InfrastructureName': infrastructure_name, 'HealthStatus': health_status})
+                    health_status_data.append({'InfrastructureName': infrastructure_name, 'InfrastructureType': infrastructure_type, 'LogDateTime': logDateTime, 'OverallHealthStatus': overallHealthStatus, 'HealthStatus': health_status})
 
                 if health_status_data:
                     return jsonify({"code": 200, "data": health_status_data}), 200

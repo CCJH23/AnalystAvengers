@@ -21,6 +21,7 @@ from flask_cors import CORS
 import time, datetime, json
 from threading import Thread
 from datetime import datetime, timedelta
+import pytz
 
 #############################
 # INITIALISATIONS OF APP, etc
@@ -109,7 +110,9 @@ def get_historical_logs():
     with app.app_context():
         while True:
             # Calculate time frame
-            end_time = datetime.now()
+            gmt = pytz.timezone('GMT')
+            end_time = datetime.now(gmt)
+            # end_time = datetime.now()
             start_time = end_time - timedelta(hours=1)
 
             # Retrieve historical logs for each unique server

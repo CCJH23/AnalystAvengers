@@ -30,7 +30,9 @@
 
                     <v-row>
                         <v-col>
-                            <h4 style="color:rgb(193, 63, 63)">To edit</h4>
+                            <img v-if="OverallHealthStatus == 'Healthy'" src="../assets/healthy.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px; margin-top: 5px;">
+                            <img v-else-if="OverallHealthStatus == 'Warning'" src="../assets/degraded.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px; margin-top: 5px;">
+                            <img v-else src="../assets/unhealthy.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px; margin-top: 5px;">
                         </v-col>
                         <v-col>
                             <p>{{ infrastructureType }}</p>
@@ -52,34 +54,56 @@
                     <h3>Logs</h3>
                 </div>
             
-                <div style="background-color: #ececec; padding: 20px; border: 1px solid black; border-top: none;">
+                <!-- Log Title Row -->
+                <div style="background-color: #ececec; padding: 10px; border: 1px solid black; border-top: none; border-bottom: none;">
                     <v-row>
-                        <v-col cols="3">
-                            <strong>Error Id</strong>
+                        <v-col style="width: 8%;">
+                            <strong>Log Id</strong>
                         </v-col>
-                        <v-col cols="3">
-                            <strong>Error Type</strong>
+                        <v-col style="width: 8%;">
+                            <strong>Log Date</strong>
                         </v-col>
-                        <v-col cols="3">
-                            <strong>Error Started</strong>
+                        <v-col style="width: 14%;">
+                            <strong>ServerAvailability</strong>
                         </v-col>
-                        <v-col cols="3">
-                            <strong>Error Resolved</strong>
+                        <v-col style="width: 14%;">
+                            <strong>ServerCpuUtilisation</strong>
+                        </v-col>
+                        <v-col style="width: 14%;">
+                            <strong>ServerDiskUtilisation</strong>
+                        </v-col>
+                        <v-col style="width: 20%;">
+                            <strong>ServerMemoryUtilisation</strong>
+                        </v-col>
+                        <v-col style="width: 20%;">
+                            <strong>ServerNetworkAvailability</strong>
                         </v-col>
                     </v-row>
+                </div>
 
-                    <v-row>
-                        <v-col>
-                            <p>drs-error012910010</p>
+                <!-- Log Data Rows with Scrollable Content -->
+                <div style="background-color: #ececec; padding: 10px; border: 1px solid black; border-top: none; overflow-y: auto; height: 30vh; scrollbar-width: none;">
+                    <v-row v-for="(log, index) in historicalServerLogs.slice(-20)" :key="index">
+                        <v-col style="width: 8%;">
+                            <p>{{ log.Id }}</p>
                         </v-col>
-                        <v-col>
-                            <p>Network connectivity</p>
+                        <v-col style="width: 8%;">
+                            <p>{{ log.LogDateTime }}</p>
                         </v-col>
-                        <v-col>
-                            <p>21st Jan, 04:08:12</p>
+                        <v-col style="width: 14%;">
+                            <p>{{ log.ServerAvailability }}</p>
                         </v-col>
-                        <v-col>
-                            <p>-</p>
+                        <v-col style="width: 14%;">
+                            <p>{{ (parseFloat(log.ServerCpuUtilisation)).toFixed(3) }}%</p>
+                        </v-col>
+                        <v-col style="width: 14%;">
+                            <p>{{ (parseFloat(log.ServerDiskUtilisation)).toFixed(3) }}%</p>
+                        </v-col>
+                        <v-col style="width: 20%;">
+                            <p>{{ (parseFloat(log.ServerMemoryUtilisation)).toFixed(3) }}%</p>
+                        </v-col>
+                        <v-col style="width: 20%;">
+                            <p>{{ log.ServerNetworkAvailability }}</p>
                         </v-col>
                     </v-row>  
                 </div>
@@ -102,41 +126,86 @@
 </template>
 
 <script setup>
-import Sidebar from "@/components/Navbar/Sidebar.vue";
 import { ref, onMounted } from 'vue';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
+import io from 'socket.io-client';
 
 const route = useRoute();
-let infrastructureName = ref('');
-let infrastructureCountry = ref('');
-let infrastructurePriority = ref(0);
-let infrastructureType = ref('');
-let monitoringTool = ref('');
+const infrastructureName = ref('');
+const infrastructureCountry = ref('');
+const infrastructurePriority = ref(0);
+const infrastructureType = ref('');
+const monitoringTool = ref('');
+const historicalServerLogs = ref([]);
+const healthStatus = ref([]);
+const OverallHealthStatus = ref('');
 
-onMounted(() => {
+// Establish SocketIO connection
+const socket = io('http://localhost:8000/latestlogs');
+  
+socket.on('connect', () => {
+    console.log('SocketIO connection established');
+});
+
+// Listen for the 'historical_server_logs' event
+socket.on('historical_server_logs', (data) => {
+    try {
+        // console.log('Received historical_server_logs event:', data);  
+        const filteredLogs = data.data.historical_server_logs.filter(log => log.InfrastructureName === infrastructureName.value);
+        // console.log('Filtered historical_server_logs:', filteredLogs);
+        historicalServerLogs.value = filteredLogs;
+        // console.log('Filtered historical_server_logs:', historicalServerLogs.value);
+    } catch (error) {
+        console.error('Error in historical_server_logs event listener:', error);
+    }
+});
+
+// Listen for the 'health_status' event
+socket.on('health_status', (data) => {
+    try {
+        console.log('Received health_status event:', data);
+        // Filter health status based on infrastructureName
+        const filteredHealthStatus = data.data.filter(item => item.InfrastructureName === infrastructureName.value);
+        healthStatus.value = filteredHealthStatus;
+        console.log('Filtered health status:', healthStatus.value);
+        OverallHealthStatus.value = healthStatus.value[0].OverallHealthStatus;
+        console.log('OverallHealthStatus:', OverallHealthStatus.value);
+    } catch (error) {
+        console.error('Error in health_status event listener:', error);
+    }
+});
+
+socket.on('error', (error) => {
+    console.error('SocketIO error:', error);
+});
+
+socket.on('disconnect', () => {
+    console.log('SocketIO connection closed');
+});
+
+onMounted(async () => {
     // get data from InfrastructureConfigTest table using infrastructureName
-    infrastructureName = route.params.infrastructureName;
+    infrastructureName.value = route.params.infrastructureName;
 
-    axios.get(`http://localhost:8000/infrastructureconfig/infrastructure_config/${infrastructureName}/server`)
-    .then(response => {
+    try {
+        const response = await axios.get(`http://localhost:8000/infrastructureconfig/infrastructure_config/${infrastructureName.value}/server`);
         const serverConfigData = response.data.data.server_configuration;
         infrastructureCountry.value = serverConfigData.InfrastructureCountry;
         infrastructurePriority.value = serverConfigData.InfrastructurePriority;
         infrastructureType.value = serverConfigData.InfrastructureType;
         monitoringTool.value = serverConfigData.MonitoringTool;
-    })
-    .catch(err => {
-        console.log(err);
-    }) 
+    } catch (error) {
+        console.error('Error fetching infrastructure config:', error);
+    }
 
-//   infrastructureName.value = router.currentRoute.params.infrastructureName;
-  AOS.init({
-    duration: 1600,
-  });
-  AOS.refresh();
+    socket.emit('serverlog');
+    AOS.init({
+        duration: 1600,
+    });
+    AOS.refresh();
 });
 </script>
 

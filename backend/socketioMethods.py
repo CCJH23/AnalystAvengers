@@ -111,7 +111,7 @@ class socketioClass():
         # Fetch historical logs
         historical_logs = query.all()
 
-        print("Historical Logs:", historical_logs)
+        # print("Historical Logs:", historical_logs)
 
         # Convert historical logs to a list of dictionaries
         for record in historical_logs:

@@ -11,45 +11,45 @@
                 </div>
                 <div style="background-color: #ececec; padding: 20px; border: 1px solid black; border-top: none;">
                     <v-row>
-                        <v-col>
+                        <v-col class="col-title">
                             <strong>Status</strong>
                         </v-col>
-                        <v-col>
+                        <v-col class="col-title">
                             <strong>Infrastructure Type</strong>
                         </v-col>
-                        <v-col>
+                        <v-col class="col-title">
                             <strong>Monitoring Tool</strong>
                         </v-col>
-                        <v-col>
+                        <v-col class="col-title">
                             <strong>Infrastructure Priority</strong>
                         </v-col>
-                        <v-col>
+                        <v-col class="col-title">
                             <strong>Infrastructure Country</strong>
                         </v-col>
                     </v-row>
 
                     <v-row>
-                        <v-col>
+                        <v-col class="col-content">
                             <img v-if="OverallHealthStatus == 'Healthy'" src="../assets/healthy.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px; margin-top: 5px;">
                             <img v-else-if="OverallHealthStatus == 'Warning'" src="../assets/degraded.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px; margin-top: 5px;">
                             <img v-else src="../assets/unhealthy.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px; margin-top: 5px;">
                         </v-col>
-                        <v-col>
+                        <v-col class="col-content">
                             <p>{{ infrastructureType }}</p>
                         </v-col>
-                        <v-col>
+                        <v-col class="col-content">
                             <p>{{ monitoringTool }}</p>
                         </v-col>
-                        <v-col>
+                        <v-col class="col-content">
                             <p>{{ infrastructurePriority }}</p>
                         </v-col>
-                        <v-col>
+                        <v-col class="col-content">
                             <p>{{  infrastructureCountry }}</p>
                         </v-col>
                     </v-row>  
                 </div>
             </div>
-            <div style="margin: 8px;margin-top: 60px">
+            <div style="margin: 8px;margin-top: 60px; ">
                 <div style="background-color: #dddddd; padding: 10px; border: 1px solid black; border-bottom: none;">
                     <h3>Logs</h3>
                 </div>
@@ -57,25 +57,25 @@
                 <!-- Log Title Row -->
                 <div style="background-color: #ececec; padding: 10px; border: 1px solid black; border-top: none; border-bottom: none;">
                     <v-row>
-                        <v-col style="width: 8%;">
+                        <v-col class="col-title">
                             <strong>Log Id</strong>
                         </v-col>
-                        <v-col style="width: 8%;">
+                        <v-col class="col-title">
                             <strong>Log Date</strong>
                         </v-col>
-                        <v-col style="width: 14%;">
+                        <v-col class="col-title">
                             <strong>ServerAvailability</strong>
                         </v-col>
-                        <v-col style="width: 14%;">
+                        <v-col class="col-title">
                             <strong>ServerCpuUtilisation</strong>
                         </v-col>
-                        <v-col style="width: 14%;">
+                        <v-col class="col-title">
                             <strong>ServerDiskUtilisation</strong>
                         </v-col>
-                        <v-col style="width: 20%;">
+                        <v-col class="col-title">
                             <strong>ServerMemoryUtilisation</strong>
                         </v-col>
-                        <v-col style="width: 20%;">
+                        <v-col class="col-title">
                             <strong>ServerNetworkAvailability</strong>
                         </v-col>
                     </v-row>
@@ -84,25 +84,25 @@
                 <!-- Log Data Rows with Scrollable Content -->
                 <div style="background-color: #ececec; padding: 10px; border: 1px solid black; border-top: none; overflow-y: auto; height: 30vh; scrollbar-width: none;">
                     <v-row v-for="(log, index) in historicalServerLogs.slice(-20)" :key="index">
-                        <v-col style="width: 8%;">
+                        <v-col class="col-content">
                             <p>{{ log.Id }}</p>
                         </v-col>
-                        <v-col style="width: 8%;">
+                        <v-col class="col-content">
                             <p>{{ log.LogDateTime }}</p>
                         </v-col>
-                        <v-col style="width: 14%;">
+                        <v-col class="col-content">
                             <p>{{ log.ServerAvailability }}</p>
                         </v-col>
-                        <v-col style="width: 14%;">
+                        <v-col class="col-content">
                             <p>{{ (parseFloat(log.ServerCpuUtilisation)).toFixed(3) }}%</p>
                         </v-col>
-                        <v-col style="width: 14%;">
+                        <v-col class="col-content">
                             <p>{{ (parseFloat(log.ServerDiskUtilisation)).toFixed(3) }}%</p>
                         </v-col>
-                        <v-col style="width: 20%;">
+                        <v-col class="col-content">
                             <p>{{ (parseFloat(log.ServerMemoryUtilisation)).toFixed(3) }}%</p>
                         </v-col>
-                        <v-col style="width: 20%;">
+                        <v-col class="col-content">
                             <p>{{ log.ServerNetworkAvailability }}</p>
                         </v-col>
                     </v-row>  
@@ -224,4 +224,12 @@ onMounted(async () => {
   margin-right: auto;
   margin-top: 50px;
 }
+
+.inner-container-1{
+    background-color: white;
+    position: relative; /* To position the label */
+    height: 750px;
+    padding: 50px;
+    margin: 20px 0; /* Add margin between service label and rows */
+  }
 </style>

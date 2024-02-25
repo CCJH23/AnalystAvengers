@@ -37,40 +37,53 @@ class socketioClass():
         # Query to fetch the latest log entry for each server
         query = db.session.query(ServerLogs).join(subquery, and_(ServerLogs.InfrastructureName == subquery.c.InfrastructureName, ServerLogs.LogDateTime == subquery.c.max_logDateTime))
 
-        if not last_checked_timestamps:
-            latest_server_logs = query.all()
+        latest_server_logs = query.all()
 
-            # print("Latest Server Logs:", latest_server_logs)
+        # print("Latest Server Logs:", latest_server_logs)
 
-            # Convert the latest server logs to a list of dictionaries
-            for record in latest_server_logs:
-                log_data = record.__dict__
-                # Convert LogDateTime to string format
-                log_data['LogDateTime'] = str(log_data['LogDateTime'])
-                # Remove unnecessary keys from the dictionary (e.g., '_sa_instance_state')
-                log_data.pop('_sa_instance_state', None)
-                latest_logs_data.append(log_data)
+        # Convert the latest server logs to a list of dictionaries
+        for record in latest_server_logs:
+            log_data = record.__dict__
+            # Convert LogDateTime to string format
+            log_data['LogDateTime'] = str(log_data['LogDateTime'])
+            # Remove unnecessary keys from the dictionary (e.g., '_sa_instance_state')
+            log_data.pop('_sa_instance_state', None)
+            latest_logs_data.append(log_data)
 
-        else: 
-            for server, last_checked_timestamp in last_checked_timestamps.items():
-                # Convert last_checked_timestamp to a datetime object for comparison
-                last_checked_datetime = last_checked_timestamp if last_checked_timestamp else None
+        # if not last_checked_timestamps:
+        #     latest_server_logs = query.all()
 
-                # Filter the query based on the last checked timestamp for the current server
-                query_filtered = query.filter(ServerLogs.InfrastructureName == server)
-                if last_checked_datetime:
-                    query_filtered = query_filtered.filter(ServerLogs.LogDateTime > last_checked_datetime)
+        #     # print("Latest Server Logs:", latest_server_logs)
 
-                latest_server_logs = query_filtered.all()
+        #     # Convert the latest server logs to a list of dictionaries
+        #     for record in latest_server_logs:
+        #         log_data = record.__dict__
+        #         # Convert LogDateTime to string format
+        #         log_data['LogDateTime'] = str(log_data['LogDateTime'])
+        #         # Remove unnecessary keys from the dictionary (e.g., '_sa_instance_state')
+        #         log_data.pop('_sa_instance_state', None)
+        #         latest_logs_data.append(log_data)
 
-                # Convert the latest server logs to a list of dictionaries
-                for record in latest_server_logs:
-                    log_data = record.__dict__
-                    # Convert LogDateTime to string format
-                    log_data['LogDateTime'] = str(log_data['LogDateTime'])
-                    # Remove unnecessary keys from the dictionary (e.g., '_sa_instance_state')
-                    log_data.pop('_sa_instance_state', None)
-                    latest_logs_data.append(log_data)
+        # else: 
+        #     for server, last_checked_timestamp in last_checked_timestamps.items():
+        #         # Convert last_checked_timestamp to a datetime object for comparison
+        #         last_checked_datetime = last_checked_timestamp if last_checked_timestamp else None
+
+        #         # Filter the query based on the last checked timestamp for the current server
+        #         query_filtered = query.filter(ServerLogs.InfrastructureName == server)
+        #         if last_checked_datetime:
+        #             query_filtered = query_filtered.filter(ServerLogs.LogDateTime > last_checked_datetime)
+
+        #         latest_server_logs = query_filtered.all()
+
+        #         # Convert the latest server logs to a list of dictionaries
+        #         for record in latest_server_logs:
+        #             log_data = record.__dict__
+        #             # Convert LogDateTime to string format
+        #             log_data['LogDateTime'] = str(log_data['LogDateTime'])
+        #             # Remove unnecessary keys from the dictionary (e.g., '_sa_instance_state')
+        #             log_data.pop('_sa_instance_state', None)
+        #             latest_logs_data.append(log_data)
 
         return latest_logs_data
 

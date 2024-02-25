@@ -26,20 +26,29 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import LoginView from '../views/LoginView.vue';
 import RegisterView from '../views/RegisterView.vue';
-import ViewAllView from '../views/ViewAllView.vue';
 import ViewEachView from '../views/ViewEachView.vue'
 import TopNavbar from '@/components/Navbar/TopNavbar.vue';
 import DashboardView from '../views/DashboardView.vue';
-import Sidebar from '@/components/Navbar/Sidebar.vue';
 import sockettest from '../views/sockettest.vue';
+import ViewEachServerView from "../views/ViewEachServerView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'homeview',
       component: HomeView,
+    },
+    {
+      path: '/vieweachserver',
+      name: 'vieweachserver',
+      component: ViewEachServerView,
+    },
+    {
+      path: '/vieweachserver/:infrastructureName',
+      name: 'ViewEachServer',
+      component: ViewEachServerView
     },
     {
       path: '/dashboard',
@@ -55,11 +64,6 @@ const router = createRouter({
       path: '/register',
       name: 'register',
       component: RegisterView,
-    },
-    {
-      path: '/viewall',
-      name: 'viewall',
-      component: ViewAllView,
     },
     {
       path: '/vieweach',

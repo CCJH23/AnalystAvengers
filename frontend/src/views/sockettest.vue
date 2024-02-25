@@ -7,24 +7,30 @@
   <v-container fluid class="bottom-container">
     <v-container class="fluid inner-container-1">
       <v-row style="margin-bottom:18px" class="service-label">
-        <v-col cols="2" class="col-title">Infrastructure Name</v-col>
-        <v-col cols="1" class="col-title">Infrastructure Type</v-col>
-        <v-col cols="2" class="col-title">Log Date Time</v-col>
-        <v-col cols="1" class="col-title">Server Availability</v-col>
-        <v-col cols="1" class="col-title">Server CPU Utilization</v-col>
-        <v-col cols="1" class="col-title">Server Disk Utilization</v-col>
-        <v-col cols="1" class="col-title">Server Memory Utilization</v-col>
-        <v-col cols="1" class="col-title">Server Network Availability</v-col>
+        <v-col class="col-title">Infrastructure Name</v-col>
+        <v-col class="col-title">Infrastructure Type</v-col>
+        <v-col class="col-title">Log Date Time</v-col>
+        <v-col class="col-title">Server Availability</v-col>
+        <v-col class="col-title">Server CPU Utilization</v-col>
+        <v-col class="col-title">Server Disk Utilization</v-col>
+        <v-col class="col-title">Server Memory Utilization</v-col>
+        <v-col class="col-title">Server Network Availability</v-col>
       </v-row>
       <v-row class="row-with-border" v-for="(log, index) in latestServerLogs" :key="index">
         <v-col cols="2" class="col-content">{{ log.InfrastructureName }}</v-col>
         <v-col cols="1" class="col-content">{{ log.InfrastructureType }}</v-col>
         <v-col cols="2" class="col-content">{{ log.LogDateTime }}</v-col>
-        <v-col cols="1" class="col-content">{{ log.ServerAvailability }}</v-col>
+        <v-col cols="1" class="col-content">
+          <img v-if="log.ServerAvailability === 0" src="../assets/unhealthy.png" alt="Unhealthy" class="row-logo">
+          <img v-else src="../assets/healthy.png" alt="Healthy" class="row-logo">
+        </v-col>
         <v-col cols="1" class="col-content">{{ (parseFloat(log.ServerCpuUtilisation)).toFixed(5) }}%</v-col>
         <v-col cols="1" class="col-content">{{ (parseFloat(log.ServerDiskUtilisation)).toFixed(5) }}%</v-col>
         <v-col cols="1" class="col-content">{{ (parseFloat(log.ServerMemoryUtilisation)).toFixed(5) }}%</v-col>
-        <v-col cols="1" class="col-content">{{ log.ServerNetworkAvailability }}</v-col>
+        <v-col cols="1" class="col-content">
+          <img v-if="log.ServerNetworkAvailability === 0" src="../assets/unhealthy.png" alt="Unhealthy" class="row-logo">
+          <img v-else src="../assets/healthy.png" alt="Healthy" class="row-logo">
+        </v-col>
       </v-row>
     </v-container>
   </v-container>
@@ -76,9 +82,14 @@
 
 
 <style>
-.col-title, .col-content{
+.col-content{
   font-size: 14px; /* Adjust the font size as needed */
   text-align: center; /* Center-align the text */
+}
+
+.col-title{
+  font-size: 15px; /* Adjust the font size as needed */
+  text-align: center;
 }
 
 .top-container {
@@ -93,16 +104,15 @@
   display: flex;
   flex-direction: column; /* Stack items vertically */
   align-items: center;
-  height: 100vh; /* Span entire viewport height */
   background-color: rgb(239, 244, 246);
+  padding-top: 20px; /* Add padding to reduce gap */
+  padding-bottom: 20px; /* Add padding to reduce gap */
 }
 
 .inner-container-1 {
   background-color: white;
   position: relative; /* To position the label */
   max-width: 100%; /* Ensure container does not exceed screen width */
-  padding: 20px; /* Adjust padding as needed */
-  margin: 20px auto; /* Center container horizontally and add margin */
   overflow-x: auto; /* Allow horizontal scrolling if content overflows */
 }
 

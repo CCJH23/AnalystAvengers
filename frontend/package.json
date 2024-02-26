@@ -13,6 +13,7 @@
     "@vueuse/core": "^10.8.0",
     "all": "^0.0.0",
     "aos": "^2.3.4",
+    "axios": "^1.6.7",
     "firebase": "^10.6.0",
     "leaflet": "^1.9.4",
     "material-design-icons-iconfont": "*",

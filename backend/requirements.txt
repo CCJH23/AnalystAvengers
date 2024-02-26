@@ -19,3 +19,4 @@ bidict==0.23.1
 python-engineio==4.9.0
 python-socketio==5.11.1
 simple-websocket==1.0.0
+pytz==2024.1

@@ -7,6 +7,8 @@ class MappingGraphClass():
         # Retrieve all records from the MappingGraph table
         records = MappingGraphModel.query.all()
 
+        # Store retrieved records in array format
+        mapped_records = [{"ParentEdge": record.ParentEdge, "ChildEdge": record.ChildEdge} for record in records]
         # List to store mappings
-        return records
+        return mapped_records
     

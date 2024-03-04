@@ -14,7 +14,7 @@ let userGeoMarker: leaflet.Marker;
 onMounted(() => {
   map = leaflet
   .map('map')
-  // .setView([userMarker.value.latitude, userMarker.value.longitude], 13);
+  .setView([userMarker.value.latitude, userMarker.value.longitude], 13);
 
   leaflet
   .tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -54,18 +54,18 @@ watchEffect(() => {
         
       }
 
-//       userGeoMarker = leaflet
-//       .marker([userMarker.value.latitude, userMarker.value.longitude])
-//       .addTo(map)
-//       .bindPopup('User Marker');
+      userGeoMarker = leaflet
+      .marker([userMarker.value.latitude, userMarker.value.longitude])
+      .addTo(map)
+      .bindPopup('User Marker');
 
-//       map.setView([userMarker.value.latitude, userMarker.value.longitude], 13)
+map.setView([userMarker.value.latitude, userMarker.value.longitude], 13)
       
-// //       // changes marker color
-      // const el = userGeoMarker.getElement();
-      // if(el){
-      //   el.style.filter = "hue-rotate(120deg)";
-      // }
+//       // changes marker color
+      const el = userGeoMarker.getElement();
+      if(el){
+        el.style.filter = "hue-rotate(120deg)";
+      }
   }
 })
 </script>

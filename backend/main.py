@@ -86,7 +86,7 @@ def poll_database_for_changes():
         last_checked_timestamp = socketioClass.get_last_checked_timestamps()
         # print("Last Checked Timestamps:", last_checked_timestamp)
         while True:
-            new_records = socketioClass.query_database_for_new_records(last_checked_timestamp)
+            new_records = socketioClass.query_database_for_new_records()
             # print("New Records:", new_records)
 
             if new_records:

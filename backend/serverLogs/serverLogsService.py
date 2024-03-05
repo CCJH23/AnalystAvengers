@@ -1,5 +1,5 @@
 from models.serverLogsModel import ServerLogs
-from db import db
+from db import db 
 from flask import jsonify
 from sqlalchemy import func, and_
 

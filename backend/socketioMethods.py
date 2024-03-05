@@ -22,10 +22,10 @@ class socketioClass():
             return {}
 
 
-    def query_database_for_new_records(last_checked_timestamps):
+    def query_database_for_new_records():
         # Convert last_checked_timestamps to a dictionary if it's not already
-        if not isinstance(last_checked_timestamps, dict):
-            return []
+        # if not isinstance(last_checked_timestamps, dict):
+        #     return []
 
         # print("Last Checked Timestamps:", last_checked_timestamps)
 
@@ -85,6 +85,7 @@ class socketioClass():
         #             log_data.pop('_sa_instance_state', None)
         #             latest_logs_data.append(log_data)
 
+        print("Latest Logs Data:", latest_logs_data)
         return latest_logs_data
 
 
@@ -149,7 +150,7 @@ class socketioClass():
                 health_status_data = []
 
                 # Iterate through each server log
-                print("Latest_server_logs are", latest_server_logs)
+                # print("Latest_server_logs are", latest_server_logs)
                 for log in latest_server_logs:
                     infrastructure_name = log['InfrastructureName']
                     infrastructure_type = log['InfrastructureType']

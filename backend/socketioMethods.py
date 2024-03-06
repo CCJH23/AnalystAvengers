@@ -145,6 +145,7 @@ class socketioClass():
                 # Fetch health status thresholds from the database
                 thresholds = MetricThreshold.query.all()
                 threshold_dict = {threshold.Metric: (threshold.CriticalThreshold, threshold.BadThreshold, threshold.WarningThreshold) for threshold in thresholds}
+                print("Thresholds:", threshold_dict)
 
                 # List to store health status data
                 health_status_data = []

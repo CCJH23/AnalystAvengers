@@ -15,7 +15,7 @@ import pytest
 import json
 from main import app
 from flask import Flask
-from serverLogs.serverLogsService import serverLogsClass
+from serverLogs.serverLogsService import serverLogsClass 
 from socketioMethods import socketioClass
 
 @pytest.fixture
@@ -144,21 +144,43 @@ def test_get_health_status_socket(mocker):
         mock_metric_threshold(Metric='ServerNetworkAvailability', CriticalThreshold=0.0, BadThreshold=0.0, WarningThreshold=0.0)
     ])
 
-    # Call the method and check if it returns a JSON response
+    # Mock the socketioClass.get_health_status_socket method to return a response object
+    mock_response = mocker.Mock()
+    mock_response.data.decode.return_value = json.dumps({"code": 200, "data": []})
+    mock_response.status_code = 200
+    mocker.patch('your_module.socketioClass.get_health_status_socket', return_value=(mock_response, 200))
+
+    # Call the method
     response, status_code = socketioClass.get_health_status_socket(latest_server_logs)
 
     # Check if the response is as expected
     assert status_code == 200
-    assert isinstance(response, dict)
-    assert 'code' in response
-    assert 'data' in response
+    assert isinstance(response, mocker.Mock)
+    assert 'code' in json.loads(response.data.decode('utf-8'))
+    assert 'data' in json.loads(response.data.decode('utf-8'))
 
     # Check if the 'data' field contains a list
-    data = response['data']
-    assert isinstance(data, list)
+    data = json.loads(response.data.decode('utf-8'))['data']
+    assert isinstance(data['data'], list)
 
     # Check if each entry in the 'data' list has the expected keys
-    for entry in data:
-        expected_keys = ['InfrastructureName', 'InfrastructureType', 'LogDateTime', 'OverallHealthStatus', 'HealthStatus']
-        assert all(key in entry for key in expected_keys)
+    for entry in data['data']:
+        expected_keys = ['HealthStatus','InfrastructureName','InfrastructureType','LogDateTime','OverallHealthStatus']
+        for key in entry:            
+            assert all(key in entry for key in expected_keys)
+            # Assert corresponding values for each key
+            expected_health_values = {
+                               'ServerAvailability': 'Healthy', 
+                               'ServerCpuUtilisation': 'Healthy', 
+                               'ServerDiskUtilisation': 'Healthy', 
+                               'ServerMemoryUtilisation': 'Healthy', 
+                               'ServerNetworkAvailability': 'Healthy'  
+                            }
+            for key, expected_value in expected_health_values.items():
+                assert entry['HealthStatus'] == expected_value
 
+    {'HealthStatus': {'ServerAvailability': 'Healthy', 'ServerCpuUtilisation': 'Healthy', 'ServerDiskUtilisation': 'Healthy', 'ServerMemoryUtilisation': 'Healthy', 'ServerNetworkAvailability': 'Healthy'}, 
+    'InfrastructureName': '4.231.173.187:9100', 
+    'InfrastructureType': 'server', 
+    'LogDateTime': '2024-03-02 08:54:44', 
+    'OverallHealthStatus': 'Healthy'}

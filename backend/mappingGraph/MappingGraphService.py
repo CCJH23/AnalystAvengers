@@ -8,6 +8,6 @@ class MappingGraphClass():
         records = MappingGraphModel.query.all()
 
         # Store retrieved records in array format
-        mapped_records = [{"ParentEdge": record.ParentEdge, "ChildEdge": record.ChildEdge} for record in records]
+        mapped_records = [{"ParentEdge": record.ParentEdge, "ChildEdge": record.ChildEdge, "ServiceGroup": record.ServiceGroup} for record in records]
         # List to store mappings
         return mapped_records

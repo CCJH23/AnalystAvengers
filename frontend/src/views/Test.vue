@@ -34,7 +34,7 @@ export default {
     async mounted(){
         await this.getServersStatus()
         this.mapping = await this.getMapping()
-        this.allPaths = await this.getTopologyMapping(this.mapping, 1)
+        this.allPaths = await this.getTopologyMapping(this.mapping, this.group)
     },
     data(){
         return {
@@ -44,6 +44,7 @@ export default {
             serversSvg: new Set(),
             uniqueConnections: new Set(),
             message: '',
+            group: 1,
         }
     },
     methods: {
@@ -53,7 +54,6 @@ export default {
             socket.on('health_status', (data) => {
                 var servers = data.data
                 for (var server of servers){
-                    console.log(server)
                     var infrastructureName = server.InfrastructureName
                     var overallHealthStatus = server.OverallHealthStatus
                     this.servers[infrastructureName] = overallHealthStatus
@@ -61,12 +61,16 @@ export default {
             })
         },
         async getInfrastructureConfigData(servers){
-            console.log(servers)
             var infrastructureName = null
             for (var server in servers){
                 infrastructureName = server
                 const response = await axios.get(`http://52.138.212.155:8000/infrastructureconfig/infrastructure_config/${infrastructureName}`);
-                console.log(response.data.data)
+                const serverConfigData = response.data.data.server_configuration
+                const groupId = serverConfigData['GroupId']
+                const country = serverConfigData['InfrastructureCountry']
+                if (groupId == this.group){
+                    console.log(infrastructureName, groupId, country)
+                }
             }
         },
         async getMapping(){

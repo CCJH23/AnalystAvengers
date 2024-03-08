@@ -19,6 +19,7 @@ export default {
             if (Object.keys(newValue).length > 0) {
             // Update the chart when servers changes and is not empty
             this.createTopologyChart(this.allPaths, this.servers);
+            this.getInfrastructureConfigData(this.servers)
             this.message = "Change Detected in Topology Mapping"
             setTimeout(() => {
                 this.message = ""
@@ -52,11 +53,21 @@ export default {
             socket.on('health_status', (data) => {
                 var servers = data.data
                 for (var server of servers){
+                    console.log(server)
                     var infrastructureName = server.InfrastructureName
                     var overallHealthStatus = server.OverallHealthStatus
                     this.servers[infrastructureName] = overallHealthStatus
                 }
             })
+        },
+        async getInfrastructureConfigData(servers){
+            console.log(servers)
+            var infrastructureName = null
+            for (var server in servers){
+                infrastructureName = server
+                const response = await axios.get(`http://52.138.212.155:8000/infrastructureconfig/infrastructure_config/${infrastructureName}`);
+                console.log(response.data.data)
+            }
         },
         async getMapping(){
             try {

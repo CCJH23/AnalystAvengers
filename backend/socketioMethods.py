@@ -1,6 +1,7 @@
 from db import db
 from models.serverLogsModel import ServerLogs
 from models.metricThresholdModel import MetricThreshold
+from models.problemLogsModel import ProblemLogs
 
 from sqlalchemy import func, and_
 import json
@@ -149,7 +150,7 @@ class socketioClass():
                 health_status_data = []
 
                 # Iterate through each server log
-                print("Latest_server_logs are", latest_server_logs)
+                # print("Latest_server_logs are", latest_server_logs)
                 for log in latest_server_logs:
                     infrastructure_name = log['InfrastructureName']
                     infrastructure_type = log['InfrastructureType']
@@ -205,3 +206,22 @@ class socketioClass():
         except Exception as e:
             # Handle any exceptions and return an error response
             return jsonify({"code": 500, "message": f"An error occurred: {str(e)}"}), 500
+        
+    def get_problem_logs():
+
+        problem_logs_data = []
+
+        # try:
+        problemLogs = ProblemLogs.query.all()
+        for record in problemLogs:
+            log_data = record.__dict__
+            # Convert LogDateTime to string format
+            log_data['LogDateTime'] = str(log_data['LogDateTime'])
+            # Remove unnecessary keys from the dictionary (e.g., '_sa_instance_state')
+            log_data.pop('_sa_instance_state', None)
+            problem_logs_data.append(log_data)
+
+        print("Problem_logs_data:", problem_logs_data)
+        
+        return problem_logs_data
+

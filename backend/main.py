@@ -9,6 +9,7 @@ from serverLogs.serverLogsController import serverLogsBp
 from webAppLogs.webAppLogsController import webAppLogsBp
 from databaseLogs.databaseLogsController import databaseLogsBp
 from metricThreshold.metricThresholdController import metricThresholdBp
+from problemLogs.problemLogsController import problemLogsBp
 from socketioMethods import socketioClass
 
 # external imports
@@ -43,6 +44,7 @@ app.register_blueprint(serverLogsBp)
 app.register_blueprint(webAppLogsBp)
 app.register_blueprint(databaseLogsBp)
 app.register_blueprint(metricThresholdBp)
+app.register_blueprint(problemLogsBp)
 
 ################
 # DEFAULT ROUTES
@@ -93,7 +95,7 @@ def poll_database_for_changes():
                 # Execute the health check function based on new records
                 response, status_code = socketioClass.get_health_status_socket(new_records)
                 health_data = json.loads(response.data.decode('utf-8'))
-                print("Health Status Response:", health_data['data'])
+                # print("Health Status Response:", health_data['data'])
                 if status_code == 200:
                     socketio.emit('health_status', {"code": 200, "data": health_data['data']}, namespace='/latestlogs')
                 else:
@@ -124,6 +126,20 @@ def get_historical_logs():
 
             time.sleep(10)
 
+# Function to retrieve all problem logs 
+def get_problem_logs():
+    with app.app_context():
+        while True:
+            # retrieve all problem logs
+            problem_logs = socketioClass.get_problem_logs()
+
+            print("ProblemLogs:", problem_logs)
+
+            # Emit problem logs to frontend
+            socketio.emit('problem_logs', {"code": 200, "data": {"problem_logs": problem_logs}}, namespace='/latestlogs')
+
+            time.sleep(10)
+
 
 @socketio.on('serverlog', namespace='/latestlogs')
 def handle_server_logs_connect():
@@ -140,6 +156,11 @@ if __name__ == "__main__":
     historical_logs_thread = Thread(target=get_historical_logs)
     historical_logs_thread.daemon = True
     historical_logs_thread.start()
+
+    # Start the problem logs retrieval process in a separate thread
+    problem_logs_thread = Thread(target=get_problem_logs)
+    problem_logs_thread.daemon = True
+    problem_logs_thread.start()
 
     # Start the Flask-SocketIO server
     socketio.run(app, port=8000, debug=True)

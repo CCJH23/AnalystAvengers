@@ -31,6 +31,7 @@ import TopNavbar from '@/components/Navbar/TopNavbar.vue';
 import DashboardView from '../views/DashboardView.vue';
 import sockettest from '../views/sockettest.vue';
 import ViewEachServerView from "../views/ViewEachServerView.vue";
+import alertsockettest from "../views/alertsockettest.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -74,6 +75,11 @@ const router = createRouter({
       path: '/sockettest',
       name: 'sockettest',
       component: sockettest,
+    },
+    {
+      path: '/alertsockettest',
+      name: 'alertsockettest',
+      component: alertsockettest,
     },
     {
       // Redirect any unknown routes to the login page

@@ -167,22 +167,7 @@ legend.addTo(map);
 
 info.addTo(map);
 
-// fetchIpAddressAndInitializeMap();
-
 });
-
-// async function fetchIpAddressAndInitializeMap() {
-//   try {
-//     const response = await axios.get('https://ipinfo.io/json');
-//     const { loc } = response.data;
-//     const [latitude, longitude] = loc.split(',').map(parseFloat);
-
-//     const marker = leaflet.marker([latitude, longitude]).addTo(map);
-//     marker.bindPopup('Your Location');
-//   } catch (error) {
-//     console.error('Error resolving IP address:', error);
-//   }
-// }
 
 watchEffect(() => {
   if (coords.value.latitude !== Number.POSITIVE_INFINITY && coords.value.longitude !== Number.POSITIVE_INFINITY) {

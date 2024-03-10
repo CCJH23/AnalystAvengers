@@ -1,9 +1,16 @@
+<script setup>
+    import Sidebar from "@/components/Navbar/Sidebar.vue";
+    import MapComponent from "@/components/MapComponent.vue";
+</script>
+
 <template>
   <div>
     <h1>Test Page</h1>
-    <div class="message" v-if="this.message.length > 0">{{ message }}</div>
-    <div v-show="!Object.keys(servers).length > 0">Loading Topology Map...</div>
+    <div class="message" v-if="message.length > 0">{{ message }}</div>
+    <div v-show="!Object.keys(servers).length > 0">Loading Topology Diagram...</div>
     <svg v-show="Object.keys(servers).length > 0" ref="chart"></svg>
+    <div v-show="!buildMap">Loading Map...</div>
+    <MapComponent v-if="buildMap" :mapData="mapComponentData" :servers="servers" :group="group"></MapComponent>
   </div>
 </template>
 
@@ -13,6 +20,9 @@ import axios from 'axios';
 import io from 'socket.io-client';
 
 export default {
+    components: {
+        MapComponent,
+    },
     watch: {
     servers: {
         handler: function (newValue) {
@@ -45,7 +55,12 @@ export default {
             uniqueConnections: new Set(),
             message: '',
             group: 1,
+            mapComponentData: {},
+            buildMap: false,
         }
+    },
+    created(){
+        this.group = Number(this.$route.params.serviceGroup)
     },
     methods: {
         getServersStatus(){
@@ -69,9 +84,12 @@ export default {
                 const groupId = serverConfigData['GroupId']
                 const country = serverConfigData['InfrastructureCountry']
                 if (groupId == this.group){
-                    console.log(infrastructureName, groupId, country)
+                    this.mapComponentData[infrastructureName] = {}
+                    this.mapComponentData[infrastructureName]['groupId'] = groupId
+                    this.mapComponentData[infrastructureName]['country'] = country
                 }
             }
+            this.buildMap = true
         },
         async getMapping(){
             try {

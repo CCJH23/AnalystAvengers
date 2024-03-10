@@ -5,7 +5,7 @@
 
 <template>
   <div>
-    <h1>Test Page</h1>
+    <h1>Service Group {{ group }} Details</h1>
     <div class="message" v-if="message.length > 0">{{ message }}</div>
     <div v-show="!Object.keys(servers).length > 0">Loading Topology Diagram...</div>
     <svg v-show="Object.keys(servers).length > 0" ref="chart"></svg>

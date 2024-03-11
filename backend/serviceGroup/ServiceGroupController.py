@@ -6,7 +6,7 @@ serviceGroupBp = Blueprint('serviceGroup', __name__, url_prefix='/serviceGroup')
 
 # initialise route and service to call
 # Get all records from the InfrastructureConfig table
-@mappingGraphBp.route('/', methods=['GET'])
+@serviceGroupBp.route('/', methods=['GET'])
 def get_infrastructure_config():
     try:
         response = ServiceGroupClass.get_service_group()

@@ -108,7 +108,6 @@ export default {
           const response = await axios.get(`http://52.138.212.155:8000/infrastructureconfig/infrastructure_config/${infrastructureName}`);
           const serverConfigData = response.data.data.server_configuration
           const groupId = serverConfigData['GroupId']
-          console.log(server)
           // Check if groupId exists in serviceGroups, if not, add it
           if (!this.serviceGroups.hasOwnProperty(groupId)) {
             this.serviceGroups[groupId] = {}

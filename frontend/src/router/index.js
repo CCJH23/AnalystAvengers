@@ -31,6 +31,8 @@ import TopNavbar from '@/components/Navbar/TopNavbar.vue';
 import DashboardView from '../views/DashboardView.vue';
 import sockettest from '../views/sockettest.vue';
 import ViewEachServerView from "../views/ViewEachServerView.vue";
+import ViewServiceGroup from '../views/ViewServiceGroup.vue'
+import ViewAllView from '../views/ViewAllView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -39,6 +41,16 @@ const router = createRouter({
       path: '/',
       name: 'homeview',
       component: HomeView,
+    },
+    {
+      path: '/viewall',
+      name: 'viewall',
+      component: ViewAllView,
+    },
+    {
+      path: '/view/:serviceGroup',
+      name: 'view',
+      component: ViewServiceGroup
     },
     {
       path: '/vieweachserver',

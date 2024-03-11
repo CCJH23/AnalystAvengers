@@ -44,7 +44,7 @@
   const latestServerLogs = ref([]);
   
   // Establish SocketIO connection
-  const socket = io('http://localhost:8000/latestlogs');
+  const socket = io('http://52.138.212.155:8000/latestlogs');
   
   socket.on('connect', () => {
     console.log('SocketIO connection established');

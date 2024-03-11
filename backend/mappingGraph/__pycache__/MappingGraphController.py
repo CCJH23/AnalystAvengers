@@ -13,4 +13,3 @@ def get_infrastructure_config():
         return response
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-

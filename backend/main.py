@@ -9,6 +9,7 @@ from webAppLogs.webAppLogsController import webAppLogsBp
 from databaseLogs.databaseLogsController import databaseLogsBp
 from metricThreshold.metricThresholdController import metricThresholdBp
 from mappingGraph.MappingGraphController import mappingGraphBp
+from serviceGroup.ServiceGroupController import serviceGroupBp
 from socketioMethods import socketioClass
 
 # external imports
@@ -44,6 +45,8 @@ app.register_blueprint(webAppLogsBp)
 app.register_blueprint(databaseLogsBp)
 app.register_blueprint(metricThresholdBp)
 app.register_blueprint(mappingGraphBp)
+app.register_blueprint(serviceGroupBp)
+
 
 ################
 # DEFAULT ROUTES
@@ -144,4 +147,5 @@ if __name__ == "__main__":
     historical_logs_thread.start()
 
     # Start the Flask-SocketIO server
-    socketio.run(app, host='0.0.0.0', port=8000, debug=True)
+    socketio.run(app, host='0.0.0.0', allow_unsafe_werkzeug=True, port=8000, debug=True)
+

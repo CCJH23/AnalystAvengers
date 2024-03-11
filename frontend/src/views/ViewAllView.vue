@@ -14,7 +14,7 @@
             <v-col cols="2"></v-col>
           </v-row>
           <v-row class="row-with-border" v-for="(serviceGroup, idx) in Object.keys(serviceGroups)" :key="idx" data-aos="fade-down">
-            <v-col cols="2">{{ serviceGroup }}</v-col>
+            <v-col cols="2">{{ serviceGroupNames[serviceGroup] }}</v-col>
             <v-col cols="4" style="text-align: center; color: green;">{{ serviceGroups[serviceGroup]['Healthy'] }}</v-col>
             <v-col cols="4" style="text-align: center; color: red;">{{ serviceGroups[serviceGroup]['Critical'] }}</v-col>
             <v-col cols="2">
@@ -69,11 +69,13 @@ export default {
   data(){
     return {
         servers: {},
-        serviceGroups: {}
+        serviceGroups: {},
+        serviceGroupNames: {},
     }
   },
   async mounted(){
     await this.getServersStatus()
+    await this.getServiceGroups()
   },
   watch: {
     servers: {
@@ -88,7 +90,7 @@ export default {
     },
   },
   methods: {
-     getServersStatus(){
+    getServersStatus(){
       // Establish SocketIO connection
       const socket = io('http://52.138.212.155:8000/latestlogs');
       socket.on('health_status', (data) => {
@@ -99,6 +101,12 @@ export default {
               this.servers[infrastructureName] = overallHealthStatus
           }
       })
+    },
+    async getServiceGroups(){
+      const response = await axios.get('http://52.138.212.155:8000/serviceGroup')
+      for (var service of response.data){
+        this.serviceGroupNames[service.ServiceId] = service.ServiceName
+      }
     },
     async getInfrastructureConfigData(servers){
       var infrastructureName = null

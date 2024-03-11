@@ -4,46 +4,48 @@
 </script>
 
 <template>
-    <Sidebar/>
-  <div data-aos="fade-down">
-    <div class="center">
-        <div class="content">
-          <div class="titles">Service Group {{ group }} Details</div>
-          <div class="message" v-if="message.length > 0">{{ message }}</div>
-          <div v-show="!Object.keys(servers).length > 0">Loading Topology Diagram...</div>
-          <svg v-show="Object.keys(servers).length > 0" ref="chart" class="svg-container"></svg>
-          <div v-show="!buildMap">Loading Map...</div>
+    <div>
+        <Sidebar/>
+        <div data-aos="fade-down">
+            <div class="center">
+                <div class="content">
+                <div class="titles">Service Group {{ group }} Details</div>
+                <div class="message" v-if="message.length > 0">{{ message }}</div>
+                <div v-show="!Object.keys(servers).length > 0">Loading Topology Diagram...</div>
+                <svg v-show="Object.keys(servers).length > 0" ref="chart" class="svg-container"></svg>
+                <div v-show="!buildMap">Loading Map...</div>
+                </div>
+            </div>
+            <MapComponent v-if="buildMap" :mapData="mapComponentData" :servers="servers" :group="group"></MapComponent>
+            <v-row style="margin-top:10px; margin-left:70px">
+                <v-col cols="4">
+                </v-col>
+                <v-col>
+                <img src="../assets/healthy.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px; margin-top: 5px;">
+                <span>Healthy</span>
+                </v-col>          
+                <v-col>
+                <img src="../assets/degraded.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px;">Degraded
+                </v-col>
+                <v-col>
+                <img src="../assets/unhealthy.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px;">Unhealthy
+                </v-col>
+                <v-col cols="4">
+                </v-col>
+            </v-row>
+            <v-row>
+                <v-btn
+                color="#c5dad2"
+                class="buttonstyle"
+                dark
+                right
+                @click="$router.push('/')"
+                >
+                Return to Home 
+            </v-btn>
+            </v-row>
         </div>
-      </div>
-    <MapComponent v-if="buildMap" :mapData="mapComponentData" :servers="servers" :group="group"></MapComponent>
-    <v-row style="margin-top:10px; margin-left:70px">
-        <v-col cols="4">
-        </v-col>
-        <v-col>
-          <img src="../assets/healthy.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px; margin-top: 5px;">
-          <span>Healthy</span>
-        </v-col>          
-        <v-col>
-          <img src="../assets/degraded.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px;">Degraded
-        </v-col>
-        <v-col>
-          <img src="../assets/unhealthy.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px;">Unhealthy
-        </v-col>
-        <v-col cols="4">
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-btn
-        color="#c5dad2"
-        class="buttonstyle"
-        dark
-        right
-        @click="$router.push('/')"
-        >
-        Return to Home 
-    </v-btn>
-    </v-row>
-  </div>
+    </div>
 </template>
 
 <script>
@@ -95,6 +97,9 @@ export default {
         this.group = Number(this.$route.params.serviceGroup)
     },
     methods: {
+        svgClickEvent(d){
+            this.$router.push(`/vieweachserver/${d.name}`);
+        },
         getServersStatus(){
             // Establish SocketIO connection
             const socket = io('http://52.138.212.155:8000/latestlogs');
@@ -236,8 +241,10 @@ export default {
             svg.style('border', '1px solid black');
             // Load image dynamically
             const serverImageURL = await import('@/assets/server.png');
+            
+            console.log(this.serversSvg)
             // Append server images with the correct path
-            const serverImages = svg
+            svg
             .selectAll('image')
             .data(this.serversSvg)
             .enter()
@@ -247,6 +254,9 @@ export default {
             .attr('xlink:href', serverImageURL.default)
             .attr('width', 40)
             .attr('height', 40)
+            .on('click', (event, d) => {
+                this.svgClickEvent(d);
+            })
             // Append server names
             svg
             .selectAll('text')
@@ -257,7 +267,7 @@ export default {
             .attr('y', (d) => d.y + 30)
             .text((d) => d.name)
             .style('text-anchor', 'middle')
-            .style('font-size', '12px');
+            .style('font-size', '12px')
             // Convert set to array for easy manipulation
             const serversArray = Array.from(this.serversSvg);
             // Append connections

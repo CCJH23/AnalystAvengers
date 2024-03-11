@@ -74,6 +74,10 @@ export default {
     window.removeEventListener('resize', this.createTopologyChart);
   },
   methods: {
+    handleSvgClick(data) {
+      // Your logic for handling SVG click goes here
+      console.log('SVG Clicked:', data);
+    },
     getServersStatus(){
       // Establish SocketIO connection
       const socket = io('http://52.138.212.155:8000/latestlogs');
@@ -277,20 +281,20 @@ export default {
       const serverImageURL = await import('@/assets/server.png');
       // Append server images with the correct path
       const serverImages = svg
-    .selectAll('image')
-    .data(servers)
-    .enter()
-    .append('image')
-    .attr('x', (d) => d.x - 20)
-    .attr('y', (d) => d.y - 20)
-    .attr('xlink:href', serverImageURL.default)
-    .attr('width', 40)
-    .attr('height', 40)
-    .style('filter', (d) => {
-      // Apply different colors or styles based on health status
-      const status = summarisedServerStatus[d.name];
-      return status === 'Healthy' ? 'none' : 'url(#grayscale)';
-    });
+      .selectAll('image')
+      .data(servers)
+      .enter()
+      .append('image')
+      .attr('x', (d) => d.x - 20)
+      .attr('y', (d) => d.y - 20)
+      .attr('xlink:href', serverImageURL.default)
+      .attr('width', 40)
+      .attr('height', 40)
+      .style('filter', (d) => {
+        // Apply different colors or styles based on health status
+        const status = summarisedServerStatus[d.name];
+        return status === 'Healthy' ? 'none' : 'url(#grayscale)';
+      })
     // Append server names
     svg
       .selectAll('text')
@@ -301,7 +305,7 @@ export default {
       .attr('y', (d) => d.y + 30)
       .text((d) => d.name)
       .style('text-anchor', 'middle')
-      .style('font-size', '12px');
+      .style('font-size', '12px')
 
     // Append server status text
     svg
@@ -314,18 +318,18 @@ export default {
       .text((d) => summarisedServerStatus[d.name] || 'Status not available')
       .style('text-anchor', 'middle')
       .style('font-size', '10px')
-      .style('fill', (d) => (summarisedServerStatus[d.name] === 'Healthy' ? 'green' : 'red'));
+      .style('fill', (d) => (summarisedServerStatus[d.name] === 'Healthy' ? 'green' : 'red'))
     svg.selectAll('line')
-          .data(connections)
-          .enter()
-          .append('line')
-          .attr('x1', (d) => servers.find((s) => s.id === d.source).x)
-          .attr('y1', (d) => servers.find((s) => s.id === d.source).y)
-          .attr('x2', (d) => servers.find((s) => s.id === d.target).x)
-          .attr('y2', (d) => servers.find((s) => s.id === d.target).y)
-          .style('stroke', 'black')
-          .style('stroke-dasharray', '5,5')  // Adjust the values for dashed pattern
-          .style('stroke-width', 3);  // Adjust the value for line thickness
+      .data(connections)
+      .enter()
+      .append('line')
+      .attr('x1', (d) => servers.find((s) => s.id === d.source).x)
+      .attr('y1', (d) => servers.find((s) => s.id === d.source).y)
+      .attr('x2', (d) => servers.find((s) => s.id === d.target).x)
+      .attr('y2', (d) => servers.find((s) => s.id === d.target).y)
+      .style('stroke', 'black')
+      .style('stroke-dasharray', '5,5')
+      .style('stroke-width', 3)
     },
   },
 };

@@ -12,7 +12,7 @@
         </v-toolbar-title>
         <v-spacer></v-spacer>
         <span class="mr-14">
-            <v-btn text to=""><v-icon>mdi-home</v-icon>&nbsp;&nbsp;Home</v-btn>
+            <v-btn text to="/"><v-icon>mdi-home</v-icon>&nbsp;&nbsp;Home</v-btn>
             |
             <v-btn text to="/dashboard"><v-icon>mdi-view-dashboard</v-icon>&nbsp;&nbsp;Dashboard</v-btn>
         </span>

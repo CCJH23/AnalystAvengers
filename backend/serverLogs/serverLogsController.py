@@ -14,7 +14,7 @@ def get_server_logs():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
-# Get records of each entry by unique ServerName, from the ServerLogs table with the latest Timestamp
+# Get records of each entry by unique InfrastructureName, from the ServerLogs table with the latest Timestamp
 @serverLogsBp.route('/server_logs/latest', methods=['GET'])
 def get_latest_server_logs():
     try:

@@ -28,7 +28,7 @@ class serverLogsClass():
             # Return JSON response indicating no server logs are available
             return jsonify({"code": 404, "message": "There are no server logs available."}), 404
 
-    # Get records of each entry by unique ServerName, from the ServerLogs table with the latest Timestamp
+    # Get records of each entry by unique InfrastructureName, from the ServerLogs table with the latest Timestamp
     def get_latest_server_logs():
         try:
             # Subquery to get the maximum timestamp for each server

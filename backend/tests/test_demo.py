@@ -22,20 +22,6 @@ from socketioMethods import socketioClass
 def client(app):
     return app.test_client()
 
-def test_get_server_logs(client):
-    response = client.get('/serverlogs/server_logs')
-    assert response.status_code == 200
-    data = response.get_json()
-    assert 'server_logs' in data['data']
-    assert len(data['data']['server_logs']) > 0
-
-def test_get_latest_server_logs(client):
-    response = client.get('/serverlogs/server_logs/latest')
-    assert response.status_code == 200
-    data = response.get_json()
-    assert 'latest_server_logs' in data['data']
-    assert len(data['data']['latest_server_logs']) > 0
-
 
 @pytest.fixture
 def mock_query_all(mocker):

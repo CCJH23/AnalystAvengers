@@ -105,7 +105,6 @@ class socketioClass():
         # print("Latest Timestamps:", latest_timestamps)
         return latest_timestamps
 
-
     def update_last_checked_timestamps(timestamps):
         # Convert datetime objects to string format
         serialized_timestamps = {server: timestamp.isoformat() for server, timestamp in timestamps.items()}

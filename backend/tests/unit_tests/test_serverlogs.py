@@ -8,7 +8,7 @@ def client():
     with app.test_client() as client:
         yield client
 
-def test_get_server_logs_success(client):
+def test_get_serverlogs_records_success(client):
     response = client.get('/serverlogs/server_logs')
     data = response.json
 
@@ -18,7 +18,7 @@ def test_get_server_logs_success(client):
     assert len(data['data']['server_logs']) > 0
 
 
-def test_get_latest_server_logs_success(client):
+def test_get_latest_serverlogs_records_success(client):
     response = client.get('/serverlogs/server_logs/latest')
     print(response)
     data = response.json

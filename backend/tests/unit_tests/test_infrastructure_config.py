@@ -9,7 +9,7 @@ def client():
     with app.test_client() as client:
         yield client
 
-def test_get_infrastructureconfig_records(client):
+def test_get_infrastructureconfig_records_sucess(client):
     response = client.get('/infrastructureconfig/infrastructure_config')
     response_data = response.json
 
@@ -23,7 +23,7 @@ def test_get_infrastructureconfig_records(client):
     assert "MonitoringTool" in response_data["data"]["server_configurations"][0]
 
 
-def test_get_infrastructureconfig_records_by_name(client):
+def test_get_infrastructureconfig_records_by_name_sucess(client):
     infrastructureName = "Monitoring Linux Machine 1"
     urlEncodedInfrastructureName = urllib.parse.quote(infrastructureName)
     response = client.get('/infrastructureconfig/infrastructure_config/{}'.format(urlEncodedInfrastructureName))

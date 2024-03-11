@@ -8,7 +8,7 @@ def client():
     with app.test_client() as client:
         yield client
 
-def test_get_metric_threshold(client):
+def test_get_metricthreshold_records_success(client):
     # fetch metric threshold from MetricThreshold table to see if correct response
     response = client.get('/metricthreshold/metricthresholds')
     response_data = response.json

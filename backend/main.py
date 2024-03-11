@@ -10,6 +10,7 @@ from webAppLogs.webAppLogsController import webAppLogsBp
 from databaseLogs.databaseLogsController import databaseLogsBp
 from metricThreshold.metricThresholdController import metricThresholdBp
 from mappingGraph.MappingGraphController import mappingGraphBp
+from serviceGroup.ServiceGroupController import serviceGroupBp
 from socketioMethods import socketioClass
 
 # external imports
@@ -45,6 +46,7 @@ app.register_blueprint(webAppLogsBp)
 app.register_blueprint(databaseLogsBp)
 app.register_blueprint(metricThresholdBp)
 app.register_blueprint(mappingGraphBp)
+app.register_blueprint(serviceGroupBp)
 
 ################
 # DEFAULT ROUTES

@@ -23,10 +23,10 @@ class socketioClass():
             return {}
 
 
-    def query_database_for_new_records(last_checked_timestamps):
+    def query_database_for_new_records():
         # Convert last_checked_timestamps to a dictionary if it's not already
-        if not isinstance(last_checked_timestamps, dict):
-            return []
+        # if not isinstance(last_checked_timestamps, dict):
+        #     return []
 
         # print("Last Checked Timestamps:", last_checked_timestamps)
 
@@ -221,7 +221,7 @@ class socketioClass():
             log_data.pop('_sa_instance_state', None)
             problem_logs_data.append(log_data)
 
-        print("Problem_logs_data:", problem_logs_data)
+        # print("Problem_logs_data:", problem_logs_data)
         
-        return problem_logs_data
+        return problem_logs_data 
 

@@ -1,7 +1,7 @@
 <template>
     <Sidebar/>
     <div class="display">
-        <v-container style="background-color:white, max-width: 800px; height:90vh" class="mb-6 mt-8" data-aos="fade-down">
+        <v-container style="background-color:white; padding-bottom: 10vh;" class="mb-6 mt-8" data-aos="fade-down" >
             <h2 style="color: #758d84; margin: 8px; margin-bottom: 40px; margin-top:60px">
                 Name: {{ $route.params.infrastructureName }}
             </h2>
@@ -51,6 +51,38 @@
             </div>
             <div style="margin: 8px;margin-top: 60px; ">
                 <div style="background-color: #dddddd; padding: 10px; border: 1px solid black; border-bottom: none;">
+                    <h3>Problems</h3>
+                </div>
+
+                <div style="background-color: #ececec; padding: 10px; border: 1px solid black; border-top: none;"> 
+                    <!-- if  OverallHealthStatus == 'Healthy' , display string "Server is running as per expected" -->
+                    <!-- else display 3 columns, Log Date Time, Problem Name, Problem Severity -->
+                    <v-row v-if="OverallHealthStatus == 'Healthy'">
+                        <v-col class="col-content">
+                            <p>Infrastructure working as expected. No problem logs</p>
+                        </v-col>
+                    </v-row>
+                    <v-row v-if="OverallHealthStatus != 'Healthy'">
+                        <v-col cols="3" class="col-title">
+                            <strong>Log Date Time</strong>
+                        </v-col>
+                        <v-col cols="6" class="col-title">
+                            <strong>Problem Name</strong>
+                        </v-col>
+                        <v-col cols="3" class="col-title">
+                            <strong>Problem Severity</strong>
+                        </v-col>
+                    </v-row>
+                    <v-row v-if="OverallHealthStatus != 'Healthy'" class="row-with-border" v-for="(log, index) in problemLogs" :key="index">
+                        <v-col cols="3" class="col-content">{{ log.LogDateTime }}</v-col>
+                        <v-col cols="6" class="col-content">{{ log.ProblemName }}</v-col>
+                        <v-col cols="3" class="col-content">{{ log.ProblemSeverity }}</v-col>
+                    </v-row>
+                </div>
+            </div>
+
+            <div style="margin: 8px;margin-top: 60px; ">
+                <div style="background-color: #dddddd; padding: 10px; border: 1px solid black; border-bottom: none;">
                     <h3>Logs</h3>
                 </div>
             
@@ -90,7 +122,7 @@
                             class="text-center"
                         ></v-progress-circular>
                     </v-row>
-                    <v-row v-for="(log, index) in historicalServerLogs.slice(-20)" :key="index">
+                    <v-row v-for="(log, index) in historicalServerLogs.slice(-20).reverse()" :key="index">
                         <v-col class="col-content">
                             <p>{{ log.Id }}</p>
                         </v-col>
@@ -150,6 +182,7 @@ const monitoringTool = ref('');
 const historicalServerLogs = ref([]);
 const healthStatus = ref([]);
 const OverallHealthStatus = ref('');
+const problemLogs = ref([]);
 
 // Establish SocketIO connection
 const socket = io('http://localhost:8000/latestlogs');
@@ -185,6 +218,29 @@ socket.on('health_status', (data) => {
         console.error('Error in health_status event listener:', error);
     }
 });
+
+
+socket.on('problem_logs', (data) => {
+    try {
+        if (data && data.data && Array.isArray(data.data.problem_logs)) {
+        const filteredProblemLogs = data.data.problem_logs
+            .filter(log => log.InfrastructureName === infrastructureName.value)
+            .sort((a, b) => new Date(b.LogDateTime) - new Date(a.LogDateTime));
+
+        if (filteredProblemLogs.length > 0) {
+            const latestLog = filteredProblemLogs[0];
+            problemLogs.value = [latestLog];
+        } else {
+            problemLogs.value = [];
+        }
+        } else {
+        console.error('Error: problem_logs event data is not in the expected format.');
+        }
+    } catch (error) {
+        console.error('Error in problem_logs event listener:', error);
+    }
+    });
+
 
 socket.on('error', (error) => {
     console.error('SocketIO error:', error);
@@ -223,7 +279,7 @@ onMounted(async () => {
   flex-direction: column; /* Stack items vertically */
   align-items: center;
   justify-content: center; /* Center items horizontally */
-  height: 100vh; /* Span entire viewport height */
+  height: 150vh; /* Span entire viewport height */
   background-color: rgb(239, 244, 246);
 }
 

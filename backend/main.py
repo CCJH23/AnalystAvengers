@@ -83,10 +83,10 @@ def check_db_connection():
 # Function to continuously poll the database for changes
 def poll_database_for_changes():
     with app.app_context():
-        last_checked_timestamp = socketioClass.get_last_checked_timestamps()
+        # last_checked_timestamp = socketioClass.get_last_checked_timestamps()
         # print("Last Checked Timestamps:", last_checked_timestamp)
         while True:
-            new_records = socketioClass.query_database_for_new_records(last_checked_timestamp)
+            new_records = socketioClass.query_database_for_new_records()
             # print("New Records:", new_records)
 
             if new_records:
@@ -133,7 +133,7 @@ def get_problem_logs():
             # retrieve all problem logs
             problem_logs = socketioClass.get_problem_logs()
 
-            print("ProblemLogs:", problem_logs)
+            # print("ProblemLogs:", problem_logs)
 
             # Emit problem logs to frontend
             socketio.emit('problem_logs', {"code": 200, "data": {"problem_logs": problem_logs}}, namespace='/latestlogs')

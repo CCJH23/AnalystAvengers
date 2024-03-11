@@ -39,7 +39,7 @@
   // Listen for the 'problem_logs' event
   socket.on('problem_logs', (data) => {
     try {
-      console.log('Received problem_logs event:', data);  
+      // console.log('Received problem_logs event:', data);  
       problemLogs.value = data.data.problem_logs;
       console.log('Received problem logs:', problemLogs.value);
     } catch (error) {

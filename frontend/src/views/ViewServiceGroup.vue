@@ -4,13 +4,45 @@
 </script>
 
 <template>
-  <div>
-    <h1>Service Group {{ group }} Details</h1>
-    <div class="message" v-if="message.length > 0">{{ message }}</div>
-    <div v-show="!Object.keys(servers).length > 0">Loading Topology Diagram...</div>
-    <svg v-show="Object.keys(servers).length > 0" ref="chart"></svg>
-    <div v-show="!buildMap">Loading Map...</div>
+    <Sidebar/>
+  <div data-aos="fade-down">
+    <div class="center">
+        <div class="content">
+          <div class="titles">Service Group {{ group }} Details</div>
+          <div class="message" v-if="message.length > 0">{{ message }}</div>
+          <div v-show="!Object.keys(servers).length > 0">Loading Topology Diagram...</div>
+          <svg v-show="Object.keys(servers).length > 0" ref="chart" class="svg-container"></svg>
+          <div v-show="!buildMap">Loading Map...</div>
+        </div>
+      </div>
     <MapComponent v-if="buildMap" :mapData="mapComponentData" :servers="servers" :group="group"></MapComponent>
+    <v-row style="margin-top:10px; margin-left:70px">
+        <v-col cols="4">
+        </v-col>
+        <v-col>
+          <img src="../assets/healthy.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px; margin-top: 5px;">
+          <span>Healthy</span>
+        </v-col>          
+        <v-col>
+          <img src="../assets/degraded.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px;">Degraded
+        </v-col>
+        <v-col>
+          <img src="../assets/unhealthy.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px;">Unhealthy
+        </v-col>
+        <v-col cols="4">
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-btn
+        color="#c5dad2"
+        class="buttonstyle"
+        dark
+        right
+        @click="$router.push('/')"
+        >
+        Return to Home 
+    </v-btn>
+    </v-row>
   </div>
 </template>
 
@@ -266,15 +298,15 @@ export default {
 <style scoped>
 svg {
   border: 1px solid black;
+  width: 550px;
 }
 div {
   margin: 10px;
 }
 .buttonstyle {
-  float: right;
-  margin-top: 50px;
-  margin-bottom: 10px;
-  font-size: 10px;
+  margin-top: 0px;
+  margin-bottom: 24px;
+  font-size: 16px;
 }
 .message {
   background-color: lightblue;
@@ -285,4 +317,18 @@ div {
   border-radius: 10px;
   text-align: center;
 }
+.titles{
+    color: #a7c6ba;
+    font-size: 20px;
+    font-weight: bold;
+}
+.center {
+    display: flex;
+    justify-content: center; /* Horizontally center the content */
+    align-items: center; /* Vertically center the content */
+  }
+  
+  .content {
+    text-align: center; /* Optionally, center the text within the content */
+  }
 </style>

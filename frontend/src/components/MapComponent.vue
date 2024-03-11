@@ -34,6 +34,7 @@ export default {
     }).addTo(this.map);
 
     // Record server status and countries in service group
+    var dummyCountriesData = JSON.parse(JSON.stringify(this.countriesData));
     for (var server in this.servers){
       var serverStatus = this.servers[server]
       var mapData = this.mapData[server]
@@ -41,11 +42,11 @@ export default {
         var country = mapData['country']
         var groupId = mapData['groupId']
         if (groupId == this.group){
-          if (this.countriesData.hasOwnProperty(country)){
-            var countryProperties = this.countriesData[country]['properties']
+          if (dummyCountriesData.hasOwnProperty(country)){
+            var countryProperties = dummyCountriesData[country]['properties']
             serverStatus = serverStatus.toLowerCase()
             countryProperties[serverStatus] += 1
-            this.countriesColorData['features'].push(this.countriesData[country])
+            this.countriesColorData['features'].push(dummyCountriesData[country])
           } else {
             console.log(`${country} does not exist`)
           }

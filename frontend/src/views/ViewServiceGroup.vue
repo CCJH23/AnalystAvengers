@@ -241,8 +241,6 @@ export default {
             svg.style('border', '1px solid black');
             // Load image dynamically
             const serverImageURL = await import('@/assets/server.png');
-            
-            console.log(this.serversSvg)
             // Append server images with the correct path
             svg
             .selectAll('image')

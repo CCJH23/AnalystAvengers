@@ -5,8 +5,8 @@ import leaflet from "leaflet";
 import { onMounted, watchEffect } from "vue";
 import { useGeolocation } from "@vueuse/core";
 import { userMarker, nearbyMarkers} from "@/stores/mapStore";
-import {countriesData} from "@/components/countries";
 import axios from 'axios';
+import countriesData from "./countries";
 
 const { coords } = useGeolocation();
 

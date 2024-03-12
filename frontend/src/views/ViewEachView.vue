@@ -1,6 +1,8 @@
 <template>
-  <Sidebar/>
+  <div>
+    <Sidebar/>
   <v-container class="big-container">
+    <TopologyMapping currentServer="20.123.40.22"></TopologyMapping>
       <v-menu>
           <template v-slot:activator="{ props }">
             <v-btn
@@ -66,11 +68,13 @@
           </div>
       </div>
   </v-container>
+  </div>
 </template> 
 
 <script setup>
 import { ref } from 'vue';
 import Sidebar from "@/components/Navbar/Sidebar.vue";
+import TopologyMapping from '@/views/TopologyMapping.vue';
 
 const selectedService = ref('');
 const items = [

@@ -1,16 +1,15 @@
 from flask import jsonify, Blueprint
-from mappingGraph.MappingGraphService import MappingGraphClass
+from serviceGroup.ServiceGroupService import ServiceGroupClass
 
 # initialise blueprint
-mappingGraphBp = Blueprint('mappingGraph', __name__, url_prefix='/mappingGraph')
+serviceGroupBp = Blueprint('serviceGroup', __name__, url_prefix='/serviceGroup')
 
 # initialise route and service to call
 # Get all records from the InfrastructureConfig table
-@mappingGraphBp.route('/', methods=['GET'])
+@serviceGroupBp.route('/', methods=['GET'])
 def get_infrastructure_config():
     try:
-        response = MappingGraphClass.get_mapping_graph()
+        response = ServiceGroupClass.get_service_group()
         return response
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-

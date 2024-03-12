@@ -58,9 +58,6 @@
                 <div style="background-color: #ececec; padding: 10px; border: 1px solid black; border-top: none; border-bottom: none;">
                     <v-row>
                         <v-col class="col-title">
-                            <strong>Log Id</strong>
-                        </v-col>
-                        <v-col class="col-title">
                             <strong>Log Date</strong>
                         </v-col>
                         <v-col class="col-title">
@@ -91,9 +88,6 @@
                         ></v-progress-circular>
                     </v-row>
                     <v-row v-for="(log, index) in historicalServerLogs.slice(-20)" :key="index">
-                        <v-col class="col-content">
-                            <p>{{ log.Id }}</p>
-                        </v-col>
                         <v-col class="col-content">
                             <p>{{ log.LogDateTime }}</p>
                         </v-col>
@@ -152,7 +146,7 @@ const healthStatus = ref([]);
 const OverallHealthStatus = ref('');
 
 // Establish SocketIO connection
-const socket = io('http://localhost:8000/latestlogs');
+const socket = io('http://52.138.212.155:8000/latestlogs');
   
 socket.on('connect', () => {
     console.log('SocketIO connection established');
@@ -197,9 +191,8 @@ socket.on('disconnect', () => {
 onMounted(async () => {
     // get data from InfrastructureConfigTest table using infrastructureName
     infrastructureName.value = route.params.infrastructureName;
-
     try {
-        const response = await axios.get(`http://localhost:8000/infrastructureconfig/infrastructure_config/${infrastructureName.value}`);
+        const response = await axios.get(`http://52.138.212.155:8000/infrastructureconfig/infrastructure_config/${infrastructureName.value}`);
         const serverConfigData = response.data.data.server_configuration;
         infrastructureCountry.value = serverConfigData.InfrastructureCountry;
         infrastructurePriority.value = serverConfigData.InfrastructurePriority;

@@ -3,21 +3,21 @@
 #########
 # internal imports
 from db import db
-from models.serverLogsModel import ServerLogs
 from infrastructureConfig.infrastructureConfigController import infrastructureConfigBp
 from serverLogs.serverLogsController import serverLogsBp
 from webAppLogs.webAppLogsController import webAppLogsBp
 from databaseLogs.databaseLogsController import databaseLogsBp
 from metricThreshold.metricThresholdController import metricThresholdBp
 from mappingGraph.MappingGraphController import mappingGraphBp
+from serviceGroup.ServiceGroupController import serviceGroupBp
 from socketioMethods import socketioClass
 
 # external imports
 from dotenv import load_dotenv
 import os
 from flask import Flask
-from flask_socketio import SocketIO, emit
-from sqlalchemy import text, func, and_ #func is a module provided by SQLAlchemy that allows usage of SQL functions in queries. and_ is a logical operator provided by SQLAlchemy that constructs an SQL AND clause.
+from flask_socketio import SocketIO
+from sqlalchemy import text
 from flask_cors import CORS
 import time, datetime, json
 from threading import Thread
@@ -45,6 +45,8 @@ app.register_blueprint(webAppLogsBp)
 app.register_blueprint(databaseLogsBp)
 app.register_blueprint(metricThresholdBp)
 app.register_blueprint(mappingGraphBp)
+app.register_blueprint(serviceGroupBp)
+
 
 ################
 # DEFAULT ROUTES
@@ -65,6 +67,7 @@ def check_db_connection():
     try:
         # Obtain a connection from the engine
         conn = db.engine.connect()
+        print("CONN", conn)
         
         # Execute a simple query against one of the tables
         query = text("SELECT TOP 1 * FROM dbo.InfrastructureConfig ORDER BY ServerName")
@@ -84,10 +87,9 @@ def check_db_connection():
 def poll_database_for_changes():
     with app.app_context():
         last_checked_timestamp = socketioClass.get_last_checked_timestamps()
-        # print("Last Checked Timestamps:", last_checked_timestamp)
+
         while True:
-            new_records = socketioClass.query_database_for_new_records(last_checked_timestamp)
-            # print("New Records:", new_records)
+            new_records = socketioClass.query_database_for_new_serverlogs_records()
 
             if new_records:
                 socketio.emit('latest_server_logs', {"code": 200, "data": {"latest_server_logs": new_records}}, namespace='/latestlogs')
@@ -95,32 +97,33 @@ def poll_database_for_changes():
                 # Execute the health check function based on new records
                 response, status_code = socketioClass.get_health_status_socket(new_records)
                 health_data = json.loads(response.data.decode('utf-8'))
+
+                print("<--------------------Health Status Response-------------------------")
                 print("Health Status Response:", health_data['data'])
+                print("---------------------Health Status Response------------------------>")
+
                 if status_code == 200:
                     socketio.emit('health_status', {"code": 200, "data": health_data['data']}, namespace='/latestlogs')
                 else:
                     print("Health Status Check Failed. Status Code:", status_code)
 
             last_checked_timestamp = socketioClass.get_latest_timestamp(new_records)
-            # print("Last Checked Timestamps:", last_checked_timestamp)
             socketioClass.update_last_checked_timestamps(last_checked_timestamp)
             
             time.sleep(10)  # Adjust the interval as needed
 
 # Function to retrieve historical logs for each unique server within the past hour
-def get_historical_logs():
+def get_historical_serverlogs_records_socketio():
     with app.app_context():
         while True:
             # Calculate time frame
             gmt = pytz.timezone('GMT')
             end_time = datetime.now(gmt)
-            # end_time = datetime.now()
-            start_time = end_time - timedelta(hours=1)
+            start_time = end_time - timedelta(minutes=2)
 
             # Retrieve historical logs for each unique server
-            historical_logs = socketioClass.get_historical_logs(start_time, end_time)
+            historical_logs = socketioClass.get_historical_serverlogs_records(start_time, end_time)
 
-            # print("Historical Logs:", historical_logs)
             # Emit historical logs to frontend
             socketio.emit('historical_server_logs', {"code": 200, "data": {"historical_server_logs": historical_logs}}, namespace='/latestlogs')
 
@@ -139,9 +142,10 @@ if __name__ == "__main__":
     polling_thread.start()
 
     # Start the historical logs retrieval process in a separate thread
-    historical_logs_thread = Thread(target=get_historical_logs)
+    historical_logs_thread = Thread(target=get_historical_serverlogs_records_socketio)
     historical_logs_thread.daemon = True
     historical_logs_thread.start()
 
     # Start the Flask-SocketIO server
-    socketio.run(app, host='0.0.0.0', port=8000, debug=True)
+    socketio.run(app, host='0.0.0.0', allow_unsafe_werkzeug=True, port=8000, debug=True)
+

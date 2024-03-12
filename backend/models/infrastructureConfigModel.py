@@ -9,4 +9,5 @@ class InfrastructureConfig(db.Model):
     MonitoringTool = db.Column(db.String(255))
     InfrastructurePriority = db.Column(db.Integer)
     InfrastructureCountry = db.Column(db.String(255))
+    GroupId = db.Column(db.Integer)
 

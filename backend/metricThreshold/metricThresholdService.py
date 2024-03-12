@@ -3,6 +3,16 @@ from serverLogs.serverLogsController import get_latest_server_logs
 from flask import jsonify
 
 class metricThresholdClass():
+    # fetch metric threshold from MetricThreshold table to see if correct response
+    def get_metric_thresholds():
+        try:
+            thresholds = MetricThreshold.query.all()
+            threshold_dict = {threshold.Metric: (threshold.CriticalThreshold, threshold.BadThreshold, threshold.WarningThreshold) for threshold in thresholds}
+            return threshold_dict
+        except Exception as e:
+            # Handle any exceptions and return an error response
+            return jsonify({"code": 500, "message": f"An error occurred: {str(e)}"}), 500
+
     # Check the health status of the servers for server_logs table
     def get_health_status():
         try:
@@ -17,9 +27,8 @@ class metricThresholdClass():
 
                 latest_server_logs = json_data['data']['latest_server_logs']
 
-                # Fetch health status thresholds from the database
-                thresholds = MetricThreshold.query.all()
-                threshold_dict = {threshold.Metric: (threshold.CriticalThreshold, threshold.BadThreshold, threshold.WarningThreshold) for threshold in thresholds}
+                # Fetch health status thresholds using get_metric_thresholds() function
+                threshold_dict = metricThresholdClass.get_metric_thresholds()
 
                 # List to store health status data
                 health_status_data = []

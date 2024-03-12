@@ -11,3 +11,4 @@ class MappingGraphClass():
         mapped_records = [{"ParentEdge": record.ParentEdge, "ChildEdge": record.ChildEdge, "ServiceGroup": record.ServiceGroup} for record in records]
         # List to store mappings
         return mapped_records
+

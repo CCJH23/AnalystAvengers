@@ -186,6 +186,7 @@ watchEffect(() => {
       .bindPopup('User Marker');
 
       map.setView([52.1326, 5.2913], 3)
+
       
 //       // changes marker color
       const el = userGeoMarker.getElement();

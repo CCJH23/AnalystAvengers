@@ -7,3 +7,4 @@ class MappingGraph(db.Model):
     ParentEdge = db.Column(db.String(255), nullable=False)
     ChildEdge = db.Column(db.String(255), nullable=False)
     ServiceGroup = db.Column(db.Integer, nullable=False)
+

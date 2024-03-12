@@ -58,9 +58,6 @@
                 <div style="background-color: #ececec; padding: 10px; border: 1px solid black; border-top: none; border-bottom: none;">
                     <v-row>
                         <v-col class="col-title">
-                            <strong>Log Id</strong>
-                        </v-col>
-                        <v-col class="col-title">
                             <strong>Log Date</strong>
                         </v-col>
                         <v-col class="col-title">
@@ -91,9 +88,6 @@
                         ></v-progress-circular>
                     </v-row>
                     <v-row v-for="(log, index) in historicalServerLogs.slice(-20)" :key="index">
-                        <v-col class="col-content">
-                            <p>{{ log.Id }}</p>
-                        </v-col>
                         <v-col class="col-content">
                             <p>{{ log.LogDateTime }}</p>
                         </v-col>

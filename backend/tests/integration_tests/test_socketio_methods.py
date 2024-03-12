@@ -46,7 +46,7 @@ def test_get_historical_serverlogs_records_sucess():
         # Calculate time frame
         gmt = pytz.timezone('GMT')
         end_time = datetime.now(gmt)
-        start_time = end_time - timedelta(minutes=2)
+        start_time = end_time - timedelta(days=2)
 
         historical_serverlogs_records = socketioClass.get_historical_serverlogs_records(start_time, end_time)
         first_record = historical_serverlogs_records[0]

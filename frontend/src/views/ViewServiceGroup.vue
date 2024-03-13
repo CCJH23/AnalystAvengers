@@ -369,7 +369,7 @@ export default {
 <style scoped>
 svg {
   border: 1px solid black;
-  width: 100%;
+  width: 30%;
   height: 400px;
 }
 div {

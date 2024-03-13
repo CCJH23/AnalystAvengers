@@ -14,7 +14,7 @@ def get_infrastructure_config():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# Query data from infrastructure_config table by infrastructure name and infrastructure type
+# Query data from infrastructure_config table by infrastructure name
 @infrastructureConfigBp.route('/infrastructure_config/<infrastructure_name>', methods=['GET'])
 def get_infrastructure_config_by_infra_name(infrastructure_name):
     try:

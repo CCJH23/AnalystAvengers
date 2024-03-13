@@ -5,35 +5,9 @@
 
 <template>
     <Sidebar/>
-    <div class="mx-6 mt-6" style="background-color: rgb(239, 244, 246)" data-aos="fade-down">
+    <div class="ml-8 mx-6 mt-8" style="background-color: rgb(239, 244, 246)" data-aos="fade-down">
         <v-row>
-            <v-col class="mini-container" cols="2.5" data-aos="fade-down">
-                <!-- First Mini Column -->
-                <span class="mini-container-header">Uptime</span>
-                <span class="mini-container-content1">99.99%</span>
-                <span class="mini-container-content2">Monitoring frequency: <span class="highlight-text">continuously</span></span>
-            </v-col>
-            <v-col class="mini-container" cols="2.5" data-aos="fade-down">
-                <!-- Second Mini Column -->
-                <span class="mini-container-header">Average CPU Usage</span>
-                <span class="mini-container-content1">20%</span>
-                <span class="mini-container-content2">Monitoring frequency: <span class="highlight-text">every 5 min</span></span>
-            </v-col>
-            <v-col class="mini-container" cols="2.5" data-aos="fade-down">
-                <!-- Third Mini Column -->
-                <span class="mini-container-header">Average Memory Usage</span>
-                <span class="mini-container-content1">40%</span>
-                <span class="mini-container-content2">Monitoring frequency: <span class="highlight-text">every 5 min</span></span>
-            </v-col>
-            <v-col class="mini-container" cols="2.5" data-aos="fade-down">
-                <!-- Fourth Mini Column -->
-                <span class="mini-container-header">Average Network Throughput</span>
-                <span class="mini-container-content1">40%</span>
-                <span class="mini-container-content2">Monitoring frequency: <span class="highlight-text">every hour</span></span>
-            </v-col>
-        </v-row>
-        <v-row>
-            <v-col class="mini-container-geo" cols="12" data-aos="fade-down">
+            <v-col class="mini-container-geo" cols="11" data-aos="fade-down">
               <span class="mini-container-header" style="position: absolute; top: 10px;">Geo Map</span>
               <Map/>
               <span class="mini-container-content3" style="position: absolute; top: 80px;">
@@ -123,7 +97,8 @@
 .mini-container-geo {
   position: relative;
   margin-bottom: 50px;
-  margin-left: 30px;
+  margin-top: 40px;
+  margin-left: 90px;
   height: 670px; /* Set a fixed height */
   display: flex;
   flex-direction: column; /* Stack items vertically */

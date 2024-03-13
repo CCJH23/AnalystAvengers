@@ -2,6 +2,8 @@ from db import db
 from models.serverLogsModel import ServerLogs
 from models.metricThresholdModel import MetricThreshold
 from models.problemLogsModel import ProblemLogs
+from metricThreshold.metricThresholdService import metricThresholdClass
+
 
 from sqlalchemy import func, and_
 import json
@@ -24,6 +26,7 @@ class socketioClass():
 
 
     def query_database_for_new_records():
+
         # Convert last_checked_timestamps to a dictionary if it's not already
         # if not isinstance(last_checked_timestamps, dict):
         #     return []
@@ -86,6 +89,10 @@ class socketioClass():
         #             log_data.pop('_sa_instance_state', None)
         #             latest_logs_data.append(log_data)
 
+        print("<--------------------Latest Logs Data-------------------------")
+        print("Latest Logs Data:", latest_logs_data)
+        print("---------------------Latest Logs Data------------------------>")
+        
         return latest_logs_data
 
 
@@ -115,7 +122,8 @@ class socketioClass():
         with open('last_checked_timestamps.json', 'w') as file:
             file.write(json.dumps(serialized_timestamps))
 
-    def get_historical_logs(start_time, end_time):
+
+    def get_historical_serverlogs_records(start_time, end_time):
         # Initialize a list to store historical logs
         historical_logs_data = []
 
@@ -124,8 +132,6 @@ class socketioClass():
 
         # Fetch historical logs
         historical_logs = query.all()
-
-        # print("Historical Logs:", historical_logs)
 
         # Convert historical logs to a list of dictionaries
         for record in historical_logs:
@@ -136,15 +142,22 @@ class socketioClass():
             log_data.pop('_sa_instance_state', None)
             historical_logs_data.append(log_data)
 
+        print("<--------------------Historical Logs Data-------------------------")
+        print("Historical Logs Data:", historical_logs_data)
+        print("---------------------Historical Logs Data------------------------>")
+
         return historical_logs_data
     
+
     def get_health_status_socket(latest_server_logs):
         try:
             if latest_server_logs:
 
                 # Fetch health status thresholds from the database
-                thresholds = MetricThreshold.query.all()
-                threshold_dict = {threshold.Metric: (threshold.CriticalThreshold, threshold.BadThreshold, threshold.WarningThreshold) for threshold in thresholds}
+                # thresholds = MetricThreshold.query.all()
+                # threshold_dict = {threshold.Metric: (threshold.CriticalThreshold, threshold.BadThreshold, threshold.WarningThreshold) for threshold in thresholds}
+                # print("Thresholds:", threshold_dict)
+                threshold_dict = metricThresholdClass.get_metric_thresholds()
 
                 # List to store health status data
                 health_status_data = []
@@ -206,6 +219,7 @@ class socketioClass():
         except Exception as e:
             # Handle any exceptions and return an error response
             return jsonify({"code": 500, "message": f"An error occurred: {str(e)}"}), 500
+
         
     def get_problem_logs():
 
@@ -224,4 +238,5 @@ class socketioClass():
         # print("Problem_logs_data:", problem_logs_data)
         
         return problem_logs_data 
+
 

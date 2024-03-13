@@ -185,7 +185,7 @@ const OverallHealthStatus = ref('');
 const problemLogs = ref([]);
 
 // Establish SocketIO connection
-const socket = io('http://localhost:8000/latestlogs');
+const socket = io('http://52.138.212.155:8000/latestlogs');
   
 socket.on('connect', () => {
     console.log('SocketIO connection established');
@@ -253,9 +253,8 @@ socket.on('disconnect', () => {
 onMounted(async () => {
     // get data from InfrastructureConfigTest table using infrastructureName
     infrastructureName.value = route.params.infrastructureName;
-
     try {
-        const response = await axios.get(`http://localhost:8000/infrastructureconfig/infrastructure_config/${infrastructureName.value}`);
+        const response = await axios.get(`http://52.138.212.155:8000/infrastructureconfig/infrastructure_config/${infrastructureName.value}`);
         const serverConfigData = response.data.data.server_configuration;
         infrastructureCountry.value = serverConfigData.InfrastructureCountry;
         infrastructurePriority.value = serverConfigData.InfrastructurePriority;

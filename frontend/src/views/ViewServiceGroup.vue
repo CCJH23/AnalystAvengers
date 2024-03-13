@@ -60,7 +60,6 @@ export default {
         handler: function (newValue) {
             if (Object.keys(newValue).length > 0) {
             // Update the chart when servers changes and is not empty
-            this.createTopologyChart(this.allPaths, this.servers);
             this.getInfrastructureConfigData(this.servers)
             this.message = "Change Detected in Topology Mapping"
             setTimeout(() => {
@@ -127,7 +126,7 @@ export default {
                     this.mapComponentData[infrastructureName]['country'] = country
                 }
             }
-            this.buildMap = true
+            await this.createTopologyChart(this.allPaths, this.servers, this.mapComponentData);
         },
         async getMapping(){
             try {
@@ -201,7 +200,8 @@ export default {
             // Resulting array of arrays
             return arrayOfArrays;
         },
-        async createTopologyChart(allPaths, summarisedServerStatus){
+        async createTopologyChart(allPaths, summarisedServerStatus, mapComponentData){
+            this.buildMap = true
             const serverNameMap = new Map();
             const links = []
             var parentY = 100;
@@ -224,10 +224,13 @@ export default {
                 servers.forEach((server) => {
                     // Check if the server name is not already in the map
                     if (!serverNameMap.has(server.name)) {
+                        // Add country to server object
+                        server['country'] = mapComponentData[server.name]['country']
                         // Add the server name to the map
                         serverNameMap.set(server.name, true);
                         // Add the server object to the set
                         this.serversSvg.add(server);
+                        console.log(this.serversSvg)
                     }
                 });
                 // Create links between servers using their IDs
@@ -345,6 +348,18 @@ export default {
             .style('text-anchor', 'middle')
             .style('font-size', '10px')
             .style('fill', (d) => (this.servers[d.name] === 'Healthy' ? 'green' : 'red'));
+            // Append country text
+            g
+            .selectAll('countryText')
+            .data(this.serversSvg)
+            .enter()
+            .append('text')
+            .attr('x', (d) => d.x)
+            .attr('y', (d) => d.y - 40) // Adjust the vertical position as needed
+            .text((d) => d.country || "Status Not Found") // Corrected this line
+            .style('text-anchor', 'middle')
+            .style('font-size', '10px')
+            .style('fill', 'blue');
         }
     }
 }

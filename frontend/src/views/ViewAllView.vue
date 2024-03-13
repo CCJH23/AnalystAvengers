@@ -117,10 +117,8 @@ export default {
       }
       if (criticalArr.length === 0) {
         return "Everything is healthy.";
-      } else if (criticalArr.length === 1) {
-        return `The server "${criticalArr[0]}" is critical.`;
       } else {
-        return `${criticalArr.length} servers are critical.`;
+        return `Service Group is critical`;
       }
     },
     getServiceGroupColor(serviceGroup) {

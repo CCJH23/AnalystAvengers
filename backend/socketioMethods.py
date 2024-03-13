@@ -25,8 +25,8 @@ class socketioClass():
             return {}
 
 
-    def query_database_for_new_records():
-
+    def query_database_for_new_serverlogs_records():
+        # New Line
         # Convert last_checked_timestamps to a dictionary if it's not already
         # if not isinstance(last_checked_timestamps, dict):
         #     return []

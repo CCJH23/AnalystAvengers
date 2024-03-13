@@ -1,7 +1,9 @@
 from db import db
 from models.serverLogsModel import ServerLogs
 from models.metricThresholdModel import MetricThreshold
+from models.problemLogsModel import ProblemLogs
 from metricThreshold.metricThresholdService import metricThresholdClass
+
 
 from sqlalchemy import func, and_
 import json
@@ -23,7 +25,8 @@ class socketioClass():
             return {}
 
 
-    def query_database_for_new_serverlogs_records():
+    def query_database_for_new_records():
+
         # Convert last_checked_timestamps to a dictionary if it's not already
         # if not isinstance(last_checked_timestamps, dict):
         #     return []
@@ -216,4 +219,24 @@ class socketioClass():
         except Exception as e:
             # Handle any exceptions and return an error response
             return jsonify({"code": 500, "message": f"An error occurred: {str(e)}"}), 500
+
+        
+    def get_problem_logs():
+
+        problem_logs_data = []
+
+        # try:
+        problemLogs = ProblemLogs.query.all()
+        for record in problemLogs:
+            log_data = record.__dict__
+            # Convert LogDateTime to string format
+            log_data['LogDateTime'] = str(log_data['LogDateTime'])
+            # Remove unnecessary keys from the dictionary (e.g., '_sa_instance_state')
+            log_data.pop('_sa_instance_state', None)
+            problem_logs_data.append(log_data)
+
+        # print("Problem_logs_data:", problem_logs_data)
+        
+        return problem_logs_data 
+
 

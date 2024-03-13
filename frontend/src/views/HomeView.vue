@@ -62,7 +62,7 @@ import AOS from 'aos'
 import 'aos/dist/aos.css'
 import io from 'socket.io-client';
 
-// // Establish SocketIO connection
+// Establish SocketIO connection
 const socket = io('http://52.138.212.155:8000/latestlogs');
 
 socket.on('error', (error) => {

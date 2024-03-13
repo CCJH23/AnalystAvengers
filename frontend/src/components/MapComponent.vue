@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h1>Map Page</h1>
     <div ref="map" style="height: 500px;"></div>
   </div>
 </template>

@@ -7,14 +7,12 @@
     <div>
         <Sidebar/>
         <div data-aos="fade-down">
-            <div class="center">
-                <div class="content">
+            <div class="content">
                 <div class="titles">Service Group {{ group }} Details</div>
                 <div class="message" v-if="message.length > 0">{{ message }}</div>
                 <div v-show="!Object.keys(servers).length > 0">Loading Topology Diagram...</div>
                 <svg v-show="Object.keys(servers).length > 0" ref="chart" class="svg-container"></svg>
                 <div v-show="!buildMap">Loading Map...</div>
-                </div>
             </div>
             <MapComponent v-if="buildMap" :mapData="mapComponentData" :servers="servers" :group="group"></MapComponent>
             <v-row style="margin-top:10px; margin-left:70px">
@@ -100,6 +98,9 @@ export default {
         svgClickEvent(d){
             this.$router.push(`/vieweachserver/${d.name}`);
         },
+        dragged(event, d){
+            d3.select(this).attr("cx", d.x = event.x).attr("cy", d.y = event.y);
+        },
         getServersStatus(){
             // Establish SocketIO connection
             const socket = io('http://52.138.212.155:8000/latestlogs');
@@ -169,7 +170,36 @@ export default {
             for (const startNode in adjacencyList) {
                 dfs(startNode, []);
             }
-            return paths;
+            var strArr = [];
+            for (var path of paths){
+                strArr.push(path.join(','))
+            }
+            function isSubset(str1, str2) {
+                return str2.includes(str1);
+            }
+            // Loop through strArr
+            for (var i = 0; i < strArr.length; i++) {
+                for (var j = 0; j < strArr.length; j++) {
+                    if (i !== j && isSubset(strArr[i], strArr[j])) {
+                        // Check which string is longer and remove the shorter one
+                        if (strArr[i].length > strArr[j].length) {
+                            strArr.splice(j, 1);
+                        } else {
+                            strArr.splice(i, 1);
+                        }
+                        // After removing a string, adjust the loop variables and break
+                        i--;
+                        break;
+                    }
+                }
+            }
+            // Convert each string into an array
+            var arrayOfArrays = strArr.map(function(str) {
+                return str.split(',');
+            });
+
+            // Resulting array of arrays
+            return arrayOfArrays;
         },
         async createTopologyChart(allPaths, summarisedServerStatus){
             const serverNameMap = new Map();
@@ -232,17 +262,30 @@ export default {
                 }
             }
 
-            const parentWidth = this.$el.clientWidth;
+            const parentWidth = window.innerWidth;
             const svg = d3.select(this.$refs.chart);
-            const height = 300;
-            svg.selectAll('*').remove();
-            svg.attr('width', parentWidth).attr('height', height);
+            const g = svg.append('g');
+            const handleZoom = (e) => g.attr('transform', e.transform);
+            const zoom = d3.zoom().on('zoom', handleZoom);
+            // Add zooming and panning
+            d3.select('svg').call(zoom);
+            const height = 400;
+            g.selectAll('*').remove();
+            g.attr('width', parentWidth).attr('height', height);
             // Add a border to the SVG
-            svg.style('border', '1px solid black');
+            g.style('border', '1px solid black');
+            // Add instruction text
+            svg.append('text')
+                .attr('x', 10) // Adjust the horizontal position as needed
+                .attr('y', 20) // Adjust the vertical position as needed
+                .text("Click and drag to pan around, and use your mouse scroll or keypad to zoom in and out.")
+                .style('font-size', '12px')
+                .style('fill', 'black');
             // Load image dynamically
             const serverImageURL = await import('@/assets/server.png');
-            // Append server images with the correct path
-            svg
+
+            // Add icons of virtual machines under service group to d3
+            g
             .selectAll('image')
             .data(this.serversSvg)
             .enter()
@@ -252,11 +295,12 @@ export default {
             .attr('xlink:href', serverImageURL.default)
             .attr('width', 40)
             .attr('height', 40)
+            .style('cursor', 'pointer')
             .on('click', (event, d) => {
-                this.svgClickEvent(d);
+                this.svgClickEvent(d); // Add clickevent for each icon
             })
             // Append server names
-            svg
+            g
             .selectAll('text')
             .data(this.serversSvg)
             .enter()
@@ -266,10 +310,14 @@ export default {
             .text((d) => d.name)
             .style('text-anchor', 'middle')
             .style('font-size', '12px')
+            .style('cursor', 'pointer')
+            .on('click', (event, d) => {
+                this.svgClickEvent(d); // Add clickevent for each virtual server name
+            })
             // Convert set to array for easy manipulation
             const serversArray = Array.from(this.serversSvg);
             // Append connections
-            const connectionsSvg = svg
+            const connectionsSvg = g
             .selectAll('line')
             .data([...this.uniqueConnections])
             .enter()
@@ -286,7 +334,7 @@ export default {
             .style('stroke-dasharray', '5,5')  // Adjust the values for dashed pattern
             .style('stroke-width', 3);  // Adjust the value for line thickness
             // Append status text
-            svg
+            g
             .selectAll('statusText')
             .data(this.serversSvg)
             .enter()
@@ -306,7 +354,8 @@ export default {
 <style scoped>
 svg {
   border: 1px solid black;
-  width: 550px;
+  width: 100%;
+  height: 400px;
 }
 div {
   margin: 10px;
@@ -329,14 +378,14 @@ div {
     color: #a7c6ba;
     font-size: 20px;
     font-weight: bold;
+    padding-top: 20px;
 }
 .center {
     display: flex;
     justify-content: center; /* Horizontally center the content */
     align-items: center; /* Vertically center the content */
-  }
-  
-  .content {
-    text-align: center; /* Optionally, center the text within the content */
-  }
+}
+.content {
+text-align: center; /* Optionally, center the text within the content */
+}
 </style>

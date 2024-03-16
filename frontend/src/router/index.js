@@ -41,11 +41,6 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'homeview',
-      component: HomeView,
-    },
-    {
-      path: '/viewall',
       name: 'viewall',
       component: ViewAllView,
     },

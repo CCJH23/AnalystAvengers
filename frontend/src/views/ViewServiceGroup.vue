@@ -103,12 +103,14 @@ export default {
         getServersStatus(){
             // Establish SocketIO connection
             const socket = io('http://52.138.212.155:8000/latestlogs');
-            socket.on('health_status', (data) => {
+            socket.on('new_health_status', (data) => {
                 var servers = data.data
-                for (var server of servers){
-                    var infrastructureName = server.InfrastructureName
-                    var overallHealthStatus = server.OverallHealthStatus
-                    this.servers[infrastructureName] = overallHealthStatus
+                for (var server in servers){
+                    if (server != ''){
+                        var infrastructureName = server
+                        var overallHealthStatus = servers[server]
+                        this.servers[infrastructureName] = overallHealthStatus
+                    }
                 }
             })
         },
@@ -120,10 +122,12 @@ export default {
                 const serverConfigData = response.data.data.server_configuration
                 const groupId = serverConfigData['GroupId']
                 const country = serverConfigData['InfrastructureCountry']
+                const infrastructureType = serverConfigData['InfrastructureType']
                 if (groupId == this.group){
                     this.mapComponentData[infrastructureName] = {}
                     this.mapComponentData[infrastructureName]['groupId'] = groupId
                     this.mapComponentData[infrastructureName]['country'] = country
+                    this.mapComponentData[infrastructureName]['infrastructureType'] = infrastructureType
                 }
             }
             await this.createTopologyChart(this.allPaths, this.servers, this.mapComponentData);
@@ -201,6 +205,7 @@ export default {
             return arrayOfArrays;
         },
         async createTopologyChart(allPaths, summarisedServerStatus, mapComponentData){
+            d3.select(this.$refs.chart).selectAll("*").remove();
             this.buildMap = true
             const serverNameMap = new Map();
             const links = []
@@ -230,7 +235,6 @@ export default {
                         serverNameMap.set(server.name, true);
                         // Add the server object to the set
                         this.serversSvg.add(server);
-                        console.log(this.serversSvg)
                     }
                 });
                 // Create links between servers using their IDs
@@ -286,6 +290,9 @@ export default {
                 .style('fill', 'black');
             // Load image dynamically
             const serverImageURL = await import('@/assets/server.png');
+            const webAppImageURL = await import('@/assets/app.png');
+
+            console.log(mapComponentData)
 
             // Add icons of virtual machines under service group to d3
             g
@@ -295,7 +302,7 @@ export default {
             .append('image')
             .attr('x', (d) => d.x - 20)
             .attr('y', (d) => d.y - 20)
-            .attr('xlink:href', serverImageURL.default)
+            .attr('xlink:href', (d) => (mapComponentData[d.name]['infrastructureType'] === 'server' ? serverImageURL.default : webAppImageURL.default))
             .attr('width', 40)
             .attr('height', 40)
             .style('cursor', 'pointer')
@@ -402,5 +409,8 @@ div {
 }
 .content {
 text-align: center; /* Optionally, center the text within the content */
+}
+.svg-container {
+    width: 100%;
 }
 </style>

@@ -4,6 +4,10 @@
 <template>
     <div>
       <Sidebar/>
+      <v-container fluid class="top-container">
+        <img src="../assets/logo.png" alt="Logo" class="logo" data-aos="fade-down">
+        <span class="text-center bold headline" data-aos="fade-down">Server Logs</span>
+      </v-container>
       <v-container fluid class="bottom-container">
         <v-container class="fluid inner-container-1">
           <v-row style="margin-bottom:18px" class="service-label" data-aos="fade-down">Service Health</v-row>

@@ -1,4 +1,5 @@
 from models.metricThresholdModel import MetricThreshold
+from models.problemLogsModel import ProblemLogs
 from serverLogs.serverLogsController import get_latest_server_logs
 from flask import jsonify
 

@@ -2,7 +2,7 @@ from db import db
 
 class WebAppLogs(db.Model):
     # test table name is WebAppLogsTest while table with actual data is WebAppLogs
-    __tablename__ = 'WebAppLogsTest'
+    __tablename__ = 'WebAppLogs'
 
     Id = db.Column(db.Integer, primary_key=True)
     InfrastructureName = db.Column(db.String(255))

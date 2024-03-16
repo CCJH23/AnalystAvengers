@@ -23,10 +23,8 @@
 // export default router
 
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '../views/HomeView.vue';
 import LoginView from '../views/LoginView.vue';
 import RegisterView from '../views/RegisterView.vue';
-import ViewEachView from '../views/ViewEachView.vue'
 import TopNavbar from '@/components/Navbar/TopNavbar.vue';
 import DashboardView from '../views/DashboardView.vue';
 import sockettest from '../views/sockettest.vue';
@@ -73,11 +71,6 @@ const router = createRouter({
       path: '/register',
       name: 'register',
       component: RegisterView,
-    },
-    {
-      path: '/vieweach',
-      name: 'vieweach',
-      component: ViewEachView,
     },
     {
       path: '/sockettest',

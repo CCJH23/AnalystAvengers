@@ -8,7 +8,7 @@
         <img src="../../assets/logo.png" style="height: 30px; opacity: 100%; margin-left: 15px; margin-right:3px;" class="my-5" @click="navigateToViewAll">
         <!-- Use inline styles for Analyst and Avengers -->
         <v-toolbar-title class="mx-0 text-h6" @click="navigateToViewAll">
-          <span style="font-weight: normal">ANALYST</span> <span style="font-style: normal; font-weight: bold;">AVENGERS</span>
+          <span style="font-weight: normal">ANALYST</span> <span style="font-weight: bold;">AVENGERS</span>
         </v-toolbar-title>
         
         <v-spacer></v-spacer>

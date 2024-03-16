@@ -191,3 +191,4 @@ export default {
     margin: 5px; /* Add margin between row logos */
   }
 </style>
+../../utils/auth

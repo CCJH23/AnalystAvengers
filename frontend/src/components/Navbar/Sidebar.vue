@@ -12,11 +12,8 @@
         </v-toolbar-title>
         
         <v-spacer></v-spacer>
-        <span class="mr-14">
-            <v-btn text to="/"><v-icon>mdi-home</v-icon>&nbsp;&nbsp;Home</v-btn>
-            |
-            <button class="btn btn-none btn-sign-out mb-2 pr-4" @click="signOut"><v-icon>mdi-logout</v-icon>&nbsp;Sign out</button>
-        </span>
+        <button class="btn btn-none btn-sign-out mb-2 pr-4" @click="signOut"><v-icon>mdi-logout</v-icon>&nbsp;Sign out</button>
+        
         
       </v-app-bar>
     </div>

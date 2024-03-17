@@ -116,13 +116,30 @@
                             <strong>WebAppAvailability</strong>
                         </v-col>
                         <v-col class="col-title">
-                            <strong>WebAppError</strong>
+                            <strong>No. of Errors / sec</strong>
                         </v-col>
                         <v-col class="col-title">
-                            <strong>WebAppRate</strong>
+                            <strong>No. of Request / sec</strong>
                         </v-col>
                         <v-col class="col-title">
-                            <strong>WebAppDuration</strong>
+                            <strong>Duration / request</strong>
+                        </v-col>
+                    </v-row>
+                    <v-row v-else-if="infrastructureType === 'database'">
+                        <v-col class="col-title">
+                            <strong>Log Date</strong>
+                        </v-col>
+                        <v-col class="col-title">
+                            <strong>DatabaseAvailability</strong>
+                        </v-col>
+                        <v-col class="col-title">
+                            <strong>Duration of uptime (sec)</strong>
+                        </v-col>
+                        <v-col class="col-title">
+                            <strong>DatabaseAvailableConnections</strong>
+                        </v-col>
+                        <v-col class="col-title">
+                            <strong>DatabaseSlowQueryRate</strong>
                         </v-col>
                     </v-row>
 
@@ -165,15 +182,32 @@
                             <p>{{ log.WebAppAvailability }}</p>
                         </v-col>
                         <v-col class="col-content">
-                            <p>{{ (parseFloat(log.WebAppError)).toFixed(3) }}%</p>
+                            <p>{{ (parseFloat(log.WebAppError)).toFixed(3) }}</p>
                         </v-col>
                         <v-col class="col-content">
-                            <p>{{ (parseFloat(log.WebAppRate)).toFixed(3) }}%</p>
+                            <p>{{ (parseFloat(log.WebAppRate)).toFixed(3) }}</p>
                         </v-col>
                         <v-col class="col-content">
-                            <p>{{ (parseFloat(log.WebAppDuration)).toFixed(3) }}%</p>
+                            <p>{{ (parseFloat(log.WebAppDuration)).toFixed(3) }}</p>
                         </v-col>
-                    </v-row>  
+                    </v-row>
+                    <v-row v-else-if="infrastructureType === 'database'" v-for="(log, index) in historicalLogs.slice(-20).reverse()" :key="`database-${index}-${log.Id}`">
+                        <v-col class="col-content">
+                            <p>{{ log.LogDateTime }}</p>
+                        </v-col>
+                        <v-col class="col-content">
+                            <p>{{ log.DatabaseAvailability}}</p>
+                        </v-col>
+                        <v-col class="col-content">
+                            <p>{{ log.DatabaseUptime }}</p>
+                        </v-col>
+                        <v-col class="col-content">
+                            <p>{{ (parseFloat(log.DatabaseAvailableConnections)).toFixed(3) }}%</p>
+                        </v-col>
+                        <v-col class="col-content">
+                            <p>{{ (parseFloat(log.DatabaseSlowQueryRate)).toFixed(3) }}</p>
+                        </v-col>
+                    </v-row>   
                 </div>
             </div>
             <v-row>
@@ -218,7 +252,7 @@ const historicalLogs = ref([]);
 
 // Establish SocketIO connection
 // const socket = io('http://52.138.212.155:8000/latestlogs');
-const socket = io('http://52.138.212.155:8000/latestlogs');
+const socket = io('http://localhost:8000/latestlogs');
   
 socket.on('connect', () => {
     console.log('SocketIO connection established');

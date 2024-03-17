@@ -4,6 +4,10 @@
 <template>
     <div>
       <Sidebar/>
+      <v-container fluid class="top-container">
+        <img src="../assets/logo.png" alt="Logo" class="logo" data-aos="fade-down">
+        <span class="text-center bold headline" data-aos="fade-down">Server Logs</span>
+      </v-container>
       <v-container fluid class="bottom-container">
         <v-container class="fluid inner-container-1">
           <v-row style="margin-bottom:18px" class="service-label" data-aos="fade-down">Service Health</v-row>
@@ -73,12 +77,14 @@ export default {
     getServersStatus(){
       // Establish SocketIO connection
       const socket = io('http://52.138.212.155:8000/latestlogs');
-      socket.on('health_status', (data) => {
+      socket.on('new_health_status', (data) => {
           var servers = data.data
-          for (var server of servers){
-              var infrastructureName = server.InfrastructureName
-              var overallHealthStatus = server.OverallHealthStatus
+          for (var server in servers){
+            if (server != ''){
+              var infrastructureName = server
+              var overallHealthStatus = servers[server]
               this.servers[infrastructureName] = overallHealthStatus
+            }
           }
       })
     },
@@ -111,14 +117,14 @@ export default {
       for (const server of group){
         const serverName = server['InfrastructureName']
         const serverStatus = servers[serverName]
-        if (serverStatus == 'Critical'){
+        if (serverStatus == 'Unhealthy'){
           criticalArr.push(serverName)
         }
       }
       if (criticalArr.length === 0) {
         return "Everything is healthy.";
       } else {
-        return `Service Group is critical`;
+        return `Service Group is unhealthy`;
       }
     },
     getServiceGroupColor(serviceGroup) {

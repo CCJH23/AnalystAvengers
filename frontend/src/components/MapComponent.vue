@@ -72,7 +72,9 @@ export default {
           '<b>' + props.name + '</b><br />' + 
           (props.healthy === 1 ? '<b>' + props.healthy + '</b> healthy server' : '<b>' + props.healthy + '</b> healthy servers') +
           '<br />' +
-          (props.critical === 1 ? '<b>' + props.critical + '</b> critical server' : '<b>' + props.critical + '</b> critical servers')
+          (props.unhealthy === 1 ? '<b>' + props.unhealthy + '</b> unhealthy server' : '<b>' + props.unhealthy + '</b> unhealthy servers') + 
+          '<br />' +
+          (props.critical === 1 ? '<b>' + props.critical + '</b> unhealthy server' : '<b>' + props.critical + '</b> critical servers')
           : 'Hover over a highlighted country');
     };
     this.info.addTo(this.map);
@@ -89,8 +91,8 @@ export default {
         shadowSize: [41, 41],
       });
     },
-    getColor(healthy, critical) {
-      const totalServers = healthy + critical;
+    getColor(healthy, critical, unhealthy) {
+      const totalServers = healthy + critical + unhealthy;
       if (healthy === totalServers) {
         // All healthy, return green
         return '#00FF00';
@@ -104,7 +106,7 @@ export default {
     },
     style(feature){
       return {
-          fillColor: this.getColor(feature.properties.healthy, feature.properties.critical),
+          fillColor: this.getColor(feature.properties.healthy, feature.properties.critical, feature.properties.unhealthy),
           weight: 2,
           opacity: 1,
           color: 'white',

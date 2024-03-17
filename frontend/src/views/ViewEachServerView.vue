@@ -219,7 +219,7 @@
                 bottom
                 @click="$router.push('/')"
                 >
-                Return to Health Status Page    
+                Return to Home 
             </v-btn>
             </v-row>
             

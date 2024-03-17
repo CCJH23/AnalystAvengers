@@ -125,6 +125,23 @@
                             <strong>WebAppDuration</strong>
                         </v-col>
                     </v-row>
+                    <v-row v-else-if="infrastructureType === 'database'">
+                        <v-col class="col-title">
+                            <strong>Log Date</strong>
+                        </v-col>
+                        <v-col class="col-title">
+                            <strong>DatabaseAvailability</strong>
+                        </v-col>
+                        <v-col class="col-title">
+                            <strong>DatabaseUptime</strong>
+                        </v-col>
+                        <v-col class="col-title">
+                            <strong>DatabaseAvailableConnections</strong>
+                        </v-col>
+                        <v-col class="col-title">
+                            <strong>DatabaseSlowQueryRate</strong>
+                        </v-col>
+                    </v-row>
 
                 </div>
 
@@ -173,7 +190,24 @@
                         <v-col class="col-content">
                             <p>{{ (parseFloat(log.WebAppDuration)).toFixed(3) }}%</p>
                         </v-col>
-                    </v-row>  
+                    </v-row>
+                    <v-row v-else-if="infrastructureType === 'database'" v-for="(log, index) in historicalLogs.slice(-20).reverse()" :key="`database-${index}-${log.Id}`">
+                        <v-col class="col-content">
+                            <p>{{ log.LogDateTime }}</p>
+                        </v-col>
+                        <v-col class="col-content">
+                            <p>{{ log.DatabaseAvailability}}</p>
+                        </v-col>
+                        <v-col class="col-content">
+                            <p>{{ (parseFloat(log.DatabaseUptime)).toFixed(3) }}%</p>
+                        </v-col>
+                        <v-col class="col-content">
+                            <p>{{ (parseFloat(log.DatabaseAvailableConnections)).toFixed(3) }}%</p>
+                        </v-col>
+                        <v-col class="col-content">
+                            <p>{{ (parseFloat(log.DatabaseSlowQueryRate)).toFixed(3) }}%</p>
+                        </v-col>
+                    </v-row>   
                 </div>
             </div>
             <v-row>

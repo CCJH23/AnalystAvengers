@@ -133,13 +133,13 @@
                             <strong>DatabaseAvailability</strong>
                         </v-col>
                         <v-col class="col-title">
-                            <strong>Duration of uptime (s)</strong>
+                            <strong>DatabaseUptime</strong>
                         </v-col>
                         <v-col class="col-title">
                             <strong>DatabaseAvailableConnections</strong>
                         </v-col>
                         <v-col class="col-title">
-                            <strong>No. of slow queries/sec</strong>
+                            <strong>DatabaseSlowQueryRate</strong>
                         </v-col>
                     </v-row>
 
@@ -199,13 +199,13 @@
                             <p>{{ log.DatabaseAvailability}}</p>
                         </v-col>
                         <v-col class="col-content">
-                            <p>{{ log.DatabaseUptime }}</p>
+                            <p>{{ (parseFloat(log.DatabaseUptime)).toFixed(3) }}%</p>
                         </v-col>
                         <v-col class="col-content">
                             <p>{{ (parseFloat(log.DatabaseAvailableConnections)).toFixed(3) }}%</p>
                         </v-col>
                         <v-col class="col-content">
-                            <p>{{ (parseFloat(log.DatabaseSlowQueryRate)).toFixed(3) }}</p>
+                            <p>{{ (parseFloat(log.DatabaseSlowQueryRate)).toFixed(3) }}%</p>
                         </v-col>
                     </v-row>   
                 </div>

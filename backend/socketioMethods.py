@@ -224,7 +224,7 @@ class socketioClass():
         current_time = datetime.now(gmt)
 
         # Calculate the start time as 15 seconds ago from the current time
-        start_time = current_time - timedelta(seconds=15)
+        start_time = current_time - timedelta(seconds=60)
 
         # Query to fetch the problem logs within the past 15 seconds
         query = db.session.query(ProblemLogs).filter(ProblemLogs.LogDateTime >= start_time)

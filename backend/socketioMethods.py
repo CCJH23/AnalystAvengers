@@ -43,7 +43,7 @@ class socketioClass():
 
     def query_database_for_metrics_records():
         latest_logs_data = []
-        model_array = [ServerLogs, WebAppLogs]
+        model_array = [ServerLogs, WebAppLogs, DatabaseLogs]
         
         for model in model_array:
             # Subquery to get the maximum timestamp for each server

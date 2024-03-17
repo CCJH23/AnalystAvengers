@@ -15,6 +15,23 @@ export default {
     servers: Object,
     group: Number,
   },
+  watch: {
+    servers: {
+      handler: function (newServers) {
+        // Clear the existing map
+        if (this.map) {
+          this.map.remove();
+          this.map = null;
+        }
+        // Rebuild the map
+        this.buildMapComponent()
+      },
+      deep: true // Ensure deep watching for changes in nested objects
+    }
+  },
+  mounted(){
+    this.buildMapComponent()
+  },
   data() {
     return {
       map: null,
@@ -24,63 +41,62 @@ export default {
       info: null,
     };
   },
-  mounted() {
-    // Initialize the map
-    this.map = L.map(this.$refs.map).setView([0, 0], 2); // Centered at (0, 0) with zoom level 2
-    // Add a tile layer (OpenStreetMap is a common choice)
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: '© OpenStreetMap contributors',
-    }).addTo(this.map);
+  methods: {
+    buildMapComponent(){
+      // Initialize the map
+      this.map = L.map(this.$refs.map).setView([0, 0], 2); // Centered at (0, 0) with zoom level 2
+      // Add a tile layer (OpenStreetMap is a common choice)
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '© OpenStreetMap contributors',
+      }).addTo(this.map);
 
-    // Record server status and countries in service group
-    var dummyCountriesData = JSON.parse(JSON.stringify(this.countriesData));
-    for (var server in this.servers){
-      var serverStatus = this.servers[server]
-      var mapData = this.mapData[server]
-      if (mapData){
-        var country = mapData['country']
-        var groupId = mapData['groupId']
-        if (groupId == this.group){
-          if (dummyCountriesData.hasOwnProperty(country)){
-            var countryProperties = dummyCountriesData[country]['properties']
-            serverStatus = serverStatus.toLowerCase()
-            countryProperties[serverStatus] += 1
-            this.countriesColorData['features'].push(dummyCountriesData[country])
-          } else {
-            console.log(`${country} does not exist`)
+      // Record server status and countries in service group
+      var dummyCountriesData = JSON.parse(JSON.stringify(this.countriesData));
+      for (var server in this.servers){
+        var serverStatus = this.servers[server]
+        var mapData = this.mapData[server]
+        if (mapData){
+          var country = mapData['country']
+          var groupId = mapData['groupId']
+          if (groupId == this.group){
+            if (dummyCountriesData.hasOwnProperty(country)){
+              var countryProperties = dummyCountriesData[country]['properties']
+              serverStatus = serverStatus.toLowerCase()
+              countryProperties[serverStatus] += 1
+              this.countriesColorData['features'].push(dummyCountriesData[country])
+            } else {
+              console.log(`${country} does not exist`)
+            }
           }
         }
       }
-    }
 
-    // Add styling to countries based on density
-    this.geojson = L.geoJson(this.countriesColorData, {
-      style: this.style,
-      onEachFeature: this.onEachFeature
-    }).addTo(this.map);
+      // Add styling to countries based on density
+      this.geojson = L.geoJson(this.countriesColorData, {
+        style: this.style,
+        onEachFeature: this.onEachFeature
+      }).addTo(this.map);
 
-    // Initialize the custom control and add it to the map
-    this.info = L.control();
-    this.info.onAdd = function (map) {
-      this._div = L.DomUtil.create('div', 'info');
-      this.update();
-      return this._div;
-    };
-    // Create server status summary text on top right of map
-    this.info.update = function (props) {
-      this._div.innerHTML = '<h4>Server Status</h4>' +  (props ?
-          '<b>' + props.name + '</b><br />' + 
-          (props.healthy === 1 ? '<b>' + props.healthy + '</b> healthy server' : '<b>' + props.healthy + '</b> healthy servers') +
-          '<br />' +
-          (props.unhealthy === 1 ? '<b>' + props.unhealthy + '</b> unhealthy server' : '<b>' + props.unhealthy + '</b> unhealthy servers') + 
-          '<br />' +
-          (props.critical === 1 ? '<b>' + props.critical + '</b> unhealthy server' : '<b>' + props.critical + '</b> critical servers')
-          : 'Hover over a highlighted country');
-    };
-    this.info.addTo(this.map);
-
-  },
-  methods: {
+      // Initialize the custom control and add it to the map
+      this.info = L.control();
+      this.info.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'info');
+        this.update();
+        return this._div;
+      };
+      // Create server status summary text on top right of map
+      this.info.update = function (props) {
+        this._div.innerHTML = '<h4>Server Status</h4>' +  (props ?
+            '<b>' + props.name + '</b><br />' + 
+            (props.healthy === 1 ? '<b>' + props.healthy + '</b> healthy server' : '<b>' + props.healthy + '</b> healthy servers') +
+            '<br />' +
+            (props.unhealthy === 1 ? '<b>' + props.unhealthy + '</b> unhealthy server' : '<b>' + props.unhealthy + '</b> unhealthy servers') + 
+            '<br />' +
+            (props.degraded === 1 ? '<b>' + props.degraded + '</b> degraded server' : '<b>' + props.degraded + '</b> degraded servers')
+            : 'Hover over a highlighted country');
+      };
+      this.info.addTo(this.map);
+    },
     createMarkerIcon(color) {
       return new L.Icon({
         iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
@@ -91,22 +107,21 @@ export default {
         shadowSize: [41, 41],
       });
     },
-    getColor(healthy, critical, unhealthy) {
-      const totalServers = healthy + critical + unhealthy;
-      if (healthy === totalServers) {
-        // All healthy, return green
-        return '#00FF00';
-      } else if (critical === totalServers) {
-        // All critical, return red
-        return '#FF0000';
-      } else {
-        // Some critical, some healthy, return yellow
-        return '#FFFF00';
+    getColor(healthy, degraded, unhealthy) {
+      if (unhealthy > 0){
+        // If there is unhealthy, return red
+        return "#FF0000";
+      } else if (degraded > 0){
+        // if there is degraded, return yellow
+        return "#FFFF00";
+      } else if (healthy > 0) {
+        // if there are no unhealthy or degraded, return healthy
+        return "#00FF00";
       }
     },
     style(feature){
       return {
-          fillColor: this.getColor(feature.properties.healthy, feature.properties.critical, feature.properties.unhealthy),
+          fillColor: this.getColor(feature.properties.healthy, feature.properties.degraded, feature.properties.unhealthy),
           weight: 2,
           opacity: 1,
           color: 'white',

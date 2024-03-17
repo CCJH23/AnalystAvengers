@@ -291,8 +291,7 @@ export default {
             // Load image dynamically
             const serverImageURL = await import('@/assets/server.png');
             const webAppImageURL = await import('@/assets/app.png');
-
-            console.log(mapComponentData)
+            const databaseImageURL = await import('@/assets/database.png')
 
             // Add icons of virtual machines under service group to d3
             g
@@ -302,7 +301,19 @@ export default {
             .append('image')
             .attr('x', (d) => d.x - 20)
             .attr('y', (d) => d.y - 20)
-            .attr('xlink:href', (d) => (mapComponentData[d.name]['infrastructureType'] === 'server' ? serverImageURL.default : webAppImageURL.default))
+            .attr('xlink:href', (d) => {
+                let infrastructureType = mapComponentData[d.name]['infrastructureType'];
+                switch (infrastructureType) {
+                    case 'server':
+                        return serverImageURL.default;
+                    case 'webapp':
+                        return webAppImageURL.default;
+                    case 'database':
+                        return databaseImageURL.default;
+                    default:
+                        return serverImageURL.default;
+                }
+            })
             .attr('width', 40)
             .attr('height', 40)
             .style('cursor', 'pointer')
@@ -354,8 +365,16 @@ export default {
             .text((d) => summarisedServerStatus[d.name] || "Status Not Found") // Corrected this line
             .style('text-anchor', 'middle')
             .style('font-size', '10px')
-            .style('fill', (d) => (this.servers[d.name] === 'Healthy' ? 'green' : 'red'));
-            // Append country text
+            .style('fill', (d) => {
+                switch (this.servers[d.name]){
+                    case 'Healthy':
+                        return "green";
+                    case 'Degraded':
+                        return "#FFFF00";
+                    case 'Unhealthy':
+                        return 'red'
+                }
+            })
             g
             .selectAll('countryText')
             .data(this.serversSvg)

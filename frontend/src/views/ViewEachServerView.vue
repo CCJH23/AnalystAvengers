@@ -116,13 +116,13 @@
                             <strong>WebAppAvailability</strong>
                         </v-col>
                         <v-col class="col-title">
-                            <strong>WebAppError</strong>
+                            <strong>No. of errors/sec</strong>
                         </v-col>
                         <v-col class="col-title">
-                            <strong>WebAppRate</strong>
+                            <strong>No. of requests/sec</strong>
                         </v-col>
                         <v-col class="col-title">
-                            <strong>WebAppDuration</strong>
+                            <strong>Duration/request</strong>
                         </v-col>
                     </v-row>
                     <v-row v-else-if="infrastructureType === 'database'">
@@ -133,13 +133,13 @@
                             <strong>DatabaseAvailability</strong>
                         </v-col>
                         <v-col class="col-title">
-                            <strong>DatabaseUptime</strong>
+                            <strong>Duration of uptime (s)</strong>
                         </v-col>
                         <v-col class="col-title">
                             <strong>DatabaseAvailableConnections</strong>
                         </v-col>
                         <v-col class="col-title">
-                            <strong>DatabaseSlowQueryRate</strong>
+                            <strong>No. of slow queries/sec</strong>
                         </v-col>
                     </v-row>
 
@@ -182,13 +182,13 @@
                             <p>{{ log.WebAppAvailability }}</p>
                         </v-col>
                         <v-col class="col-content">
-                            <p>{{ (parseFloat(log.WebAppError)).toFixed(3) }}%</p>
+                            <p>{{ (parseFloat(log.WebAppError)).toFixed(3) }}</p>
                         </v-col>
                         <v-col class="col-content">
-                            <p>{{ (parseFloat(log.WebAppRate)).toFixed(3) }}%</p>
+                            <p>{{ (parseFloat(log.WebAppRate)).toFixed(3) }}</p>
                         </v-col>
                         <v-col class="col-content">
-                            <p>{{ (parseFloat(log.WebAppDuration)).toFixed(3) }}%</p>
+                            <p>{{ (parseFloat(log.WebAppDuration)).toFixed(3) }}</p>
                         </v-col>
                     </v-row>
                     <v-row v-else-if="infrastructureType === 'database'" v-for="(log, index) in historicalLogs.slice(-20).reverse()" :key="`database-${index}-${log.Id}`">
@@ -199,13 +199,13 @@
                             <p>{{ log.DatabaseAvailability}}</p>
                         </v-col>
                         <v-col class="col-content">
-                            <p>{{ (parseFloat(log.DatabaseUptime)).toFixed(3) }}%</p>
+                            <p>{{ log.DatabaseUptime }}</p>
                         </v-col>
                         <v-col class="col-content">
                             <p>{{ (parseFloat(log.DatabaseAvailableConnections)).toFixed(3) }}%</p>
                         </v-col>
                         <v-col class="col-content">
-                            <p>{{ (parseFloat(log.DatabaseSlowQueryRate)).toFixed(3) }}%</p>
+                            <p>{{ (parseFloat(log.DatabaseSlowQueryRate)).toFixed(3) }}</p>
                         </v-col>
                     </v-row>   
                 </div>
@@ -219,7 +219,7 @@
                 bottom
                 @click="$router.push('/')"
                 >
-                Return to Health Status Page    
+                Return to Home 
             </v-btn>
             </v-row>
             

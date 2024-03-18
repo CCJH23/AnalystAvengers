@@ -155,7 +155,7 @@
                             class="text-center"
                         ></v-progress-circular>
                     </v-row>
-                    <v-row v-if="infrastructureType === 'server'" v-for="(log, index) in historicalLogs.slice(-20)" :key="index">
+                    <v-row v-if="infrastructureType === 'server'" v-for="(log, index) in historicalLogs.slice(-20).reverse()" :key="index">
                         <v-col class="col-content">
                             <p>{{ log.LogDateTime }}</p>
                         </v-col>
@@ -175,7 +175,7 @@
                             <p>{{ log.ServerNetworkAvailability }}</p>
                         </v-col>
                     </v-row>  
-                    <v-row v-else-if="infrastructureType === 'webapp'" v-for="(log, index) in historicalLogs.slice(-20)" :key="`${index}-${log.Id}`">
+                    <v-row v-else-if="infrastructureType === 'webapp'" v-for="(log, index) in historicalLogs.slice(-20).reverse()" :key="`${index}-${log.Id}`">
                         <v-col class="col-content">
                             <p>{{ log.LogDateTime }}</p>
                         </v-col>
@@ -192,7 +192,7 @@
                             <p>{{ (parseFloat(log.WebAppDuration)).toFixed(3) }}</p>
                         </v-col>
                     </v-row>
-                    <v-row v-else-if="infrastructureType === 'database'" v-for="(log, index) in historicalLogs.slice(-20)" :key="`database-${index}-${log.Id}`">
+                    <v-row v-else-if="infrastructureType === 'database'" v-for="(log, index) in historicalLogs.slice(-20).reverse()" :key="`database-${index}-${log.Id}`">
                         <v-col class="col-content">
                             <p>{{ log.LogDateTime }}</p>
                         </v-col>
@@ -274,10 +274,10 @@ socket.on('connect', () => {
 
 // Listen for the 'historical_logs' event
 socket.on('historical_logs', (data) => {
-    console.log('Received historical_logs event:', data);
+    // console.log('Received historical_logs event:', data);
     try {
         console.log('Received historical_logs event:', data);  
-        const filteredLogs = data.data.historical_logs.filter(log => log.InfrastructureName === infrastructureName.value).sort((a, b) => new Date(b.LogDateTime) - new Date(a.LogDateTime));
+        const filteredLogs = data.data.historical_logs.filter(log => log.InfrastructureName === infrastructureName.value);
         // console.log('Filtered historical_server_logs:', filteredLogs);
         historicalLogs.value = filteredLogs;
         // console.log('Filtered historical_server_logs:', historicalServerLogs.value);

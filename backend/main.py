@@ -157,25 +157,55 @@ def poll_database_for_changes():
 
 
 # Function to retrieve historical logs for each unique server within the past hour
+# def get_historical_logs_records_socketio():
+#     with app.app_context():
+#         while True:
+#             # Function to handle the infrastructure type received from the frontend
+#             @socketio.on('infrastructure_type', namespace='/latestlogs')
+#             def handle_infrastructure_type(infrastructure_type_received):
+#                 # Calculate time frame
+#                 print("Infrastructure Type:", infrastructure_type_received)
+#                 gmt = pytz.timezone('GMT')
+#                 end_time = datetime.now(gmt)
+#                 start_time = end_time - timedelta(minutes=2)
+
+#                 # Retrieve historical logs for each unique server
+#                 historical_logs = socketioClass.get_historical_logs_records(start_time, end_time, infrastructure_type_received)
+
+#                 # Emit historical logs to frontend
+#                 socketio.emit('historical_logs', {"code": 200,"data": {"historical_logs": historical_logs}}, namespace='/latestlogs')
+
+#             time.sleep(10)
+            
+
+# Function to retrieve historical logs for each unique server within the past 10 mins
 def get_historical_logs_records_socketio():
     with app.app_context():
-        while True:
-            # Function to handle the infrastructure type received from the frontend
-            @socketio.on('infrastructure_type', namespace='/latestlogs')
-            def handle_infrastructure_type(infrastructure_type_received):
-                # Calculate time frame
-                print("Infrastructure Type:", infrastructure_type_received)
-                gmt = pytz.timezone('GMT')
-                end_time = datetime.now(gmt)
-                start_time = end_time - timedelta(minutes=2)
+        # Function to handle the infrastructure type received from the frontend
+        @socketio.on('infrastructure_type', namespace='/latestlogs')
+        def handle_infrastructure_type(infrastructure_type_received):
+            while True:
+                try:
+                    # Calculate time frame
+                    print("Infrastructure Type:", infrastructure_type_received)
+                    gmt = pytz.timezone('GMT')
+                    end_time = datetime.now(gmt)
+                    start_time = end_time - timedelta(minutes=10)
 
-                # Retrieve historical logs for each unique server
-                historical_logs = socketioClass.get_historical_logs_records(start_time, end_time, infrastructure_type_received)
+                    # Retrieve historical logs for each unique server
+                    historical_logs = socketioClass.get_historical_logs_records(start_time, end_time, infrastructure_type_received)
+                    print("Historical Logs:", historical_logs)
+                    # Emit historical logs to frontend
+                    socketio.emit('historical_logs', {"code": 200, "data": {"historical_logs": historical_logs}}, namespace='/latestlogs')
 
-                # Emit historical logs to frontend
-                socketio.emit('historical_logs', {"code": 200,"data": {"historical_logs": historical_logs}}, namespace='/latestlogs')
+                    time.sleep(10)
 
-            time.sleep(10)
+                except Exception as e:
+                    print("Error:", e)
+                    # Handle the error, maybe retry or log it
+
+# Start the event loop
+get_historical_logs_records_socketio()
 
 
 # Function to retrieve all problem logs 

@@ -6,7 +6,7 @@
       <Sidebar/>
       <v-container fluid class="top-container">
         <img src="../assets/logo.png" alt="Logo" class="logo" data-aos="fade-down">
-        <span class="text-center bold headline" data-aos="fade-down">Server Logs</span>
+        <span class="text-center bold headline" data-aos="fade-down">Service Health</span>
       </v-container>
       <v-container fluid class="bottom-container">
         <v-container class="fluid inner-container-1">

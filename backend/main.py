@@ -204,8 +204,7 @@ def get_historical_logs_records_socketio():
                     print("Error:", e)
                     # Handle the error, maybe retry or log it
 
-# Start the event loop
-get_historical_logs_records_socketio()
+
 
 
 # Function to retrieve all problem logs 

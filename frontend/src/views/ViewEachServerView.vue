@@ -53,15 +53,7 @@
                 <div style="background-color: #dddddd; padding: 10px; border: 1px solid black; border-bottom: none;">
                     <h3>Problems</h3>
                 </div>
-
-                <div style="background-color: #ececec; padding: 10px; border: 1px solid black; border-top: none;"> 
-                    <!-- if  OverallHealthStatus == 'Healthy' , display string "Server is running as per expected" -->
-                    <!-- else display 3 columns, Log Date Time, Problem Name, Problem Severity -->
-                    <v-row v-if="overall_problem_severity == 'Healthy'">
-                        <v-col class="col-content">
-                            <p>Infrastructure working as expected. No problem logs</p>
-                        </v-col>
-                    </v-row>
+                <div style="background-color: #ececec; padding: 10px; border: 1px solid black; border-top: none; border-bottom: none;">
                     <v-row v-if="overall_problem_severity != 'Healthy'">
                         <v-col cols="3" class="col-title">
                             <strong>Log Date Time</strong>
@@ -71,6 +63,15 @@
                         </v-col>
                         <v-col cols="3" class="col-title">
                             <strong>Problem Severity</strong>
+                        </v-col>
+                    </v-row>  
+                </div>
+                <div style="background-color: #ececec; padding: 10px; border: 1px solid black; border-top: none; overflow-y: auto; height: 30vh; scrollbar-width: none;"> 
+                    <!-- if  OverallHealthStatus == 'Healthy' , display string "Server is running as per expected" -->
+                    <!-- else display 3 columns, Log Date Time, Problem Name, Problem Severity -->
+                    <v-row v-if="overall_problem_severity == 'Healthy'">
+                        <v-col class="col-content">
+                            <p>Infrastructure working as expected. No problem logs</p>
                         </v-col>
                     </v-row>
                     <v-row v-if="overall_problem_severity != 'Healthy'" class="row-with-border" v-for="(log, index) in latest_problem_logs" :key="index">
@@ -154,7 +155,7 @@
                             class="text-center"
                         ></v-progress-circular>
                     </v-row>
-                    <v-row v-if="infrastructureType === 'server'" v-for="(log, index) in historicalLogs.slice(-20).reverse()" :key="index">
+                    <v-row v-if="infrastructureType === 'server'" v-for="(log, index) in historicalLogs.slice(-20)" :key="index">
                         <v-col class="col-content">
                             <p>{{ log.LogDateTime }}</p>
                         </v-col>
@@ -174,7 +175,7 @@
                             <p>{{ log.ServerNetworkAvailability }}</p>
                         </v-col>
                     </v-row>  
-                    <v-row v-else-if="infrastructureType === 'webapp'" v-for="(log, index) in historicalLogs.slice(-20).reverse()" :key="`${index}-${log.Id}`">
+                    <v-row v-else-if="infrastructureType === 'webapp'" v-for="(log, index) in historicalLogs.slice(-20)" :key="`${index}-${log.Id}`">
                         <v-col class="col-content">
                             <p>{{ log.LogDateTime }}</p>
                         </v-col>
@@ -191,7 +192,7 @@
                             <p>{{ (parseFloat(log.WebAppDuration)).toFixed(3) }}</p>
                         </v-col>
                     </v-row>
-                    <v-row v-else-if="infrastructureType === 'database'" v-for="(log, index) in historicalLogs.slice(-20).reverse()" :key="`database-${index}-${log.Id}`">
+                    <v-row v-else-if="infrastructureType === 'database'" v-for="(log, index) in historicalLogs.slice(-20)" :key="`database-${index}-${log.Id}`">
                         <v-col class="col-content">
                             <p>{{ log.LogDateTime }}</p>
                         </v-col>
@@ -251,8 +252,8 @@ const overall_problem_severity = ref('Healthy');
 const historicalLogs = ref([]);
 
 // Establish SocketIO connection
-// const socket = io('http://52.138.212.155:8000/latestlogs');
 const socket = io('http://52.138.212.155:8000/latestlogs');
+// const socket = io('http://localhost:8000/latestlogs');
   
 socket.on('connect', () => {
     console.log('SocketIO connection established');
@@ -276,7 +277,7 @@ socket.on('historical_logs', (data) => {
     console.log('Received historical_logs event:', data);
     try {
         console.log('Received historical_logs event:', data);  
-        const filteredLogs = data.data.historical_logs.filter(log => log.InfrastructureName === infrastructureName.value);
+        const filteredLogs = data.data.historical_logs.filter(log => log.InfrastructureName === infrastructureName.value).sort((a, b) => new Date(b.LogDateTime) - new Date(a.LogDateTime));
         // console.log('Filtered historical_server_logs:', filteredLogs);
         historicalLogs.value = filteredLogs;
         // console.log('Filtered historical_server_logs:', historicalServerLogs.value);
@@ -330,7 +331,7 @@ socket.on('latest_problem_logs', (data) => {
         // Check if the infrastructure name exists in the latest problem logs
         if (infrastructureNameValue in data.data.latest_problem_logs) {
             // Get the array of problem logs and severities for the infrastructure name
-            const problemLogsAndSeverities = data.data.latest_problem_logs[infrastructureNameValue];
+            const problemLogsAndSeverities = data.data.latest_problem_logs[infrastructureNameValue].sort((a, b) => new Date(b.LogDateTime) - new Date(a.LogDateTime));
 
             // Update the ref variable with the problem logs and severities
             latest_problem_logs.value = problemLogsAndSeverities.map(({ problem_log, problem_severity }) => ({

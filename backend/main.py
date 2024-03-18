@@ -190,7 +190,7 @@ def get_historical_logs_records_socketio():
                     print("Infrastructure Type:", infrastructure_type_received)
                     gmt = pytz.timezone('GMT')
                     end_time = datetime.now(gmt)
-                    start_time = end_time - timedelta(minutes=10)
+                    start_time = end_time - timedelta(minutes=5)
 
                     # Retrieve historical logs for each unique server
                     historical_logs = socketioClass.get_historical_logs_records(start_time, end_time, infrastructure_type_received)

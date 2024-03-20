@@ -22,4 +22,6 @@ def get_health_status():
         return response
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+
 

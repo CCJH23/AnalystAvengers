@@ -2,3 +2,5 @@
 venv
 *.pyc
 *.pyo
+last_checked_timestamp.txt
+last_checked_timestamp.json

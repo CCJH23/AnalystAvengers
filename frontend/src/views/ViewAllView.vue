@@ -4,42 +4,25 @@
 <template>
     <div>
       <Sidebar/>
+      <v-container fluid class="top-container">
+        <img src="../assets/logo.png" alt="Logo" class="logo" data-aos="fade-down">
+        <span class="text-center bold headline" data-aos="fade-down">Service Health</span>
+      </v-container>
       <v-container fluid class="bottom-container">
         <v-container class="fluid inner-container-1">
           <v-row style="margin-bottom:18px" class="service-label" data-aos="fade-down">Service Health</v-row>
           <v-row class="row-with-border">
             <v-col cols="2" style="color: #a7c6ba; font-weight: bold;">Service Groups</v-col>
-            <v-col cols="4" style="text-align: center; color: #a7c6ba; font-weight: bold;">Healthy Servers</v-col>
-            <v-col cols="4" style="text-align: center; color: #a7c6ba; font-weight: bold;">Critical Servers</v-col>
+            <v-col cols="8" style="text-align: center; color: #a7c6ba; font-weight: bold;">Service Group Status</v-col>
             <v-col cols="2"></v-col>
           </v-row>
           <v-row class="row-with-border" v-for="(serviceGroup, idx) in Object.keys(serviceGroups)" :key="idx" data-aos="fade-down">
             <v-col cols="2">{{ serviceGroupNames[serviceGroup] }}</v-col>
-            <v-col cols="4" style="text-align: center; color: green;">{{ serviceGroups[serviceGroup]['Healthy'] }}</v-col>
-            <v-col cols="4" style="text-align: center; color: red;">{{ serviceGroups[serviceGroup]['Critical'] }}</v-col>
+            <v-col cols="8" :style="{ 'text-align': 'center', color: getServiceGroupColor(serviceGroup)}">{{ serviceGroupComments[serviceGroup] }}</v-col>
             <v-col cols="2">
               <v-btn variant="text" :to="'view/' + serviceGroup">View</v-btn>
             </v-col>
           </v-row>
-          <v-row class="row-with-border" v-for="(rowLabel, rowIndex) in rowLabels" :key="rowIndex" data-aos="fade-down">
-            <v-col cols="2">
-              <!-- Render different icons based on the label -->
-              <v-icon v-if="rowLabel === 'UBS Website'">mdi-web</v-icon>
-              <v-icon v-else-if="rowLabel === 'UBS Trading Platform'">mdi-swap-horizontal</v-icon>
-              <v-icon v-else-if="rowLabel === 'UBS Intranet'">mdi-web-box</v-icon>
-              <v-icon v-else-if="rowLabel === 'UBS Wealth Management Platform'">mdi-currency-usd</v-icon>
-              <v-icon v-else-if="rowLabel === 'UBS Mobile Banking App'">mdi-cellphone</v-icon>
-              <v-icon v-else-if="rowLabel === 'UBS Online Banking Platform'">mdi-bank-transfer</v-icon>
-              <v-icon v-else-if="rowLabel === 'UBS Financial Advisor Platform'">mdi-account-tie</v-icon>
-              <!-- Add more conditions for other labels and their corresponding icons -->
-              {{ rowLabel }}
-            </v-col>
-            <v-col cols="2" v-for="(colIndex, index) in 5" :key="colIndex">
-              <img v-if="index !== 3" src="../assets/healthy.png" alt="Healthy Logo" class="row-logo" />
-              <img v-else src="../assets/unhealthy.png" alt="Unhealthy Logo" class="row-logo" @load="hasUnhealthyLogo = true" />
-              <!-- <img src="../assets/degraded.png" alt="Degraded Logo" class="row-logo" @load="hasUnhealthyLogo = true"/> -->
-            </v-col>
-          </v-row>        
           <v-row style="margin-top:38px">
             <v-col cols="4">
             </v-col>
@@ -71,6 +54,7 @@ export default {
         servers: {},
         serviceGroups: {},
         serviceGroupNames: {},
+        serviceGroupComments: {},
     }
   },
   async mounted(){
@@ -93,12 +77,14 @@ export default {
     getServersStatus(){
       // Establish SocketIO connection
       const socket = io('http://52.138.212.155:8000/latestlogs');
-      socket.on('health_status', (data) => {
+      socket.on('new_health_status', (data) => {
           var servers = data.data
-          for (var server of servers){
-              var infrastructureName = server.InfrastructureName
-              var overallHealthStatus = server.OverallHealthStatus
+          for (var server in servers){
+            if (server != ''){
+              var infrastructureName = server
+              var overallHealthStatus = servers[server]
               this.servers[infrastructureName] = overallHealthStatus
+            }
           }
       })
     },
@@ -111,22 +97,44 @@ export default {
     async getInfrastructureConfigData(servers){
       var infrastructureName = null
       for (var server in servers){
-          var serverStatus = servers[server]
-          infrastructureName = server
-          const response = await axios.get(`http://52.138.212.155:8000/infrastructureconfig/infrastructure_config/${infrastructureName}`);
-          const serverConfigData = response.data.data.server_configuration
-          const groupId = serverConfigData['GroupId']
-          // Check if groupId exists in serviceGroups, if not, add it
-          if (!this.serviceGroups.hasOwnProperty(groupId)) {
-            this.serviceGroups[groupId] = {}
-          }
-          if (!this.serviceGroups[groupId].hasOwnProperty(serverStatus)){
-            this.serviceGroups[groupId][serverStatus] = 1
-          } else {
-            this.serviceGroups[groupId][serverStatus] += 1
-          }
+        infrastructureName = server
+        const response = await axios.get(`http://52.138.212.155:8000/infrastructureconfig/infrastructure_config/${infrastructureName}`);
+        const serverConfigData = response.data.data.server_configuration
+        const groupId = serverConfigData['GroupId']
+        // Check if groupId exists in serviceGroups, if not, add it
+        if (!this.serviceGroups.hasOwnProperty(groupId)) {
+          this.serviceGroups[groupId] = []; // Initialize as an array
+        }
+        // Add serverConfigData to the corresponding group
+        this.serviceGroups[groupId].push(serverConfigData);
+      }
+      for (const groupId in this.serviceGroups){
+        this.serviceGroupComments[groupId] = this.getServiceGroupComments(this.serviceGroups[groupId], this.servers)
       }
     },
+    getServiceGroupComments(group, servers){
+      var criticalArr = []
+      for (const server of group){
+        const serverName = server['InfrastructureName']
+        const serverStatus = servers[serverName]
+        if (serverStatus == 'Unhealthy'){
+          criticalArr.push(serverName)
+        }
+      }
+      if (criticalArr.length === 0) {
+        return "Everything is healthy.";
+      } else {
+        return `Service Group is unhealthy`;
+      }
+    },
+    getServiceGroupColor(serviceGroup) {
+      const status = this.serviceGroupComments[serviceGroup];
+      if (status === 'Everything is healthy.') {
+        return 'green';
+      } else {
+        return 'red';
+      }
+    }
   }
 }
 </script>

@@ -69,14 +69,14 @@
                 <div style="background-color: #ececec; padding: 10px; border: 1px solid black; border-top: none; overflow-y: auto; height: 30vh; scrollbar-width: none;"> 
                     <!-- if  OverallHealthStatus == 'Healthy' , display string "Server is running as per expected" -->
                     <!-- else display 3 columns, Log Date Time, Problem Name, Problem Severity -->
-                    <v-row v-if="!latest_problem_logs.length" class="justify-center" style="margin-top: 5px;">
+                    <v-row v-if="loading" class="justify-center" style="margin-top: 5px;">
                         <v-progress-circular
                             indeterminate
                             color="teal-lighten-3"
                             class="text-center"
                         ></v-progress-circular>
                     </v-row>
-                    <v-row v-if="overall_problem_severity == 'Healthy' && latest_problem_logs">
+                    <v-row v-if="overall_problem_severity == 'Healthy' && !loading">
                         <v-col class="col-content">
                             <p>Infrastructure working as expected. No problem logs</p>
                         </v-col>
@@ -257,6 +257,8 @@ const problemLogs = ref([]);
 const latest_problem_logs = ref([]);
 const overall_problem_severity = ref('Healthy');
 const historicalLogs = ref([]);
+const loading = ref(true);
+
 
 // Establish SocketIO connection
 const socket = io('http://52.138.212.155:8000/latestlogs');
@@ -335,6 +337,7 @@ socket.on('latest_problem_logs', (data) => {
     try {
         const infrastructureNameValue = infrastructureName.value;
         console.log('Received latest_problem_logs event on this page:', data.data.latest_problem_logs);
+        loading.value = true;
         // Check if the infrastructure name exists in the latest problem logs
         if (infrastructureNameValue in data.data.latest_problem_logs) {
             // Get the array of problem logs and severities for the infrastructure name
@@ -354,11 +357,11 @@ socket.on('latest_problem_logs', (data) => {
                 overallSeverity = 'Healthy';
             } else {
                 for (const { problem_severity } of problemLogsAndSeverities) {
-                    if (problem_severity === 'Degraded') {
-                        overallSeverity = 'Degraded';
-                        break; // If at least one problem is degraded, set overall severity to Degraded and exit loop
-                    } else if (problem_severity === 'Unhealthy' && overallSeverity !== 'Degraded') {
-                        overallSeverity = 'Unhealthy'; // If no problems are degraded but at least one is unhealthy, set overall severity to Unhealthy
+                    if (problem_severity === 'Unhealthy') {
+                        overallSeverity = 'Unhealthy';
+                        break; // If at least one problem is unhealthy, set overall severity to Unhealthy and exit loop
+                    } else if (problem_severity === 'Degraded' && overallSeverity !== 'Degraded') {
+                        overallSeverity = 'Degraded'; // If no problems are unhealthy but at least one is degraded, set overall severity to Degraded
                     }
                 }
             }
@@ -372,6 +375,8 @@ socket.on('latest_problem_logs', (data) => {
         }
     } catch (error) {
         console.error('Error in latest_problem_logs event listener:', error);
+    } finally {
+        loading.value = false;
     }
 });
 

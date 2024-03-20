@@ -370,7 +370,7 @@ export default {
                     case 'Healthy':
                         return "green";
                     case 'Degraded':
-                        return "#FFFF00";
+                        return "orange";
                     case 'Unhealthy':
                         return 'red'
                 }

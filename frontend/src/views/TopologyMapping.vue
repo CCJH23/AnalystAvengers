@@ -82,7 +82,7 @@ export default {
       // Establish SocketIO connection
       const socket = io('http://52.138.212.155:8000/latestlogs');
       // Listen for the 'historical_server_logs' event
-      socket.on('health_status', (data) => {
+      socket.on('new_health_status', (data) => {
           var servers = data.data
           for (var server of servers){
             var infrastructureName = server.InfrastructureName

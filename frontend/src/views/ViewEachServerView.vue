@@ -69,7 +69,14 @@
                 <div style="background-color: #ececec; padding: 10px; border: 1px solid black; border-top: none; overflow-y: auto; height: 30vh; scrollbar-width: none;"> 
                     <!-- if  OverallHealthStatus == 'Healthy' , display string "Server is running as per expected" -->
                     <!-- else display 3 columns, Log Date Time, Problem Name, Problem Severity -->
-                    <v-row v-if="overall_problem_severity == 'Healthy'">
+                    <v-row v-if="!latest_problem_logs.length" class="justify-center" style="margin-top: 5px;">
+                        <v-progress-circular
+                            indeterminate
+                            color="teal-lighten-3"
+                            class="text-center"
+                        ></v-progress-circular>
+                    </v-row>
+                    <v-row v-if="overall_problem_severity == 'Healthy' && latest_problem_logs">
                         <v-col class="col-content">
                             <p>Infrastructure working as expected. No problem logs</p>
                         </v-col>
@@ -155,7 +162,7 @@
                             class="text-center"
                         ></v-progress-circular>
                     </v-row>
-                    <v-row v-if="infrastructureType === 'server'" v-for="(log, index) in historicalLogs.slice(-20).reverse()" :key="index">
+                    <v-row v-if="infrastructureType === 'server'" v-for="(log, index) in historicalLogs.slice(-30).reverse()" :key="index">
                         <v-col class="col-content">
                             <p>{{ log.LogDateTime }}</p>
                         </v-col>
@@ -175,7 +182,7 @@
                             <p>{{ log.ServerNetworkAvailability }}</p>
                         </v-col>
                     </v-row>  
-                    <v-row v-else-if="infrastructureType === 'webapp'" v-for="(log, index) in historicalLogs.slice(-20).reverse()" :key="`${index}-${log.Id}`">
+                    <v-row v-else-if="infrastructureType === 'webapp'" v-for="(log, index) in historicalLogs.slice(-30).reverse()" :key="`${index}-${log.Id}`">
                         <v-col class="col-content">
                             <p>{{ log.LogDateTime }}</p>
                         </v-col>
@@ -192,7 +199,7 @@
                             <p>{{ (parseFloat(log.WebAppDuration)).toFixed(3) }}</p>
                         </v-col>
                     </v-row>
-                    <v-row v-else-if="infrastructureType === 'database'" v-for="(log, index) in historicalLogs.slice(-20).reverse()" :key="`database-${index}-${log.Id}`">
+                    <v-row v-else-if="infrastructureType === 'database'" v-for="(log, index) in historicalLogs.slice(-30).reverse()" :key="`database-${index}-${log.Id}`">
                         <v-col class="col-content">
                             <p>{{ log.LogDateTime }}</p>
                         </v-col>
@@ -302,32 +309,32 @@ socket.on('health_status', (data) => {
 });
 
 
-socket.on('problem_logs', (data) => {
-    try {
-        console.log('Received problem_logs event on this page:', data);
-        if (data && data.data && Array.isArray(data.data.problem_logs)) {
-        const filteredProblemLogs = data.data.problem_logs
-            .filter(log => log.InfrastructureName === infrastructureName.value)
-            .sort((a, b) => new Date(b.LogDateTime) - new Date(a.LogDateTime));
+// socket.on('problem_logs', (data) => {
+//     try {
+//         console.log('Received problem_logs event on this page:', data);
+//         if (data && data.data && Array.isArray(data.data.problem_logs)) {
+//         const filteredProblemLogs = data.data.problem_logs
+//             .filter(log => log.InfrastructureName === infrastructureName.value)
+//             .sort((a, b) => new Date(b.LogDateTime) - new Date(a.LogDateTime));
 
-        if (filteredProblemLogs.length > 0) {
-            const latestLog = filteredProblemLogs[0];
-            problemLogs.value = [latestLog];
-        } else {
-            problemLogs.value = [];
-        }
-        } else {
-        console.error('Error: problem_logs event data is not in the expected format.');
-        }
-    } catch (error) {
-        console.error('Error in problem_logs event listener:', error);
-    }
-});
+//         if (filteredProblemLogs.length > 0) {
+//             const latestLog = filteredProblemLogs[0];
+//             problemLogs.value = [latestLog];
+//         } else {
+//             problemLogs.value = [];
+//         }
+//         } else {
+//         console.error('Error: problem_logs event data is not in the expected format.');
+//         }
+//     } catch (error) {
+//         console.error('Error in problem_logs event listener:', error);
+//     }
+// });
 
 socket.on('latest_problem_logs', (data) => {
     try {
         const infrastructureNameValue = infrastructureName.value;
-
+        console.log('Received latest_problem_logs event on this page:', data.data.latest_problem_logs);
         // Check if the infrastructure name exists in the latest problem logs
         if (infrastructureNameValue in data.data.latest_problem_logs) {
             // Get the array of problem logs and severities for the infrastructure name

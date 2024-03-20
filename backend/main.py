@@ -128,7 +128,7 @@ def poll_database_for_changes():
                 latest_problem_logs_data = socketioClass.get_latest_problem_logs()
                 # Execute the health check function based on new records and latest problem logs
                 health_status = socketioClass.get_health_status_socket(latest_problem_logs_data, new_records)
-                socketioClass
+
                 print("Health Status:", health_status)
 
                 # Emit the health status to the frontend

@@ -1,6 +1,6 @@
 from db import db
 
-class MappingGraphModel(db.Model):
+class MappingGraph(db.Model):
     __tablename__ = 'MappingGraph'
 
     Id = db.Column(db.Integer, primary_key=True)

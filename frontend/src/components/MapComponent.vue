@@ -45,6 +45,7 @@ export default {
     buildMapComponent(){
       // Initialize the map
       this.map = L.map(this.$refs.map).setView([0, 0], 2); // Centered at (0, 0) with zoom level 2
+
       // Add a tile layer (OpenStreetMap is a common choice)
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: '© OpenStreetMap contributors',
@@ -71,7 +72,7 @@ export default {
         }
       }
 
-      // Add styling to countries based on density
+      // Add styling to countries based on server status
       this.geojson = L.geoJson(this.countriesColorData, {
         style: this.style,
         onEachFeature: this.onEachFeature
@@ -112,10 +113,10 @@ export default {
         // If there is unhealthy, return red
         return "#FF0000";
       } else if (degraded > 0){
-        // if there is degraded, return yellow
-        return "#FFFF00";
+        // if there is degraded, return orange
+        return "orange";
       } else if (healthy > 0) {
-        // if there are no unhealthy or degraded, return healthy
+        // if there are no unhealthy or degraded, return green
         return "#00FF00";
       }
     },
@@ -155,13 +156,6 @@ export default {
       });
     }
   }
-};
-// Map of country to color
-const countryColorMap = {
-  china: 'red',
-  germany: 'red',
-  uk: 'red',
-  // Add more countries and colors as needed
 };
 </script>
 

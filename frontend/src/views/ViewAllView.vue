@@ -114,23 +114,30 @@ export default {
     },
     getServiceGroupComments(group, servers){
       var criticalArr = []
+      var degradedArr = []
       for (const server of group){
         const serverName = server['InfrastructureName']
         const serverStatus = servers[serverName]
         if (serverStatus == 'Unhealthy'){
           criticalArr.push(serverName)
+        } else if (serverStatus == 'Degraded'){
+          degradedArr.push(serverName)
         }
       }
-      if (criticalArr.length === 0) {
-        return "Everything is healthy.";
+      if (criticalArr.length > 0){
+        return "Service Group is unhealthy";
+      } else if (degradedArr.length > 0){
+        return "Service Group is degraded";
       } else {
-        return `Service Group is unhealthy`;
+        return "Service Group is healthy";
       }
     },
     getServiceGroupColor(serviceGroup) {
       const status = this.serviceGroupComments[serviceGroup];
-      if (status === 'Everything is healthy.') {
+      if (status === 'Service Group is healthy') {
         return 'green';
+      } else if (status === 'Service Group is degraded'){
+        return 'orange';
       } else {
         return 'red';
       }

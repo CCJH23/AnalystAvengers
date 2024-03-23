@@ -1,5 +1,5 @@
 <script setup>
-    import Sidebar from "@/components/Navbar/Sidebar.vue";
+    import Sidebar from "@/components/Sidebar.vue";
 </script>
 <template>
     <div>
@@ -103,7 +103,7 @@ export default {
         const groupId = serverConfigData['GroupId']
         // Check if groupId exists in serviceGroups, if not, add it
         if (!this.serviceGroups.hasOwnProperty(groupId)) {
-          this.serviceGroups[groupId] = []; // Initialize as an array
+          this.serviceGroups[groupId] = []; 
         }
         // Add serverConfigData to the corresponding group
         this.serviceGroups[groupId].push(serverConfigData);
@@ -148,18 +148,19 @@ export default {
 
 <style>
   .top-container {
-    height: 20vh; /* Set height of the container to full viewport height */
+    margin-top:90px;
+    height: 20vh; 
     display: flex;
-    flex-direction: column; /* Stack items vertically */
-    justify-content: center; /* Center items vertically */
-    align-items: center; /* Center items horizontally */
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center;
   }
 
   .bottom-container {
     display: flex;
-    flex-direction: column; /* Stack items vertically */
+    flex-direction: column; 
     align-items: center;
-    height: 80vh; /* Span entire viewport height */
+    height: 80vh; 
     background-color: rgb(239, 244, 246)
   }
 

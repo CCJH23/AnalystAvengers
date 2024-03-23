@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-  import Sidebar from "@/components/Navbar/Sidebar.vue";
+  import Sidebar from "@/components/Sidebar.vue";
   import { ref, onMounted } from 'vue';
   import io from 'socket.io-client';
   

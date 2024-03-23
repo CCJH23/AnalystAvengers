@@ -242,7 +242,7 @@ import 'aos/dist/aos.css';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 import io from 'socket.io-client';
-import Sidebar from "@/components/Navbar/Sidebar.vue";
+import Sidebar from "@/components/Sidebar.vue";
 
 const route = useRoute();
 const infrastructureName = ref('');

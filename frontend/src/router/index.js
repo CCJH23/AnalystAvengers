@@ -25,7 +25,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import LoginView from '../views/LoginView.vue';
 import RegisterView from '../views/RegisterView.vue';
-import TopNavbar from '@/components/Navbar/TopNavbar.vue';
 import DashboardView from '../views/DashboardView.vue';
 import sockettest from '../views/sockettest.vue';
 import ViewEachServerView from "../views/ViewEachServerView.vue";
@@ -91,6 +90,3 @@ const router = createRouter({
 });
 
 export default router;
-export const components = {
-  TopNavbar,
-};

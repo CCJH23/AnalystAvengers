@@ -117,7 +117,7 @@ export default {
         return "orange";
       } else if (healthy > 0) {
         // if there are no unhealthy or degraded, return green
-        return "#00FF00";
+        return "green";
       }
     },
     style(feature){
@@ -127,7 +127,7 @@ export default {
           opacity: 1,
           color: 'white',
           dashArray: '3',
-          fillOpacity: 0.7
+          fillOpacity: 1.0
       };
     },
     highlightFeature(e){

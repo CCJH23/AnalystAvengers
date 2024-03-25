@@ -162,7 +162,7 @@
                             class="text-center"
                         ></v-progress-circular>
                     </v-row>
-                    <v-row v-if="infrastructureType === 'server'" v-for="(log, index) in historicalLogs.slice(-30).reverse()" :key="index">
+                    <v-row v-if="infrastructureType === 'server'" v-for="(log, index) in historicalLogs" :key="index">
                         <v-col class="col-content">
                             <p>{{ log.LogDateTime }}</p>
                         </v-col>
@@ -182,7 +182,7 @@
                             <p>{{ log.ServerNetworkAvailability }}</p>
                         </v-col>
                     </v-row>  
-                    <v-row v-else-if="infrastructureType === 'webapp'" v-for="(log, index) in historicalLogs.slice(-30).reverse()" :key="`${index}-${log.Id}`">
+                    <v-row v-else-if="infrastructureType === 'webapp'" v-for="(log, index) in historicalLogs" :key="`${index}-${log.Id}`">
                         <v-col class="col-content">
                             <p>{{ log.LogDateTime }}</p>
                         </v-col>
@@ -199,7 +199,7 @@
                             <p>{{ (parseFloat(log.WebAppDuration)).toFixed(3) }}</p>
                         </v-col>
                     </v-row>
-                    <v-row v-else-if="infrastructureType === 'database'" v-for="(log, index) in historicalLogs.slice(-30).reverse()" :key="`database-${index}-${log.Id}`">
+                    <v-row v-else-if="infrastructureType === 'database'" v-for="(log, index) in historicalLogs" :key="`database-${index}-${log.Id}`">
                         <v-col class="col-content">
                             <p>{{ log.LogDateTime }}</p>
                         </v-col>
@@ -268,25 +268,18 @@ socket.on('connect', () => {
     console.log('SocketIO connection established');
 });
 
-// // Listen for the 'historical_server_logs' event
-// socket.on('historical_server_logs', (data) => {
-//     try {
-//         // console.log('Received historical_server_logs event:', data);  
-//         const filteredLogs = data.data.historical_server_logs.filter(log => log.InfrastructureName === infrastructureName.value);
-//         // console.log('Filtered historical_server_logs:', filteredLogs);
-//         historicalServerLogs.value = filteredLogs;
-//         // console.log('Filtered historical_server_logs:', historicalServerLogs.value);
-//     } catch (error) {
-//         console.error('Error in historical_server_logs event listener:', error);
-//     }
-// });
 
 // Listen for the 'historical_logs' event
 socket.on('historical_logs', (data) => {
     // console.log('Received historical_logs event:', data);
     try {
         console.log('Received historical_logs event:', data);  
-        const filteredLogs = data.data.historical_logs.filter(log => log.InfrastructureName === infrastructureName.value);
+        const filteredLogs = data.data.historical_logs;
+        filteredLogs.sort((a, b) => {
+            const dateA = new Date(a.LogDateTime);
+            const dateB = new Date(b.LogDateTime);
+            return dateB - dateA; // Sort in descending order
+        });
         // console.log('Filtered historical_server_logs:', filteredLogs);
         historicalLogs.value = filteredLogs;
         // console.log('Filtered historical_server_logs:', historicalServerLogs.value);
@@ -311,28 +304,6 @@ socket.on('health_status', (data) => {
 });
 
 
-// socket.on('problem_logs', (data) => {
-//     try {
-//         console.log('Received problem_logs event on this page:', data);
-//         if (data && data.data && Array.isArray(data.data.problem_logs)) {
-//         const filteredProblemLogs = data.data.problem_logs
-//             .filter(log => log.InfrastructureName === infrastructureName.value)
-//             .sort((a, b) => new Date(b.LogDateTime) - new Date(a.LogDateTime));
-
-//         if (filteredProblemLogs.length > 0) {
-//             const latestLog = filteredProblemLogs[0];
-//             problemLogs.value = [latestLog];
-//         } else {
-//             problemLogs.value = [];
-//         }
-//         } else {
-//         console.error('Error: problem_logs event data is not in the expected format.');
-//         }
-//     } catch (error) {
-//         console.error('Error in problem_logs event listener:', error);
-//     }
-// });
-
 socket.on('latest_problem_logs', (data) => {
     try {
         const infrastructureNameValue = infrastructureName.value;
@@ -341,7 +312,14 @@ socket.on('latest_problem_logs', (data) => {
         // Check if the infrastructure name exists in the latest problem logs
         if (infrastructureNameValue in data.data.latest_problem_logs) {
             // Get the array of problem logs and severities for the infrastructure name
-            const problemLogsAndSeverities = data.data.latest_problem_logs[infrastructureNameValue].sort((a, b) => new Date(b.LogDateTime) - new Date(a.LogDateTime));
+            const problemLogsAndSeverities = data.data.latest_problem_logs[infrastructureNameValue];
+
+            // Sort the logs based on LogDateTime
+            problemLogsAndSeverities.sort((a, b) => {
+                const dateA = new Date(a.problem_log.LogDateTime);
+                const dateB = new Date(b.problem_log.LogDateTime);
+                return dateB - dateA; // Sort in descending order
+            });
 
             // Update the ref variable with the problem logs and severities
             latest_problem_logs.value = problemLogsAndSeverities.map(({ problem_log, problem_severity }) => ({
@@ -400,7 +378,11 @@ onMounted(async () => {
         infrastructurePriority.value = serverConfigData.InfrastructurePriority;
         infrastructureType.value = serverConfigData.InfrastructureType;
         monitoringTool.value = serverConfigData.MonitoringTool;
-        socket.emit('infrastructure_type', infrastructureType.value)
+        socket.emit('infrastructure_data', { 
+            infrastructure_type: infrastructureType.value, 
+            infrastructure_name: infrastructureName.value 
+        });
+        socket.emit('infrastructure_name', { infrastructure_name: infrastructureName.value });
     } catch (error) {
         console.error('Error fetching infrastructure config:', error);
     }

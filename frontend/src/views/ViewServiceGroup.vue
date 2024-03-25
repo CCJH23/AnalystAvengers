@@ -1,6 +1,7 @@
+<!-- Page to view the chosen service group's topology mapping and regional mapping (color-coded according to infrastructure's health)-->
 <script setup>
     import Sidebar from "@/components/Sidebar.vue";
-    import MapComponent from "@/components/MapComponent.vue";
+    import MapComponent from "@/components/MapComponent.vue"; // Component for displaying maps
 </script>
 
 <template>
@@ -9,11 +10,13 @@
         <div data-aos="fade-down">
             <div class="content">
                 <div class="titles">Service Group {{ group }} Details</div>
+                <!-- Message for when topology changes are loading -->
                 <div class="message" v-if="message.length > 0">{{ message }}</div>
                 <div v-show="!Object.keys(servers).length > 0">Loading Topology Diagram...</div>
                 <svg v-show="Object.keys(servers).length > 0" ref="chart" class="svg-container"></svg>
                 <div v-show="!buildMap">Loading Map...</div>
             </div>
+            <!-- MapComponent with props for detailed mapping -->
             <MapComponent v-if="buildMap" :mapData="mapComponentData" :servers="servers" :group="group"></MapComponent>
             <v-row style="margin-top:10px; margin-left:70px">
                 <v-col cols="4">
@@ -47,9 +50,9 @@
 </template>
 
 <script>
-import * as d3 from 'd3';
-import axios from 'axios';
-import io from 'socket.io-client';
+import * as d3 from 'd3'; // Import D3 for dynamic visualisation
+import axios from 'axios'; // Import axios for HTTP requests
+import io from 'socket.io-client'; // Import socket.io-client for real-time web socket communication
 
 export default {
     components: {
@@ -73,6 +76,7 @@ export default {
         },
     },
     async mounted(){
+        // Gets server status, mapping and topology mapping
         await this.getServersStatus()
         this.mapping = await this.getMapping()
         this.allPaths = await this.getTopologyMapping(this.mapping, this.group)
@@ -91,9 +95,11 @@ export default {
         }
     },
     created(){
+        // retrieves group number
         this.group = Number(this.$route.params.serviceGroup)
     },
     methods: {
+        // click on individual svg to be brought to infrastructure metrics page (vieweachserver)
         svgClickEvent(d){
             this.$router.push(`/vieweachserver/${d.name}`);
         },
@@ -114,6 +120,7 @@ export default {
                 }
             })
         },
+        // Retrieves data to create topology mapping
         async getInfrastructureConfigData(servers){
             var infrastructureName = null
             for (var server in servers){
@@ -132,6 +139,7 @@ export default {
             }
             await this.createTopologyChart(this.allPaths, this.servers, this.mapComponentData);
         },
+        // get regional map
         async getMapping(){
             try {
                 const response = await axios.get("http://52.138.212.155:8000/mappingGraph")
@@ -145,6 +153,7 @@ export default {
             const allPaths = this.findAllPaths(filteredData)
             return allPaths
         },
+        // To add into topology mapping
         findAllPaths(graph){
             const adjacencyList = {};
             // Build the adjacency list

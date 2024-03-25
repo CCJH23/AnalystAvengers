@@ -33,8 +33,8 @@
 
                     <v-row>
                         <v-col class="col-content">
-                            <img v-if="overall_problem_severity == 'Healthy'" src="../assets/healthy.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px; margin-top: 5px;">
-                            <img v-else-if="overall_problem_severity == 'Degraded'" src="../assets/degraded.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px; margin-top: 5px;">
+                            <img v-if="healthStatus == 'Healthy'" src="../assets/healthy.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px; margin-top: 5px;">
+                            <img v-else-if="healthStatus == 'Degraded'" src="../assets/degraded.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px; margin-top: 5px;">
                             <img v-else src="../assets/unhealthy.png" alt="Logo" class="row-logo" style="width: 15px; height: 15px; margin-top: 5px;">
                         </v-col>
                         <v-col class="col-content">
@@ -58,7 +58,7 @@
                     <h3>Problems</h3>
                 </div>
                 <div style="background-color: #ececec; padding: 10px; border: 1px solid black; border-top: none; border-bottom: none;">
-                    <v-row v-if="overall_problem_severity != 'Healthy'">
+                    <v-row v-if="healthStatus != 'Healthy'">
                         <v-col cols="3" class="col-title">
                             <strong>Log Date Time</strong>
                         </v-col>
@@ -80,12 +80,12 @@
                             class="text-center"
                         ></v-progress-circular>
                     </v-row>
-                    <v-row v-if="overall_problem_severity == 'Healthy' && !loading">
+                    <v-row v-if="healthStatus == 'Healthy' && !loading">
                         <v-col class="col-content">
                             <p>Infrastructure working as expected. No problem logs</p>
                         </v-col>
                     </v-row>
-                    <v-row v-if="overall_problem_severity != 'Healthy'" class="row-with-border" v-for="(log, index) in latest_problem_logs" :key="index">
+                    <v-row v-if="healthStatus != 'Healthy'" class="row-with-border" v-for="(log, index) in latest_problem_logs" :key="index">
                         <v-col cols="3" class="col-content">{{ log.problem_log.LogDateTime }}</v-col>
                         <v-col cols="6" class="col-content">{{ log.problem_log.ProblemName }}</v-col>
                         <v-col cols="3" class="col-content">{{ log.problem_log.ProblemSeverity }}</v-col>
@@ -245,7 +245,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'; // Import Vue composition API functions
+import { ref, onMounted, onUnmounted } from 'vue'; // Import Vue composition API functions
 import AOS from 'aos'; // Import aos for animations
 import 'aos/dist/aos.css';
 import { useRoute } from 'vue-router'; // Import Vue Router's useRoute function to access route parameters
@@ -300,14 +300,16 @@ socket.on('historical_logs', (data) => {
 });
 
 // Listen for the 'health_status' event
-socket.on('health_status', (data) => {
+socket.on('new_health_status', (data) => {
     try {
-        // console.log('Received health_status event:', data);
+        // console.log('Received health_status event:', data.data);
         // Filter health status based on infrastructureName
-        const filteredHealthStatus = data.data.filter(item => item.InfrastructureName === infrastructureName.value);
+        const filteredObject = Object.keys(data.data).filter(key => key === infrastructureName.value);
+        const filteredHealthStatus = filteredObject.map(key => data.data[key]);
+        console.log('Filtered health status:', filteredHealthStatus);
         healthStatus.value = filteredHealthStatus;
         // console.log('Filtered health status:', healthStatus.value);
-        OverallHealthStatus.value = healthStatus.value[0].OverallHealthStatus;
+        // OverallHealthStatus.value = healthStatus.value[0].OverallHealthStatus;
         // console.log('OverallHealthStatus:', OverallHealthStatus.value);
     } catch (error) {
         console.error('Error in health_status event listener:', error);
@@ -319,7 +321,6 @@ socket.on('latest_problem_logs', (data) => {
     try {
         const infrastructureNameValue = infrastructureName.value;
         console.log('Received latest_problem_logs event on this page:', data.data.latest_problem_logs);
-        loading.value = true;
         // Check if the infrastructure name exists in the latest problem logs
         if (infrastructureNameValue in data.data.latest_problem_logs) {
             // Get the array of problem logs and severities for the infrastructure name
@@ -327,9 +328,9 @@ socket.on('latest_problem_logs', (data) => {
 
             // Sort the logs based on LogDateTime
             problemLogsAndSeverities.sort((a, b) => {
-                const dateA = new Date(a.problem_log.LogDateTime);
-                const dateB = new Date(b.problem_log.LogDateTime);
-                return dateB - dateA; // Sort in descending order
+                const dateAproblem = new Date(a.problem_log.LogDateTime);
+                const dateBproblem = new Date(b.problem_log.LogDateTime);
+                return dateBproblem - dateAproblem; // Sort in descending order
             });
 
             // Update the ref variable with the problem logs and severities
@@ -359,13 +360,15 @@ socket.on('latest_problem_logs', (data) => {
         } else {
             console.log(`No problem logs found for infrastructure ${infrastructureNameValue}`);
             // Clear the latest_problem_logs ref variable if no logs found
-            latest_problem_logs.value = [];
+            // latest_problem_logs.value = [];
             overall_problem_severity.value = 'Healthy'; // Reset overall severity to Healthy if no logs found
         }
     } catch (error) {
         console.error('Error in latest_problem_logs event listener:', error);
     } finally {
-        loading.value = false;
+        if (loading.value) {
+            loading.value = false;
+        }
     }
 });
 
@@ -377,6 +380,14 @@ socket.on('error', (error) => {
 
 socket.on('disconnect', () => {
     console.log('SocketIO connection closed');
+});
+
+// Cleanup event listeners on component unmount
+onUnmounted(() => {
+    socket.off('historical_logs');
+    socket.off('latest_problem_logs');
+    socket.off('error');
+    socket.off('disconnect');
 });
 
 onMounted(async () => {

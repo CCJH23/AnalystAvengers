@@ -95,7 +95,11 @@ def poll_database_for_changes():
             if new_records:
                 socketio.emit('latest_server_logs', {"code": 200, "data": {"latest_server_logs": new_records}}, namespace='/latestlogs')
 
-                latest_problem_logs_data = socketioClass.get_latest_problem_logs()
+                gmt = pytz.timezone('GMT')
+                end_time = datetime.now(gmt)
+                start_time = end_time - timedelta(minutes=2)
+
+                latest_problem_logs_data = socketioClass.get_latest_problem_logs(start_time, end_time)
                 # Execute the health check function based on new records and latest problem logs
                 health_status = socketioClass.get_health_status_socket(latest_problem_logs_data, new_records)
 
@@ -124,9 +128,10 @@ def get_historical_logs_records_socketio():
 
                     # Retrieve historical logs for each unique server
                     historical_logs = socketioClass.get_historical_logs_records(start_time, end_time, infrastructure_type_received, infrastructure_name_received)
-                    print("Historical Logs:", historical_logs)
+                    # print("Historical Logs:", historical_logs)
                     # Emit historical logs to frontend
                     socketio.emit('historical_logs', {"code": 200, "data": {"historical_logs": historical_logs}}, namespace='/latestlogs')
+
                     time.sleep(10)
 
             except Exception as e:
@@ -145,8 +150,12 @@ def get_problem_logs():
                 infrastructure_name_received = data.get('infrastructure_name')
                 while True:
                     # retrieve all problem logs
-                    problem_logs = socketioClass.get_problem_logs()
-                    latest_problem_logs = socketioClass.get_latest_problem_logs_by_name(infrastructure_name_received)
+                    # problem_logs = socketioClass.get_problem_logs()
+                    gmt = pytz.timezone('GMT')
+                    end_time = datetime.now(gmt)
+                    start_time = end_time - timedelta(minutes=2)
+
+                    latest_problem_logs = socketioClass.get_latest_problem_logs_by_name(start_time, end_time, infrastructure_name_received)
                     # Initialize a dictionary to store problem severities for each infrastructure name
                     problem_severity_dict = {}
 
@@ -167,10 +176,10 @@ def get_problem_logs():
                             }
                         )
                         
-                    # print(problem_severity_dict)
+                    print(problem_severity_dict)
 
                     # Emit problem logs to frontend
-                    socketio.emit('problem_logs', {"code": 200, "data": {"problem_logs": problem_logs}}, namespace='/latestlogs')
+                    # socketio.emit('problem_logs', {"code": 200, "data": {"problem_logs": problem_logs}}, namespace='/latestlogs')
                     socketio.emit('latest_problem_logs', {"code": 200, "data": {"latest_problem_logs": problem_severity_dict}}, namespace='/latestlogs')
 
                     time.sleep(10)

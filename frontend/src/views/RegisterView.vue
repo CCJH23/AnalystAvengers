@@ -1,8 +1,10 @@
+<!-- Register page for users to register for an account before entering the site -->
 <template>
     <div class="background-container">
         <LoginNavbar />
         <div class="register-container">
         <h1>Register</h1>
+        <!-- Registration form preventing default submission behavior -->
         <form @submit.prevent="handleRegister" class="needs-validation">
             <div class="form-group">
                 <label for="email">Email</label>
@@ -21,7 +23,7 @@
 
 <script>
 import LoginNavbar from '../components/LoginNavbar.vue';
-import Auth from '../utils/auth'
+import Auth from '../utils/auth' // Importing the Auth utility for authentication functions
 
 export default {
     components: {
@@ -34,15 +36,17 @@ export default {
         };
     },
     created() {
+        // On component creation, check user's authentication state
         (async () => {
             const result = await Auth.checkState();
             if(result){
-                this.$router.push('/')
+                this.$router.push('/') // If authenticated, redirect to the homepages
             }
         })();
     },
     methods: {
         async handleRegister(){
+            // Handle registration with provided email and password
             try {
                 await Auth.register(this.email, this.password)
                 this.email = ''
@@ -53,6 +57,7 @@ export default {
             }
         },
         getCookie(name) {
+            // Utility method to get a cookie by name
             const value = `; ${document.cookie}`;
             const parts = value.split(`; ${name}=`);
             
@@ -66,11 +71,8 @@ export default {
 
 <style scoped>
 .background-container {
-  /* Add your background image URL and additional styles */
-  background: url('@/img/bg.jpg') center center fixed;
+  background: url('@/assets/bg.jpg') center center fixed;
   background-size: cover;
-  /* Add other background styles or overlay if needed */
-  /* For example, you can add an overlay with opacity */
   position: absolute;
   width: 100%;
   height: 100%;
@@ -85,11 +87,11 @@ export default {
 }
 .register-container {
   max-width: 400px;
-  margin: 10% auto; /* Adjust the margin to center the form vertically */
+  margin: 10% auto; 
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  background-color: rgba(255, 255, 255, 0.8); /* Adjust the opacity as needed */
+  background-color: rgba(255, 255, 255, 0.8); 
   color:black;
 }
 

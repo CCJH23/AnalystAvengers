@@ -1,3 +1,4 @@
+<!-- Map component to be included when viewing the status of each service group  -->
 <template>
   <div>
     <div ref="map" style="height: 500px;"></div>
@@ -43,10 +44,8 @@ export default {
   },
   methods: {
     buildMapComponent(){
-      // Initialize the map
       this.map = L.map(this.$refs.map).setView([0, 0], 2); // Centered at (0, 0) with zoom level 2
 
-      // Add a tile layer (OpenStreetMap is a common choice)
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: '© OpenStreetMap contributors',
       }).addTo(this.map);
@@ -116,10 +115,11 @@ export default {
         // if there is degraded, return orange
         return "orange";
       } else if (healthy > 0) {
-        // if there are no unhealthy or degraded, return green
-        return "#00FF00";
+        // else return green
+        return "green";
       }
     },
+    // style map on country according to server status
     style(feature){
       return {
           fillColor: this.getColor(feature.properties.healthy, feature.properties.degraded, feature.properties.unhealthy),
@@ -127,9 +127,10 @@ export default {
           opacity: 1,
           color: 'white',
           dashArray: '3',
-          fillOpacity: 0.7
+          fillOpacity: 1.0
       };
     },
+    // highlights area on mouseover
     highlightFeature(e){
       var layer = e.target;
       layer.setStyle({
@@ -141,6 +142,7 @@ export default {
       layer.bringToFront();
       this.info.update(layer.feature.properties);
     },
+    // returns to normal after mouseout
     resetHighlight(e){
       this.geojson.resetStyle(e.target);
       this.info.update();

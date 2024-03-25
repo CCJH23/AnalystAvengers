@@ -1,3 +1,4 @@
+<!-- Pulling data for the problems table in vieweachserver pages-->
 <template>
   <Sidebar />
   <v-container fluid class="top-container">
@@ -23,7 +24,7 @@
 </template>
 
 <script setup>
-  import Sidebar from "@/components/Navbar/Sidebar.vue";
+  import Sidebar from "@/components/Sidebar.vue";
   import { ref, onMounted } from 'vue';
   import io from 'socket.io-client';
   
@@ -69,30 +70,30 @@
 
 <style>
 .col-content{
-  font-size: 14px; /* Adjust the font size as needed */
-  text-align: center; /* Center-align the text */
+  font-size: 14px; 
+  text-align: center; 
 }
 
 .col-title{
-  font-size: 15px; /* Adjust the font size as needed */
+  font-size: 15px; 
   text-align: center;
 }
 
 .top-container {
-  height: auto; /* Let the height adjust based on content */
+  height: auto; 
   display: flex;
-  flex-direction: column; /* Stack items vertically */
+  flex-direction: column; 
   justify-content: center;
   align-items: center;
 }
 
 .bottom-container {
   display: flex;
-  flex-direction: column; /* Stack items vertically */
+  flex-direction: column; 
   align-items: center;
   background-color: rgb(239, 244, 246);
-  padding-top: 20px; /* Add padding to reduce gap */
-  padding-bottom: 20px; /* Add padding to reduce gap */
+  padding-top: 20px; 
+  padding-bottom: 20px; 
 }
 
 .inner-container-1 {

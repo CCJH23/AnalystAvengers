@@ -1,3 +1,4 @@
+<!-- Login and Register navbar component to be included in the Login and Registration page (before user logs in) -->
 <template>
   <nav>
     <ul>

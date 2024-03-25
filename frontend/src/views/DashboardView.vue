@@ -1,6 +1,6 @@
+<!-- not in use -->
 <script setup>
-    import Sidebar from "@/components/Navbar/Sidebar.vue";
-    import Map from "@/components/Map.vue"
+    import Sidebar from "@/components/Sidebar.vue";
 </script>
 
 <template>

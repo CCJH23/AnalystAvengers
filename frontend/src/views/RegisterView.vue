@@ -67,7 +67,7 @@ export default {
 <style scoped>
 .background-container {
   /* Add your background image URL and additional styles */
-  background: url('@/img/bg.jpg') center center fixed;
+  background: url('@/assets/bg.jpg') center center fixed;
   background-size: cover;
   /* Add other background styles or overlay if needed */
   /* For example, you can add an overlay with opacity */

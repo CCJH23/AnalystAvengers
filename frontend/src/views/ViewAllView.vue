@@ -1,13 +1,16 @@
+<!-- Home page which displays all service groups and their respective statuses -->
 <script setup>
     import Sidebar from "@/components/Sidebar.vue";
 </script>
 <template>
     <div>
       <Sidebar/>
+      <!-- Container for the top section of the page -->
       <v-container fluid class="top-container">
         <img src="../assets/logo.png" alt="Logo" class="logo" data-aos="fade-down">
         <span class="text-center bold headline" data-aos="fade-down">Service Health</span>
       </v-container>
+       <!-- Container for the bottom section of the page which includes service group details -->
       <v-container fluid class="bottom-container">
         <v-container class="fluid inner-container-1">
           <v-row style="margin-bottom:18px" class="service-label" data-aos="fade-down">Service Health</v-row>
@@ -16,6 +19,7 @@
             <v-col cols="8" style="text-align: center; color: #a7c6ba; font-weight: bold;">Service Group Status</v-col>
             <v-col cols="2"></v-col>
           </v-row>
+          <!-- Dynamic rows for each service group, displaying the name and status -->
           <v-row class="row-with-border" v-for="(serviceGroup, idx) in Object.keys(serviceGroups)" :key="idx" data-aos="fade-down">
             <v-col cols="2">{{ serviceGroupNames[serviceGroup] }}</v-col>
             <v-col cols="8" :style="{ 'text-align': 'center', color: getServiceGroupColor(serviceGroup)}">{{ serviceGroupComments[serviceGroup] }}</v-col>
@@ -23,6 +27,7 @@
               <v-btn variant="text" :to="'view/' + serviceGroup">View</v-btn>
             </v-col>
           </v-row>
+          <!-- Legend for service group statuses with corresponding icons -->
           <v-row style="margin-top:38px">
             <v-col cols="4">
             </v-col>

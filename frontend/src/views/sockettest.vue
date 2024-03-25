@@ -1,10 +1,13 @@
+<!-- Pulling data for the servers logs table in vieweachserver pages-->
 <template>
   <Sidebar />
   <v-container fluid class="top-container">
+    <!-- Logo and page headline -->
     <img src="../assets/logo.png" alt="Logo" class="logo">
     <span class="text-center bold headline">Latest Server Logs</span>
   </v-container>
   <v-container fluid class="bottom-container">
+    <!-- Container for the server logs table -->
     <v-container class="fluid inner-container-1">
       <v-row style="margin-bottom:18px" class="service-label">
         <v-col class="col-title">Infrastructure Name</v-col>
@@ -16,6 +19,7 @@
         <v-col class="col-title">Server Memory Utilization</v-col>
         <v-col class="col-title">Server Network Availability</v-col>
       </v-row>
+      <!-- Table rows for server logs -->
       <v-row class="row-with-border" v-for="(log, index) in latestServerLogs" :key="index">
         <v-col cols="2" class="col-content">{{ log.InfrastructureName }}</v-col>
         <v-col cols="1" class="col-content">{{ log.InfrastructureType }}</v-col>
@@ -24,6 +28,7 @@
           <img v-if="log.ServerAvailability === 0" src="../assets/unhealthy.png" alt="Unhealthy" class="row-logo">
           <img v-else src="../assets/healthy.png" alt="Healthy" class="row-logo">
         </v-col>
+        <!-- Server utilization metrics -->
         <v-col cols="1" class="col-content">{{ (parseFloat(log.ServerCpuUtilisation)).toFixed(5) }}%</v-col>
         <v-col cols="1" class="col-content">{{ (parseFloat(log.ServerDiskUtilisation)).toFixed(5) }}%</v-col>
         <v-col cols="1" class="col-content">{{ (parseFloat(log.ServerMemoryUtilisation)).toFixed(5) }}%</v-col>
@@ -37,9 +42,10 @@
 </template>
 
 <script setup>
+  // Importing required components and Vue functionalities
   import Sidebar from "@/components/Sidebar.vue";
   import { ref, onMounted } from 'vue';
-  import io from 'socket.io-client';
+  import io from 'socket.io-client'; // Import socket.io-client for real-time web socket communication
   
   const latestServerLogs = ref([]);
   
@@ -83,37 +89,37 @@
 
 <style>
 .col-content{
-  font-size: 14px; /* Adjust the font size as needed */
-  text-align: center; /* Center-align the text */
+  font-size: 14px; 
+  text-align: center;
 }
 
 .col-title{
-  font-size: 15px; /* Adjust the font size as needed */
+  font-size: 15px; 
   text-align: center;
 }
 
 .top-container {
-  height: auto; /* Let the height adjust based on content */
+  height: auto; 
   display: flex;
-  flex-direction: column; /* Stack items vertically */
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
 .bottom-container {
   display: flex;
-  flex-direction: column; /* Stack items vertically */
+  flex-direction: column; 
   align-items: center;
   background-color: rgb(239, 244, 246);
-  padding-top: 20px; /* Add padding to reduce gap */
-  padding-bottom: 20px; /* Add padding to reduce gap */
+  padding-top: 20px; 
+  padding-bottom: 20px; 
 }
 
 .inner-container-1 {
   background-color: white;
-  position: relative; /* To position the label */
-  max-width: 100%; /* Ensure container does not exceed screen width */
-  overflow-x: auto; /* Allow horizontal scrolling if content overflows */
+  position: relative; 
+  max-width: 100%; 
+  overflow-x: auto; 
 }
 
 .text-center {
@@ -127,7 +133,7 @@
 
 .headline {
   font-size: 24px;
-  margin: 0; /* Remove margin to prevent any unwanted spacing */
+  margin: 0; 
 }
 
 .logo {

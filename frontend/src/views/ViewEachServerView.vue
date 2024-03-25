@@ -1,10 +1,13 @@
+<!-- Page to view a chosen infrastructure's overview, problems and logs -->
 <template>
     <Sidebar/>
     <div class="display">
         <v-container style="background-color:white; padding-bottom: 10vh;" class="mb-6 mt-8" data-aos="fade-down" >
+            <!-- Infrastructure name dynamically fetched from the route parameters -->
             <h2 style="color: #758d84; margin: 8px; margin-bottom: 40px; margin-top:60px">
                 Name: {{ $route.params.infrastructureName }}
             </h2>
+            <!-- Overview Table -->
             <div style="margin: 8px;">
                 <div style="background-color: #dddddd; padding: 10px; border: 1px solid black; border-bottom: none;">
                     <h3>Overview</h3>
@@ -49,6 +52,7 @@
                     </v-row>  
                 </div>
             </div>
+            <!-- Problems Table -->
             <div style="margin: 8px;margin-top: 60px; ">
                 <div style="background-color: #dddddd; padding: 10px; border: 1px solid black; border-bottom: none;">
                     <h3>Problems</h3>
@@ -89,6 +93,8 @@
                 </div>
             </div>
 
+
+            <!-- Logs Table -->
             <div style="margin: 8px;margin-top: 60px; ">
                 <div style="background-color: #dddddd; padding: 10px; border: 1px solid black; border-bottom: none;">
                     <h3>Logs</h3>
@@ -162,6 +168,7 @@
                             class="text-center"
                         ></v-progress-circular>
                     </v-row>
+                    <!-- if infrastructure is a server -->
                     <v-row v-if="infrastructureType === 'server'" v-for="(log, index) in historicalLogs.slice(-30).reverse()" :key="index">
                         <v-col class="col-content">
                             <p>{{ log.LogDateTime }}</p>
@@ -182,6 +189,7 @@
                             <p>{{ log.ServerNetworkAvailability }}</p>
                         </v-col>
                     </v-row>  
+                    <!-- if infrastructure is a webapp -->
                     <v-row v-else-if="infrastructureType === 'webapp'" v-for="(log, index) in historicalLogs.slice(-30).reverse()" :key="`${index}-${log.Id}`">
                         <v-col class="col-content">
                             <p>{{ log.LogDateTime }}</p>
@@ -199,6 +207,7 @@
                             <p>{{ (parseFloat(log.WebAppDuration)).toFixed(3) }}</p>
                         </v-col>
                     </v-row>
+                    <!-- if database is a webapp -->
                     <v-row v-else-if="infrastructureType === 'database'" v-for="(log, index) in historicalLogs.slice(-30).reverse()" :key="`database-${index}-${log.Id}`">
                         <v-col class="col-content">
                             <p>{{ log.LogDateTime }}</p>
@@ -236,15 +245,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import AOS from 'aos';
+import { ref, onMounted } from 'vue'; // Import Vue composition API functions
+import AOS from 'aos'; // Import aos for animations
 import 'aos/dist/aos.css';
-import { useRoute } from 'vue-router';
-import axios from 'axios';
-import io from 'socket.io-client';
+import { useRoute } from 'vue-router'; // Import Vue Router's useRoute function to access route parameters
+import axios from 'axios'; // Import axios for HTTP requests
+import io from 'socket.io-client'; // Import socket.io-client for real-time web socket communication
 import Sidebar from "@/components/Sidebar.vue";
 
+// Accessing current route information
 const route = useRoute();
+// Declaring reactive variables for infrastructure details
 const infrastructureName = ref('');
 const infrastructureCountry = ref('');
 const infrastructurePriority = ref(0);

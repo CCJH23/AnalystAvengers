@@ -145,18 +145,14 @@ class socketioClass():
         
         return problem_logs_data 
 
-    def get_latest_problem_logs():
+    def get_latest_problem_logs(start_time, end_time):
         latest_problem_logs_data = []
 
-        # Get the current time in GMT timezone
-        gmt = pytz.timezone('GMT')
-        current_time = datetime.now(gmt)
-
-        # Calculate the start time as 15 seconds ago from the current time
-        start_time = current_time - timedelta(seconds=60)
-
         # Query to fetch the problem logs within the past 15 seconds
-        query = db.session.query(ProblemLogs).filter(ProblemLogs.LogDateTime >= start_time)
+        query = db.session.query(ProblemLogs).filter(
+            ProblemLogs.LogDateTime >= start_time,
+            ProblemLogs.LogDateTime <= end_time
+        )
 
         latest_problem_logs = query.all()
 
@@ -173,18 +169,14 @@ class socketioClass():
 
         return latest_problem_logs_data
 
-    def get_latest_problem_logs_by_name(infra_name):
+    def get_latest_problem_logs_by_name(start_time, end_time, infra_name):
         latest_problem_logs_data = []
 
-        # Get the current time in GMT timezone
-        gmt = pytz.timezone('GMT')
-        current_time = datetime.now(gmt)
-
-        # Calculate the start time as 15 seconds ago from the current time
-        start_time = current_time - timedelta(seconds=60)
-
-        # Query to fetch the problem logs within the past 15 seconds
-        query = db.session.query(ProblemLogs).filter(ProblemLogs.LogDateTime >= start_time, ProblemLogs.InfrastructureName == infra_name)
+        query = db.session.query(ProblemLogs).filter(
+            ProblemLogs.LogDateTime >= start_time,
+            ProblemLogs.LogDateTime <= end_time,
+            ProblemLogs.InfrastructureName == infra_name
+        )
 
         latest_problem_logs = query.all()
 

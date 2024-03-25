@@ -1,5 +1,5 @@
 <script setup>
-    import Sidebar from "@/components/Navbar/Sidebar.vue";
+    import Sidebar from "@/components/Sidebar.vue";
     import MapComponent from "@/components/MapComponent.vue";
 </script>
 

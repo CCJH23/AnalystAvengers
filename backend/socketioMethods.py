@@ -92,10 +92,11 @@ class socketioClass():
         return historical_logs_data
     
 
-    def get_historical_logs_records(start_time, end_time, infra_type):
+    def get_historical_logs_records(start_time, end_time, infra_type, infra_name):
         # Initialize a list to store historical logs
         model = None
         historical_logs_data = []
+        
         if infra_type == "server":
             model = ServerLogs
         elif infra_type == "database":
@@ -103,8 +104,12 @@ class socketioClass():
         elif infra_type == "webapp":
             model = WebAppLogs
 
-        # Query to fetch historical logs within the specified time frame
-        query = db.session.query(model).filter(model.LogDateTime >= start_time, model.LogDateTime <= end_time)
+        # Query to fetch historical logs within the specified time frame and for the specified infra_name
+        query = db.session.query(model).filter(
+            model.LogDateTime >= start_time,
+            model.LogDateTime <= end_time,
+            model.InfrastructureName == infra_name
+        )
 
         # Fetch historical logs
         historical_logs = query.all()
@@ -118,84 +123,9 @@ class socketioClass():
             log_data.pop('_sa_instance_state', None)
             historical_logs_data.append(log_data)
 
-        # print("<--------------------Historical Logs Data-------------------------")
-        # print("Historical Logs Data:", historical_logs_data)
-        # print("---------------------Historical Logs Data------------------------>")
-
         return historical_logs_data
+
     
-
-    # def get_health_status_socket(latest_server_logs):
-    #     try:
-    #         if latest_server_logs:
-
-    #             # Fetch health status thresholds from the database
-    #             # thresholds = MetricThreshold.query.all()
-    #             # threshold_dict = {threshold.Metric: (threshold.CriticalThreshold, threshold.BadThreshold, threshold.WarningThreshold) for threshold in thresholds}
-    #             # print("Thresholds:", threshold_dict)
-    #             threshold_dict = metricThresholdClass.get_metric_thresholds()
-
-    #             # List to store health status data
-    #             health_status_data = []
-
-    #             # Iterate through each server log
-    #             # print("Latest_server_logs are", latest_server_logs)
-    #             for log in latest_server_logs:
-    #                 infrastructure_name = log['InfrastructureName']
-    #                 infrastructure_type = log['InfrastructureType']
-    #                 logDateTime = log['LogDateTime']
-    #                 overallHealthStatusSet = set()
-    #                 overallHealthStatus = 'Healthy'
-    #                 health_status = {}
-
-    #                 # Determine health status for each metric
-    #                 for metric in log.keys():
-    #                     if metric in threshold_dict:
-    #                         value = log[metric]
-    #                         critical_threshold, bad_threshold, warning_threshold = threshold_dict[metric]
-
-    #                         if metric == 'ServerAvailability' or metric == 'ServerNetworkAvailability':
-    #                             if value == 0:
-    #                                 health_status[metric] = 'Critical'
-    #                                 overallHealthStatusSet.add('Critical')
-    #                             else:
-    #                                 health_status[metric] = 'Healthy'
-    #                                 overallHealthStatusSet.add('Healthy')
-    #                         else:
-    #                             if value >= critical_threshold:
-    #                                 health_status[metric] = 'Critical'
-    #                                 overallHealthStatusSet.add('Critical')
-    #                             elif value >= bad_threshold:
-    #                                 health_status[metric] = 'Bad'
-    #                                 overallHealthStatusSet.add('Bad')
-    #                             elif value >= warning_threshold:
-    #                                 health_status[metric] = 'Warning'
-    #                                 overallHealthStatusSet.add('Warning')
-    #                             else:
-    #                                 health_status[metric] = 'Healthy'
-    #                                 overallHealthStatusSet.add('Healthy')
-
-    #                 if 'Critical' in overallHealthStatusSet:
-    #                     overallHealthStatus = 'Critical'
-    #                 elif 'Bad' in overallHealthStatusSet:
-    #                     overallHealthStatus = 'Bad'
-    #                 elif 'Warning' in overallHealthStatusSet:
-    #                     overallHealthStatus = 'Warning'
-
-    #                 # Append infrastructure name and its health status to the list
-    #                 health_status_data.append({'InfrastructureName': infrastructure_name, 'InfrastructureType': infrastructure_type, 'LogDateTime': logDateTime, 'OverallHealthStatus': overallHealthStatus, 'HealthStatus': health_status})
-
-    #             if health_status_data:
-    #                 return jsonify({"code": 200, "data": health_status_data}), 200
-    #             else:
-    #                 return jsonify({"code": 404, "message": "No server logs available."}), 404
-    #         else:
-    #             # Return the response from get_latest_server_logs() directly
-    #             return jsonify({"code": 404, "message": "No server logs available."}), 404
-    #     except Exception as e:
-    #         # Handle any exceptions and return an error response
-    #         return jsonify({"code": 500, "message": f"An error occurred: {str(e)}"}), 500
-
         
     def get_problem_logs():
 
@@ -215,7 +145,6 @@ class socketioClass():
         
         return problem_logs_data 
 
-
     def get_latest_problem_logs():
         latest_problem_logs_data = []
 
@@ -224,10 +153,38 @@ class socketioClass():
         current_time = datetime.now(gmt)
 
         # Calculate the start time as 15 seconds ago from the current time
-        start_time = current_time - timedelta(seconds=300)
+        start_time = current_time - timedelta(seconds=60)
 
         # Query to fetch the problem logs within the past 15 seconds
         query = db.session.query(ProblemLogs).filter(ProblemLogs.LogDateTime >= start_time)
+
+        latest_problem_logs = query.all()
+
+        # Convert the latest problem logs to a list of dictionaries
+        for record in latest_problem_logs:
+            log_data = record.__dict__
+            # Convert LogDateTime to string format
+            log_data['LogDateTime'] = str(log_data['LogDateTime'])
+            # Remove unnecessary keys from the dictionary (e.g., '_sa_instance_state')
+            log_data.pop('_sa_instance_state', None)
+            latest_problem_logs_data.append(log_data)
+
+        # print("Latest Problem Logs:", latest_problem_logs_data)
+
+        return latest_problem_logs_data
+
+    def get_latest_problem_logs_by_name(infra_name):
+        latest_problem_logs_data = []
+
+        # Get the current time in GMT timezone
+        gmt = pytz.timezone('GMT')
+        current_time = datetime.now(gmt)
+
+        # Calculate the start time as 15 seconds ago from the current time
+        start_time = current_time - timedelta(seconds=60)
+
+        # Query to fetch the problem logs within the past 15 seconds
+        query = db.session.query(ProblemLogs).filter(ProblemLogs.LogDateTime >= start_time, ProblemLogs.InfrastructureName == infra_name)
 
         latest_problem_logs = query.all()
 
@@ -331,3 +288,74 @@ class socketioClass():
                     return {}
         except FileNotFoundError:
             return {}
+        
+        # def get_health_status_socket(latest_server_logs):
+    #     try:
+    #         if latest_server_logs:
+
+    #             # Fetch health status thresholds from the database
+    #             # thresholds = MetricThreshold.query.all()
+    #             # threshold_dict = {threshold.Metric: (threshold.CriticalThreshold, threshold.BadThreshold, threshold.WarningThreshold) for threshold in thresholds}
+    #             # print("Thresholds:", threshold_dict)
+    #             threshold_dict = metricThresholdClass.get_metric_thresholds()
+
+    #             # List to store health status data
+    #             health_status_data = []
+
+    #             # Iterate through each server log
+    #             # print("Latest_server_logs are", latest_server_logs)
+    #             for log in latest_server_logs:
+    #                 infrastructure_name = log['InfrastructureName']
+    #                 infrastructure_type = log['InfrastructureType']
+    #                 logDateTime = log['LogDateTime']
+    #                 overallHealthStatusSet = set()
+    #                 overallHealthStatus = 'Healthy'
+    #                 health_status = {}
+
+    #                 # Determine health status for each metric
+    #                 for metric in log.keys():
+    #                     if metric in threshold_dict:
+    #                         value = log[metric]
+    #                         critical_threshold, bad_threshold, warning_threshold = threshold_dict[metric]
+
+    #                         if metric == 'ServerAvailability' or metric == 'ServerNetworkAvailability':
+    #                             if value == 0:
+    #                                 health_status[metric] = 'Critical'
+    #                                 overallHealthStatusSet.add('Critical')
+    #                             else:
+    #                                 health_status[metric] = 'Healthy'
+    #                                 overallHealthStatusSet.add('Healthy')
+    #                         else:
+    #                             if value >= critical_threshold:
+    #                                 health_status[metric] = 'Critical'
+    #                                 overallHealthStatusSet.add('Critical')
+    #                             elif value >= bad_threshold:
+    #                                 health_status[metric] = 'Bad'
+    #                                 overallHealthStatusSet.add('Bad')
+    #                             elif value >= warning_threshold:
+    #                                 health_status[metric] = 'Warning'
+    #                                 overallHealthStatusSet.add('Warning')
+    #                             else:
+    #                                 health_status[metric] = 'Healthy'
+    #                                 overallHealthStatusSet.add('Healthy')
+
+    #                 if 'Critical' in overallHealthStatusSet:
+    #                     overallHealthStatus = 'Critical'
+    #                 elif 'Bad' in overallHealthStatusSet:
+    #                     overallHealthStatus = 'Bad'
+    #                 elif 'Warning' in overallHealthStatusSet:
+    #                     overallHealthStatus = 'Warning'
+
+    #                 # Append infrastructure name and its health status to the list
+    #                 health_status_data.append({'InfrastructureName': infrastructure_name, 'InfrastructureType': infrastructure_type, 'LogDateTime': logDateTime, 'OverallHealthStatus': overallHealthStatus, 'HealthStatus': health_status})
+
+    #             if health_status_data:
+    #                 return jsonify({"code": 200, "data": health_status_data}), 200
+    #             else:
+    #                 return jsonify({"code": 404, "message": "No server logs available."}), 404
+    #         else:
+    #             # Return the response from get_latest_server_logs() directly
+    #             return jsonify({"code": 404, "message": "No server logs available."}), 404
+    #     except Exception as e:
+    #         # Handle any exceptions and return an error response
+    #         return jsonify({"code": 500, "message": f"An error occurred: {str(e)}"}), 500

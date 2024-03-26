@@ -126,7 +126,6 @@ class socketioClass():
         return historical_logs_data
 
     
-        
     def get_problem_logs():
 
         problem_logs_data = []
@@ -144,6 +143,7 @@ class socketioClass():
         # print("Problem_logs_data:", problem_logs_data)
         
         return problem_logs_data 
+
 
     def get_latest_problem_logs(start_time, end_time):
         latest_problem_logs_data = []
@@ -166,7 +166,7 @@ class socketioClass():
             latest_problem_logs_data.append(log_data)
 
         # print("Latest Problem Logs:", latest_problem_logs_data)
-
+        
         return latest_problem_logs_data
 
     def get_latest_problem_logs_by_name(start_time, end_time, infra_name):
@@ -190,7 +190,7 @@ class socketioClass():
             latest_problem_logs_data.append(log_data)
 
         # print("Latest Problem Logs:", latest_problem_logs_data)
-
+        
         return latest_problem_logs_data
 
     

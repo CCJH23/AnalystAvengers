@@ -37,6 +37,8 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 # initialise database with Flask app
 load_dotenv()
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mssql+pyodbc://analystavengers:{os.environ["DATABASE_PASSWORD"]}@analystavengersdb.database.windows.net:1433/AnalystAvenger_SQL?driver=ODBC+Driver+18+for+SQL+Server'
+
+# this setting causes the pool to recycle connections after the given number of seconds has passed. To fix issue of having too many connections
 app.config['SQLALCHEMY_POOL_RECYCLE'] = 1800
 db.init_app(app)
 

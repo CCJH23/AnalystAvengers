@@ -37,6 +37,9 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 # initialise database with Flask app
 load_dotenv()
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mssql+pyodbc://analystavengers:{os.environ["DATABASE_PASSWORD"]}@analystavengersdb.database.windows.net:1433/AnalystAvenger_SQL?driver=ODBC+Driver+18+for+SQL+Server'
+app.config['SQLALCHEMY_POOL_SIZE'] = 30
+app.config['SQLALCHEMY_MAX_OVERFLOW'] = 100
+app.config['SQLALCHEMY_POOL_TIMEOUT'] = 100
 db.init_app(app)
 
 # register blueprints
@@ -55,6 +58,15 @@ app.register_blueprint(serviceGroupBp)
 ################
 @app.route('/')
 def hello_world():
+    engine = db.engine
+    # Check the pool size configuration
+    pool_size = engine.pool.size()
+    max_overflow = engine.pool._max_overflow
+    pool_timeout = engine.pool._timeout
+
+    print("Pool Size:", pool_size)
+    print("Max Overflow:", max_overflow)
+    print("Pool Timeout:", pool_timeout)
     if check_db_connection():
         return "Connection to the database established!"
     else:
